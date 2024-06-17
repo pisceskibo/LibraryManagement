@@ -1,11 +1,17 @@
-from fastapi import FastAPI, Depends, Form, Query
+from fastapi import FastAPI, Depends, Form, Query, Request
 from sqlalchemy.orm import Session
 import models
 from passlib.context import CryptContext
 import jwt
 import datetime
 
+# Thư viện giao diện
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+
+
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
@@ -209,10 +215,11 @@ async def delete_book(encoded_jwt: str, id: str = Form(), db: Session = Depends(
         return "Đăng nhập bị lỗi"
         
 # Đọc tất cả sách
-@app.get('/books')
-async def read_all_books(db: Session = Depends(models.get_db)):        
+@app.get('/books', response_class=HTMLResponse)
+async def read_all_books(request: Request, db: Session = Depends(models.get_db)):        
     books = db.query(models.Book).filter(models.Book.delete_flag != 1).all()
-    return books
+    # return books
+    return templates.TemplateResponse("library.html", {"request": request, "books": books})
 
 
 ## 3. QUẢN LÝ NGƯỜI DÙNG
@@ -604,4 +611,15 @@ async def restore_final_book(encoded_jwt: str, borrow_book_id: str = Form(), db:
     else:
         return  "Đăng nhập bị lỗi"
     
-    
+
+
+# Đường dẫn tuyệt đối đến thư mục static
+from fastapi.staticfiles import StaticFiles
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Trang chủ giao diện
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    # Render template với dữ liệu đã cho
+    return templates.TemplateResponse("home.html", {"request": request})
+
