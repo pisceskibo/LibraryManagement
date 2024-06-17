@@ -4,10 +4,8 @@ import models
 from passlib.context import CryptContext
 import jwt
 import datetime
-from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
