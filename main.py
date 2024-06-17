@@ -8,10 +8,14 @@ import datetime
 # Thư viện giao diện
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 
+# Cài đặt setting cho program
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
@@ -611,11 +615,6 @@ async def restore_final_book(encoded_jwt: str, borrow_book_id: str = Form(), db:
     else:
         return  "Đăng nhập bị lỗi"
     
-
-
-# Đường dẫn tuyệt đối đến thư mục static
-from fastapi.staticfiles import StaticFiles
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Trang chủ giao diện
 @app.get("/", response_class=HTMLResponse)

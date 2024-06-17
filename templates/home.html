@@ -1,210 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- NỘI DUNG BỊ THAY ĐỔI -->
+{% block content %}
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
 
-    <title> Home Page </title>
-
-    <!-- CSS FILES -->
-    <!-- Sử dụng đường dẫn tương đối -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="/static/css/templatemo-topic-listing.css" rel="stylesheet">
-   
-</head>
-
-<body id="top">
-
-    <!-- Trang mở đầu của Header -->
-    <main>
-        <div id="sticky-wrapper" class="sticky-wrapper" style="height: 78px;">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a class="navbar-brand" href="http://127.0.0.1:8000/">
-                        <i class="bi-back"></i>
-                        <span> Library Manager </span>
-                    </a>
-
-                    <!-- Thanh bar trên cùng -->
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="http://127.0.0.1:8000/"> Home </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="http://127.0.0.1:8000/books/"> Library </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_3"> Borrow </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_4"> Student </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_5"> Category </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_6"> Contact </a>
-                            </li>
-                        </ul>
-
-                        <div class="d-none d-lg-block">
-                            <a href="#login" class="navbar-icon bi-person smoothscroll"> </a>
-                        </div>
-                    </div>
+            <div id="carouselExampleIndicators" class="carousel slide">
+                <!-- Thanh cuộn sang ngang phía dưới -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                        class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
                 </div>
-            </nav>
-        </div>
 
-
-        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
-            <div class="container">
-                <div class="row">
-
-                    <div class="col-lg-8 col-12 mx-auto">
-                        <h1 class="text-white text-center"> Trang chủ thông tin </h1>
-
-                        <h6 class="text-center"> một vài tin tức quan trọng </h6>
-
-                        <form method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bi-search" id="basic-addon1">
-
-                                </span>
-
-                                <input name="keyword" type="search" class="form-control" id="keyword"
-                                    placeholder="Search for something..." aria-label="Search">
-
-                                <button type="submit" class="form-control">Search</button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-    </main>
-
-
-    <!-- NỘI DUNG BỊ THAY ĐỔI -->
-    <section class="featured-section">
-        <div class="container">
-            <div class="row justify-content-center">
-
-                <div id="carouselExampleIndicators" class="carousel slide">
-                    <!-- Thanh cuộn sang ngang phía dưới -->
-                    <div class="carousel-indicators">
-                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
-
-                    <!-- Nội dung chính của slide -->
-                    <div class="carousel-inner" style="border-radius: 5%;">
-                      <div class="carousel-item active">
+                <!-- Nội dung chính của slide -->
+                <div class="carousel-inner" style="border-radius: 5%;">
+                    <div class="carousel-item active">
                         <img src="\static\images\fastapi_python.jpg" class="d-block w-100">
-                      </div>
-                      <div class="carousel-item">
-                        <img src="\static\images\django_python.jpg" class="d-block w-100">
-                      </div>
-                      <div class="carousel-item">
-                        <img src="\static\images\flask_python.jpg" class="d-block w-100">
-                      </div>
                     </div>
+                    <div class="carousel-item">
+                        <img src="\static\images\django_python.jpg" class="d-block w-100">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="\static\images\flask_python.jpg" class="d-block w-100">
+                    </div>
+                </div>
 
-                    <!-- Thanh chuyển sang ngang phía dưới -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Next</span>
-                    </button>
-                  </div>
-
+                <!-- Thanh chuyển sang ngang phía dưới -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
+
         </div>
-    </section>
+    </div>
+</section>
 
-
-    <!-- NỘI DUNG BỊ THAY ĐỔI -->
-
-
-    <!-- Trang kết thúc của Footer -->
-    <footer class="site-footer section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="home.html">
-                        <i class="bi-back"></i>
-                        <span> Rikkeisoft </span>
-                    </a>
-                </div>
-
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Resources</h6>
-
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item">
-                            <a href="http://127.0.0.1:8000/" class="site-footer-link"> Home </a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="http://127.0.0.1:8000/books/" class="site-footer-link"> Library </a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Student</a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Category</a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                    <h6 class="site-footer-title mb-3">Information</h6>
-
-                    <p class="text-white d-flex mb-1">
-                        <a href="tel: 0398463203" class="site-footer-link">
-                            (+84) 398 463 203
-                        </a>
-                    </p>
-
-                    <p class="text-white d-flex">
-                        <a href="mailto:tungtq2@rikkeisoft.com" class="site-footer-link">
-                            tungtq2@rikkeisoft.com
-                        </a>
-                    </p>
-                </div>
-
-                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                    <h6 class="site-footer-title mb-3"> Authority </h6>
-                    Copyright © 2024 by Rikkeisoft Company All rights reserved.
-                        <br><br> Author: <a rel="nofollow" href="https://github.com/pisceskibo" target="_blank"> <u> TungTQ </u> </a>
-                </div>
-
-            </div>
-        </div>
-    </footer>
-    <p style="text-align: center;"> Copyright © 2024 by Rikkeisoft Company </p>
-
-
-    <!-- JAVASCRIPT FILES -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-
-</html>
+{% endblock content%}
+<!-- NỘI DUNG BỊ THAY ĐỔI -->
