@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Đăng nhập tài khoản </h1>
+
+                <h6 class="text-center"> Book Store in Library </h6>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chức năng đăng nhập -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Login Account</h2>
+                        <hr> <br>
+
+                        <!-- Chức năng đăng nhập -->
+                        <form action="/login" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" id="username" class="form-control"
+                                    placeholder="Username" required="">
+                                <label for="floatingInput">Username</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="Password" required="">
+                                <label for="floatingInput">Password</label>
+                            </div>
+
+                            <button type="submit" class="form-control btn btn-primary">Login</button>
+                        </form>
+
+                        {% if token %}
+                        <div class="alert alert-success mt-3" role="alert">
+                            Your token: {{ token }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if error %}
+                        <div class="alert alert-danger mt-3" role="alert">
+                            Sai Username hoặc Password, yêu cầu nhập lại
+                        </div>
+                        {% endif %}
+
+                        <p class="text-center mt-3">
+                            Don't have an account? <a href="/create_account">Register</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

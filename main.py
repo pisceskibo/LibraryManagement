@@ -19,14 +19,25 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
-@app.post("/create_account")
-async def create_account(username: str = Form(), fullname: str = Form(), email: str = Form(), password: str = Form(), role: int = Form(), db: Session = Depends(models.get_db)):
-    passwordHash = get_password_hash(password)
-    new_user = models.User(username = username, fullname = fullname, email = email, password = passwordHash, role = role, delete_flag = 0)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+@app.post("/create_account", response_class=HTMLResponse)
+async def create_account(request: Request, username: str = Form(), fullname: str = Form(), email: str = Form(), password: str = Form(), role: int = Form(), db: Session = Depends(models.get_db)):
+    # Kiểm tra có trùng username không?
+    user = get_user(db, username)
+    if user:
+        return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists"})
+    else:    
+        passwordHash = get_password_hash(password)
+        new_user = models.User(username = username, fullname = fullname, email = email, password = passwordHash, role = role, delete_flag = 0)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully"})
+
+
+@app.get('/create_account', response_class=HTMLResponse)
+async def get_register(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
 
 # Kiểm tra password
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -41,18 +52,24 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 # Chức năng login lấy token tương ứng
-@app.get('/login')
-def login_account(username: str = Form(), password: str = Form(), db: Session = Depends(models.get_db)):
+@app.post('/login')
+async def login_account(request: Request, username: str = Form(), password: str = Form(), db: Session = Depends(models.get_db)):
     user = get_user(db, username)
     passwordCheck = verify_password(password, user.password)
-    if passwordCheck and user.delete_flag != 1:
+    if user and passwordCheck and user.delete_flag != 1:
         encoded_jwt = jwt.encode({"username": username, 
                                   "password": passwordCheck}, "secret", algorithm="HS256")
-        return encoded_jwt
-    else:
-        return ""
-    
 
+        return templates.TemplateResponse("login.html", {"request": request, "token": encoded_jwt})
+    else:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
+
+@app.get('/login', response_class=HTMLResponse)
+async def get_login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+    
 ## 2. CHỨC NĂNG QUẢN LÝ SÁCH - Thực hiện cách chức năng sử lý sách tương ứng với từng user
 # Tạo sách mới khi có quyền User
 @app.post('/books/create_book')
@@ -103,7 +120,7 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
     return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
 
 # Tìm kiếm sách (Customer)
-@app.get('/books/search_book')
+@app.get('/books/search_book', response_class=HTMLResponse)
 async def search_book(searching: str, request: Request, db: Session = Depends(models.get_db)):
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
@@ -114,7 +131,7 @@ async def search_book(searching: str, request: Request, db: Session = Depends(mo
     )
     books = books.filter(models.Book.delete_flag != 1).all()
     
-    return templates.TemplateResponse("searching_book.html", {"request": request, "books": books})
+    return templates.TemplateResponse("searching_book.html", {"request": request, "books": books, "searching": searching})
 
 
 # Gộp hai chức năng tìm kiếm và sắp xếp và phân trang

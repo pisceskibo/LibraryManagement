@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Đăng ký tài khoản </h1>
+
+                <h6 class="text-center"> Book Store in Library </h6>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chức năng đăng ký -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Register</h3>
+                        <form action="/create_account" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" id="username" class="form-control" placeholder="Username" required="">
+                                <label for="floatingInput">Username</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" name="fullname" id="fullname" class="form-control" placeholder="Fullname" required="">
+                                <label for="floatingInput">Fullname</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email" required="">
+                                <label for="floatingInput">Email</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="">
+                                <label for="floatingInput">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <select name="role" id="role" class="form-control" required="">
+                                    <option value="1">User</option>
+                                    <option value="2">Admin</option>
+                                </select>
+                                <label for="floatingSelect">Role</label>
+                            </div>
+                            <button type="submit" class="form-control btn btn-primary">Register</button>
+                        </form>
+
+                        {% if success %}
+                        <div class="alert alert-success mt-3" role="alert">
+                            {{ success }}
+                        </div>
+                        {% elif error %}
+                        <div class="alert alert-danger mt-3" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+
+                        <p class="text-center mt-3">
+                            Already have an account? <a href="/login">Login</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
