@@ -91,13 +91,14 @@ async def create_book(encoded_jwt: str, id: str = Form(), title: str = Form(), a
         return "Đăng nhập bị lỗi"
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
-@app.get('/books/sort_books')
-async def sort_books(choice: str, db: Session = Depends(models.get_db)):
+@app.get('/books/sort_books', response_class=HTMLResponse)
+async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
     if choice == "year":
         books = db.query(models.Book).order_by(models.Book.year).all()
     elif choice == "id":
         books = db.query(models.Book).order_by(models.Book.id_book).all()
-    return books
+
+    return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book')
@@ -223,7 +224,7 @@ async def delete_book(encoded_jwt: str, id: str = Form(), db: Session = Depends(
 @app.get('/books', response_class=HTMLResponse)
 async def read_all_books(request: Request, db: Session = Depends(models.get_db)):        
     books = db.query(models.Book).filter(models.Book.delete_flag != 1).all()
-    # return books
+
     return templates.TemplateResponse("library.html", {"request": request, "books": books})
 
 
