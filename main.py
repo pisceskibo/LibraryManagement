@@ -114,7 +114,7 @@ async def search_book(searching: str, db: Session = Depends(models.get_db)):
 @app.get('/books/extension')
 async def search_and_sort(searching_title_book: str = None, searching_author: str = None, searching_category: str = None,
                           searching: str = None, sortby: str = None, 
-                          limit: int = Query(5, gt=0),  # Số lượng sách tối đa mỗi trang, mặc định là 5
+                          limit: int = Query(10, gt=0),  # Số lượng sách tối đa mỗi trang, mặc định là 5
                           offset: int = Query(0, ge=0),  # Vị trí bắt đầu của trang, mặc định là 0
                           db: Session = Depends(models.get_db)):
     query = db.query(models.Book).filter(models.Book.delete_flag == 0)
@@ -145,6 +145,7 @@ async def search_and_sort(searching_title_book: str = None, searching_author: st
     books = query.offset(offset).limit(limit).all()
     
     return books
+
     
 # Chỉnh sửa sách đối với những sách của User (khác sách User tạo thì không thể sửa)
 @app.put('/books/edit_book')

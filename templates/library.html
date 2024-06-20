@@ -5,7 +5,8 @@
 
 {% block content %}
 
-<section class="hero-section d-flex justify-content-center align-items-center" id="section_1" style="padding-bottom: 50px;">
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
     <div class="container">
         <div class="row">
 
@@ -14,14 +15,14 @@
 
                 <h6 class="text-center"> Book Store in Library </h6>
 
-                <form method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                <form method="get" action="/books/extension" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1"></span>
 
-                        <input name="keyword" type="search" class="form-control" id="keyword"
-                            placeholder="Search for something..." aria-label="Search">
+                        <input name="searching" type="search" class="form-control" id="searching"
+                            placeholder="Searching for something..." aria-label="Search Anywhere">
 
-                        <button type="submit" class="form-control">Search</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
                     </div>
                 </form>
             </div>
@@ -47,15 +48,23 @@
                 </div>
 
                 <!-- Tạo bảng dữ liệu -->
-                <table class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+                <table
+                    class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                    id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
                     <thead class="student-thread">
                         <tr style="text-align: center;">
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="ID: activate to sort column ascending">ID</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Title: activate to sort column ascending">Title</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Author: activate to sort column ascending">Author</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Published Date: activate to sort column ascending">Published Date</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Category: activate to sort column ascending">Category</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Amount</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="ID: activate to sort column ascending">ID</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="Title: activate to sort column ascending">Title</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="Author: activate to sort column ascending">Author</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="Published Date: activate to sort column ascending">Published Date</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="Category: activate to sort column ascending">Category</th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                aria-label="Action: activate to sort column ascending">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,12 +82,27 @@
                 </table>
 
 
-                <!-- Phân trang -->
-                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
-                    <a class="paginate_button previous disabled" aria-controls="DataTables_Table_0" aria-disabled="true" role="link" data-dt-idx="previous" tabindex="-1" id="DataTables_Table_0_previous">Previous</a>
-                    <span><a class="paginate_button current" aria-controls="DataTables_Table_0" role="link" aria-current="page" data-dt-idx="0" tabindex="0">1</a></span>
-                    <a class="paginate_button next" aria-controls="DataTables_Table_0" role="link" data-dt-idx="next" tabindex="0" id="DataTables_Table_0_next">Next</a>
+                <!-- Phân trang: chưa xử lý -->
+                <div style="text-align: center;">
+                    <nav aria-label="Page navigation example" style="display: inline-block;">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
+
             </div>
         </div>
     </div>
