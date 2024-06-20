@@ -65,6 +65,10 @@ class Category(Base):
     # Tạo mối liên hệ giữa hai bảng
     category_books = relationship("Book", back_populates="category")
     
+    # Phương thức toString()
+    def __str__(self):
+        return self.category_id
+    
 # Model BorrowBook
 class BorrowBook(Base):
     __tablename__ = 'borrow'

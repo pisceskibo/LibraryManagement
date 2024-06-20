@@ -94,22 +94,28 @@ async def create_book(encoded_jwt: str, id: str = Form(), title: str = Form(), a
 @app.get('/books/sort_books', response_class=HTMLResponse)
 async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
     if choice == "year":
-        books = db.query(models.Book).order_by(models.Book.year).all()
+        books = db.query(models.Book).order_by(models.Book.year)
     elif choice == "id":
-        books = db.query(models.Book).order_by(models.Book.id_book).all()
+        books = db.query(models.Book).order_by(models.Book.id_book)
+    
+    books = books.filter(models.Book.delete_flag != 1).all()
 
     return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book')
-async def search_book(searching: str, db: Session = Depends(models.get_db)):
+async def search_book(searching: str, request: Request, db: Session = Depends(models.get_db)):
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
         (models.Book.title.contains(searching)) | 
         (models.Book.author.contains(searching)) | 
-        (models.Book.year.contains(searching))
-    ).all()
-    return books
+        (models.Book.year.contains(searching)) |
+        (models.Book.category_id.contains(searching))
+    )
+    books = books.filter(models.Book.delete_flag != 1).all()
+    
+    return templates.TemplateResponse("searching_book.html", {"request": request, "books": books})
+
 
 # Gộp hai chức năng tìm kiếm và sắp xếp và phân trang
 @app.get('/books/extension')
