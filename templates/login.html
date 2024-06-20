@@ -44,10 +44,16 @@
 
                         {% if token %}
                         <div class="alert alert-success mt-3" role="alert">
-                            Your token: {{ token }}
+                             Your token: {{ token }}
+
+                            <script type="text/javascript">
+                                if(confirm('Đăng nhập thành công!')){
+                                    window.location.href = "/";         // Redirect to home page
+                                }
+                            </script>
                         </div>
                         {% endif %}
-                        
+
                         {% if error %}
                         <div class="alert alert-danger mt-3" role="alert">
                             Sai Username hoặc Password, yêu cầu nhập lại
