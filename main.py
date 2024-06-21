@@ -107,9 +107,6 @@ async def read_profile(request: Request):
     
 
 
-
-    
-    
 ## 2. CHỨC NĂNG QUẢN LÝ SÁCH - Thực hiện cách chức năng sử lý sách tương ứng với từng user
 # Tạo sách mới khi có quyền User
 @app.post('/books/create_book')
@@ -147,6 +144,13 @@ async def create_book(encoded_jwt: str, id: str = Form(), title: str = Form(), a
     else:
         return "Đăng nhập bị lỗi"
     
+@app.get('/books/create_book', response_class=HTMLResponse)
+async def get_login(request: Request):
+    return templates.TemplateResponse("add_book.html", {"request": request})
+    
+    
+    
+    
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
 async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
@@ -158,6 +162,7 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
     books = books.filter(models.Book.delete_flag != 1).all()
 
     return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
+
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)

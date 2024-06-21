@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Thêm sách vào thư viện </h1>
+                <h6 class="text-center"> Add your Book in Library </h6>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chức năng đăng nhập -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Add Book in Library </h2>
+                        <hr>
+
+
+                        
+                        <!-- Chức năng thêm sách -->
+                        <form action="#" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="id_book" id="id_book" class="form-control"
+                                    placeholder="ID Book" required="">
+                                <label for="id_book"> ID Book</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select name="category" id="category" class="form-control" required="">
+                                    <option value="default_category_id"> default_category_id </option>
+                                    <option value="PYT"> PYT </option>
+                                    <option value="JAV"> JAV </option>
+                                    
+                                </select>
+                                <label for="floatingSelect">Category</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="title" id="title" class="form-control"
+                                    placeholder="Title" required="">
+                                <label for="title"> Title Book </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="author" id="author" class="form-control"
+                                    placeholder="Author" required="">
+                                <label for="author"> Author </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="date" name="year" id="year" class="form-control"
+                                    placeholder="year" required="">
+                                <label for="year"> Year </label>
+                            </div>
+                            
+                            <button type="submit" class="form-control btn btn-primary">Login</button>
+                        </form>
+
+                        
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock content %}
