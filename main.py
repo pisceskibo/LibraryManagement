@@ -7,7 +7,7 @@ import datetime
 
 # Thư viện giao diện
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 
@@ -60,7 +60,10 @@ async def login_account(request: Request, username: str = Form(), password: str 
         encoded_jwt = jwt.encode({"username": username, 
                                   "password": passwordCheck}, "secret", algorithm="HS256")
 
-        return templates.TemplateResponse("login.html", {"request": request, "token": encoded_jwt})
+        response = RedirectResponse(url="/", status_code=303)
+        response.set_cookie(key="token", value=encoded_jwt)
+        response.set_cookie(key="username", value=username)
+        return response
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
 
@@ -69,6 +72,30 @@ async def get_login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
+## Nếu đăng nhập thành công sẽ lưu token trong cookies
+def get_current_user(request: Request):
+    token = request.cookies.get("token")
+    if token:
+        try:
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = payload.get("username")
+            if username is None:
+                return None
+            return username
+        except jwt.PyJWTError:
+            return None
+    return None
+
+
+
+@app.get("/profile", response_class=HTMLResponse)
+async def read_profile(request: Request):
+    current_user = get_current_user(request)
+    if current_user:
+        return templates.TemplateResponse("profile.html", {"request": request, "username": current_user})
+    return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
+
+    
     
 ## 2. CHỨC NĂNG QUẢN LÝ SÁCH - Thực hiện cách chức năng sử lý sách tương ứng với từng user
 # Tạo sách mới khi có quyền User

@@ -57,13 +57,19 @@
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="#section_6"> Contact </a>
                             </li>
-
-                        
                         </ul>
 
+
                         <div class="d-none d-lg-block">
-                            <a href="http://127.0.0.1:8000/login" class="navbar-icon bi-person smoothscroll">  </a>
+                            {% if request.cookies.get('token') %}
+                                <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{ request.cookies.get('username') }}
+                                
+                            {% else %}
+                                <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                            {% endif %}
                         </div>
+
+
                     </div>
                 </div>
             </nav>
