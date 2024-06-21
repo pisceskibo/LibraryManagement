@@ -15,7 +15,6 @@
 </head>
 
 <body id="top">
-
     <!-- Trang mở đầu của Header -->
     <main>
         <div id="sticky-wrapper" class="sticky-wrapper" style="height: 78px;">
@@ -62,10 +61,20 @@
 
                         <div class="d-none d-lg-block">
                             {% if request.cookies.get('token') %}
-                                <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{ request.cookies.get('username') }}
-                                
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{
+                                    request.cookies.get('username') }}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li> <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{
+                                        request.cookies.get('username') }}</li>
+                                    <li><a class="dropdown-item" href="/logout"> Logout </a></li>
+                                </ul>
+                            </div>
                             {% else %}
-                                <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                             {% endif %}
                         </div>
 

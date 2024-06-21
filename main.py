@@ -1,3 +1,4 @@
+# Thư viện Backend Python
 from fastapi import FastAPI, Depends, Form, Query, Request
 from sqlalchemy.orm import Session
 import models
@@ -17,6 +18,7 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
 @app.post("/create_account", response_class=HTMLResponse)
@@ -32,7 +34,6 @@ async def create_account(request: Request, username: str = Form(), fullname: str
         db.commit()
         db.refresh(new_user)
         return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully"})
-
 
 @app.get('/create_account', response_class=HTMLResponse)
 async def get_register(request: Request):
@@ -50,6 +51,7 @@ def get_user(db, username: str):
 # Mã hóa mật khẩu
 def get_password_hash(password):
     return pwd_context.hash(password)
+
 
 # Chức năng login lấy token tương ứng
 @app.post('/login')
@@ -72,7 +74,16 @@ async def get_login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-## Nếu đăng nhập thành công sẽ lưu token trong cookies
+# Chức năng đăng xuất tài khoản
+@app.get('/logout')
+async def logout(request: Request):
+    response = RedirectResponse(url='/login', status_code=303)
+    response.delete_cookie('token')
+    response.delete_cookie('username')
+    return response
+
+
+# Trang cá nhân của tài khoản - Đang hoàn thiện
 def get_current_user(request: Request):
     token = request.cookies.get("token")
     if token:
@@ -86,14 +97,16 @@ def get_current_user(request: Request):
             return None
     return None
 
-
-
 @app.get("/profile", response_class=HTMLResponse)
 async def read_profile(request: Request):
     current_user = get_current_user(request)
     if current_user:
         return templates.TemplateResponse("profile.html", {"request": request, "username": current_user})
-    return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
+    else:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
+    
+
+
 
     
     
