@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Sửa sách trong thư viện </h1> 
+                <br>
+                <h2 class="text-center"> "{{book.id_book}} - {{book.title}}" </h2>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chức năng đăng nhập -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center"> Edit Book </h2>
+                        <hr>
+
+                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+                        <!-- Chức năng sửa sách -->
+                        <form action="/books/edit_book" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="id" id="id" class="form-control"
+                                    placeholder="ID Book" value="{{book.id_book}}" readonly>
+                                <label for="id_book"> ID Book </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select name="category_id" id="category_id" class="form-control" required="">
+                                    <option value="default_category_id"> default_category_id </option>
+                                    <option value="PYT"> PYT </option>
+                                    <option value="JAV"> JAV </option>
+                                    
+                                </select>
+                                <label for="category_id">Category</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="title" id="title" class="form-control"
+                                    placeholder="Title" value="{{book.title}}">
+                                <label for="title"> Title Book </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="author" id="author" class="form-control"
+                                    placeholder="Author" value="{{book.author}}">
+                                <label for="author"> Author </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="number" name="year" id="year" class="form-control"
+                                    placeholder="year" value="{{book.year}}">
+                                <label for="year"> Year </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="number" name="quantity" id="quantity" class="form-control"
+                                    placeholder="quantity" value="{{book.quantity_amount}}">
+                                <label for="quantity"> Quantity </label>
+                            </div>
+                            
+                            <button type="submit" class="form-control btn btn-primary"> Edit Book </button>
+                        </form>
+
+                        {% if success_book %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    if(confirm('Sửa sách thành công!')){
+                                        window.location.href = "/";         // Redirect to home page
+                                    }
+                                </script>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

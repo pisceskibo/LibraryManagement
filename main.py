@@ -140,14 +140,16 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             db.refresh(new_book)
             return templates.TemplateResponse("add_book.html", {"request": request, "success": "Book added successfully!"})
         except:
-            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Lỗi đăng nhập"})
+            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Nhập thiếu sách"})
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Lỗi đăng nhập"})
 
 @app.get('/books/create_book', response_class=HTMLResponse)
-async def get_login(request: Request):
-    return templates.TemplateResponse("add_book.html", {"request": request})
-    
+async def get_login(request: Request, token: str = Cookie(None)):
+    if token:
+        return templates.TemplateResponse("add_book.html", {"request": request})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request})
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
@@ -214,12 +216,12 @@ async def search_and_sort(searching_title_book: str = None, searching_author: st
 
     
 # Chỉnh sửa sách đối với những sách của User (khác sách User tạo thì không thể sửa)
-@app.put('/books/edit_book')
-async def edit_book(encoded_jwt: str, id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(), category_id: str = Form(), quantity: int = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/books/edit_book')
+async def edit_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(), quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             
             user = get_user(db, username)
@@ -228,7 +230,7 @@ async def edit_book(encoded_jwt: str, id: str = Form(), title: str = Form(), aut
             else:
                 book = db.query(models.Book).filter((models.Book.id_book == id)).first()
                 
-
+            # Sửa sách
             if book:
                 book.title = title
                 book.author = author
@@ -240,14 +242,23 @@ async def edit_book(encoded_jwt: str, id: str = Form(), title: str = Form(), aut
                 
                 db.commit()
                 db.refresh(book)
-                return book
+                
+                return templates.TemplateResponse("home.html", {"request": request, "success_book": "Update finished book", "book": book})
             else:
-                return "Book not found"
+                return templates.TemplateResponse("edit_book.html", {"request": request, "error": "Book not found"}) 
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
-            
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
+@app.get('/books/edit_book', response_class=HTMLResponse)
+async def get_edit(request: Request, id: str, db: Session = Depends(models.get_db)):
+    book = db.query(models.Book).filter(models.Book.id_book == id).first()
+    if book:
+        return templates.TemplateResponse("edit_book.html", {"request": request, "book": book})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
 
 # Xóa sách theo id có quyền admin và user tương ứng
 @app.delete('/books/delete_book')
