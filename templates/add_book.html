@@ -28,23 +28,23 @@
                         <hr>
 
 
-                        
+                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
                         <!-- Chức năng thêm sách -->
-                        <form action="#" method="post" class="custom-form" role="form">
+                        <form action="/books/create_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
-                                <input type="text" name="id_book" id="id_book" class="form-control"
+                                <input type="text" name="id" id="id" class="form-control"
                                     placeholder="ID Book" required="">
                                 <label for="id_book"> ID Book</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <select name="category" id="category" class="form-control" required="">
+                                <select name="category_id" id="category_id" class="form-control" required="">
                                     <option value="default_category_id"> default_category_id </option>
                                     <option value="PYT"> PYT </option>
                                     <option value="JAV"> JAV </option>
                                     
                                 </select>
-                                <label for="floatingSelect">Category</label>
+                                <label for="category_id">Category</label>
                             </div>
 
                             <div class="form-floating mb-3">
@@ -60,20 +60,30 @@
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="date" name="year" id="year" class="form-control"
+                                <input type="number" name="year" id="year" class="form-control"
                                     placeholder="year" required="">
                                 <label for="year"> Year </label>
                             </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="number" name="quantity" id="quantity" class="form-control"
+                                    placeholder="quantity" required="">
+                                <label for="quantity"> Quantity </label>
+                            </div>
                             
-                            <button type="submit" class="form-control btn btn-primary">Login</button>
+                            <button type="submit" class="form-control btn btn-primary"> Create Book </button>
                         </form>
 
+                        {% if success %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    if(confirm('Thêm sách thành công!')){
+                                        window.location.href = "/books";         // Redirect to home page
+                                    }
+                                </script>
+                            </div>
+                        {% endif %}
                         
-
-
-
-
-
                     </div>
                 </div>
             </div>

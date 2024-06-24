@@ -1,5 +1,5 @@
 # Thư viện Backend Python
-from fastapi import FastAPI, Depends, Form, Query, Request
+from fastapi import FastAPI, Depends, Form, Query, Request, Cookie
 from sqlalchemy.orm import Session
 import models
 from passlib.context import CryptContext
@@ -110,11 +110,11 @@ async def read_profile(request: Request):
 ## 2. CHỨC NĂNG QUẢN LÝ SÁCH - Thực hiện cách chức năng sử lý sách tương ứng với từng user
 # Tạo sách mới khi có quyền User
 @app.post('/books/create_book')
-async def create_book(encoded_jwt: str, id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(), category_id: str = Form(), quantity: int = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+async def create_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(),  quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         # Decode
         try:
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             
             this_category = db.query(models.Category).filter(models.Category.category_id == category_id and models.Category.delete_flag != 1).first()
@@ -138,17 +138,15 @@ async def create_book(encoded_jwt: str, id: str = Form(), title: str = Form(), a
             db.add(new_book)
             db.commit()
             db.refresh(new_book)
-            return new_book
+            return templates.TemplateResponse("add_book.html", {"request": request, "success": "Book added successfully!"})
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Lỗi đăng nhập"})
     else:
         return "Đăng nhập bị lỗi"
-    
+
 @app.get('/books/create_book', response_class=HTMLResponse)
 async def get_login(request: Request):
     return templates.TemplateResponse("add_book.html", {"request": request})
-    
-    
     
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
@@ -162,7 +160,6 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
     books = books.filter(models.Book.delete_flag != 1).all()
 
     return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
-
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)
@@ -179,7 +176,7 @@ async def search_book(searching: str, request: Request, db: Session = Depends(mo
     return templates.TemplateResponse("searching_book.html", {"request": request, "books": books, "searching": searching})
 
 
-# Gộp hai chức năng tìm kiếm và sắp xếp và phân trang
+# Gộp hai chức năng tìm kiếm và sắp xếp và phân trang (đang hoàn thiện)
 @app.get('/books/extension')
 async def search_and_sort(searching_title_book: str = None, searching_author: str = None, searching_category: str = None,
                           searching: str = None, sortby: str = None, 
