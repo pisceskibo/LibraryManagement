@@ -48,19 +48,14 @@
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="row">
 
-                    <!-- Limit trên một trang (Bên trái) -->
+                    <!-- Tổng số sách của thư viện -->
                     <div class="col-md-6">
                         <div class="dataTables_length" id="DataTables_Table_0_length">
-                            <label>Show
-                                <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0">
-                                    <option value="10">10</option>
-                                    <option value="15">15</option>
-                                    <option value="20">20</option>
-                                </select> books
+                            <label> <b> Show {{total_books}} books </b>
                             </label>
                         </div>
                     </div>
-                
+                                    
                     <!-- Chức năng sắp xếp sách (Bên phải) -->
                     <div class="col-md-6 text-md-end">
                         <div class="dropdown">
@@ -123,28 +118,6 @@
                         </form>
                     </tbody>
                 </table>
-
-
-                <!-- Phân trang: chưa xử lý -->
-                <div style="text-align: center;">
-                    <nav aria-label="Page navigation example" style="display: inline-block;">
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
 
             </div>
         </div>

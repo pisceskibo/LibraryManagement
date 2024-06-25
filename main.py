@@ -158,18 +158,25 @@ async def get_login(request: Request, token: str = Cookie(None)):
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
 async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
+    # Chức năng tìm kiếm tất cả các sách
     if choice == "year":
         books = db.query(models.Book).order_by(models.Book.year)
     elif choice == "id":
         books = db.query(models.Book).order_by(models.Book.id_book)
     
     books = books.filter(models.Book.delete_flag != 1).all()
+    total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
 
-    return templates.TemplateResponse("sorting_book.html", {"request": request, "books": books})
+    return templates.TemplateResponse("sorting_book.html", {
+        "request": request,
+        "books": books,
+        "total_books": total_books})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)
 async def search_book(searching: str, request: Request, db: Session = Depends(models.get_db)):
+    searching = searching.strip()       # Xóa các khoảng trắng dư thừa
+    
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
         (models.Book.title.contains(searching)) | 
@@ -178,11 +185,16 @@ async def search_book(searching: str, request: Request, db: Session = Depends(mo
         (models.Book.category_id.contains(searching))
     )
     books = books.filter(models.Book.delete_flag != 1).all()
+    total_books = len(books)
     
-    return templates.TemplateResponse("searching_book.html", {"request": request, "books": books, "searching": searching})
+    return templates.TemplateResponse("searching_book.html", {
+        "request": request, 
+        "books": books, 
+        "searching": searching,
+        "total_books": total_books})
 
 
-# Gộp hai chức năng tìm kiếm và sắp xếp và phân trang (đang hoàn thiện)
+# Gộp các chức năng tìm kiếm, sắp xếp, phân trang (đang hoàn thiện)
 @app.get('/books/extension')
 async def search_and_sort(searching_title_book: str = None, searching_author: str = None, searching_category: str = None,
                           searching: str = None, sortby: str = None, 
@@ -329,10 +341,20 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
         
 # Đọc tất cả sách
 @app.get('/books', response_class=HTMLResponse)
-async def read_all_books(request: Request, db: Session = Depends(models.get_db)):        
-    books = db.query(models.Book).filter(models.Book.delete_flag != 1).all()
+async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), db: Session = Depends(models.get_db)):        
+    offset = (page - 1) * page_size
+    books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size).all()
+    
+    total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
+    total_pages = (total_books + page_size - 1) // page_size  # Tính toán tổng số trang
 
-    return templates.TemplateResponse("library.html", {"request": request, "books": books})
+    return templates.TemplateResponse("library.html", {
+        "request": request,
+        "books": books,
+        "total_books": total_books,
+        "page": page,
+        "total_pages": total_pages
+    })
 
 
 

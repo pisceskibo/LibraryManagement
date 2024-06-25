@@ -48,15 +48,10 @@
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="row">
 
-                    <!-- Limit trên một trang (Bên trái) -->
+                    <!-- Tổng số sách của thư viện -->
                     <div class="col-md-6">
                         <div class="dataTables_length" id="DataTables_Table_0_length">
-                            <label>Show
-                                <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0">
-                                    <option value="10">10</option>
-                                    <option value="15">15</option>
-                                    <option value="20">20</option>
-                                </select> books
+                            <label> <b> Total Book: {{total_books}} books </b>
                             </label>
                         </div>
                     </div>
@@ -125,20 +120,22 @@
                 </table>
 
 
-                <!-- Phân trang: chưa xử lý -->
+                <!-- Phân trang -->
                 <div style="text-align: center;">
                     <nav aria-label="Page navigation example" style="display: inline-block;">
                         <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
+                            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                                <a class="page-link" href="/books?page={{ page - 1 }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
+                            {% for num in range(1, total_pages + 1) %}
+                            <li class="page-item {% if num == page %}active{% endif %}">
+                                <a class="page-link" href="/books?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                                <a class="page-link" href="/books?page={{ page + 1 }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
