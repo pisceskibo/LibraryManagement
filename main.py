@@ -5,6 +5,7 @@ import models
 from passlib.context import CryptContext
 import jwt
 import datetime
+from typing import Optional
 
 # Thư viện giao diện
 from fastapi.templating import Jinja2Templates
@@ -26,7 +27,8 @@ async def create_account(request: Request, username: str = Form(), fullname: str
     # Kiểm tra có trùng username không?
     user = get_user(db, username)
     if user:
-        return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists"})
+        # Username đã tồn tại, cần chọn username khác
+        return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists!"})
     else:    
         passwordHash = get_password_hash(password)
         new_user = models.User(username = username, fullname = fullname, email = email, password = passwordHash, role = role, delete_flag = 0)
@@ -67,7 +69,8 @@ async def login_account(request: Request, username: str = Form(), password: str 
         response.set_cookie(key="username", value=username)
         return response
     else:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
+        # Usernaem hoặc Password bị sai
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials!"})
 
 @app.get('/login', response_class=HTMLResponse)
 async def get_login(request: Request):
@@ -140,9 +143,9 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             db.refresh(new_book)
             return templates.TemplateResponse("add_book.html", {"request": request, "success": "Book added successfully!"})
         except:
-            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Nhập thiếu sách"})
+            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Nhập thiếu dữ liệu thông tin sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Lỗi đăng nhập"})
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Chưa có tài khoản đăng nhập!"})
 
 @app.get('/books/create_book', response_class=HTMLResponse)
 async def get_login(request: Request, token: str = Cookie(None)):
@@ -150,6 +153,7 @@ async def get_login(request: Request, token: str = Cookie(None)):
         return templates.TemplateResponse("add_book.html", {"request": request})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request})
+    
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
@@ -243,30 +247,46 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                 db.commit()
                 db.refresh(book)
                 
-                return templates.TemplateResponse("home.html", {"request": request, "success_book": "Update finished book", "book": book})
+                return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "success_message": "Sửa sách thành công!"})
+
             else:
-                return templates.TemplateResponse("edit_book.html", {"request": request, "error": "Book not found"}) 
+                # Không có quyền sửa sách khác User hoặc Admin
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"}) 
         except:
+            # Chưa đăng nhập nên không vào được
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
 
 @app.get('/books/edit_book', response_class=HTMLResponse)
-async def get_edit(request: Request, id: str, db: Session = Depends(models.get_db)):
-    book = db.query(models.Book).filter(models.Book.id_book == id).first()
-    if book:
-        return templates.TemplateResponse("edit_book.html", {"request": request, "book": book})
+async def get_edit(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        
+        # Logic chỉ sửa được những sách
+        user = get_user(db, username)
+        if user.role != 1:
+            book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
+        else:
+            book = db.query(models.Book).filter((models.Book.id_book == id)).first()
+        
+        if book:
+            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book})
+        else:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
 
 # Xóa sách theo id có quyền admin và user tương ứng
-@app.delete('/books/delete_book')
-async def delete_book(encoded_jwt: str, id: str = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/books/delete_book')
+async def delete_book(request: Request, id: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             user = get_user(db, username)
         
@@ -286,15 +306,26 @@ async def delete_book(encoded_jwt: str, id: str = Form(), db: Session = Depends(
                 db.commit()
                 db.refresh(book)
                     
-                return "Sách đã bị xóa"
+                return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "success_message": "Sách đã bị xóa!"})
             else:
-                return "Không có quyền xóa sách"
+                # Không có quyền xóa sách
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Page not found"})
 
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
-        # book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book != id)).first()    # Những cuốn sách còn lại
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
+@app.get('/books/delete_book', response_class=HTMLResponse)
+async def get_delete(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token:
+        book = db.query(models.Book).filter(models.Book.id_book == id).first()
+        if book:
+            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book})
+        else:
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
         
 # Đọc tất cả sách
 @app.get('/books', response_class=HTMLResponse)
@@ -302,6 +333,7 @@ async def read_all_books(request: Request, db: Session = Depends(models.get_db))
     books = db.query(models.Book).filter(models.Book.delete_flag != 1).all()
 
     return templates.TemplateResponse("library.html", {"request": request, "books": books})
+
 
 
 ## 3. QUẢN LÝ NGƯỜI DÙNG

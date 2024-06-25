@@ -30,19 +30,20 @@
     </div>
 </section>
 
+
 <!-- Hiển thị chức năng thêm sách -->
 {% if request.cookies.get('token') %}
-<div style="text-align: center;"> 
+<div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;"> 
     <button type="button" class="btn btn-primary">
-        <a href="/books/create_book" style="color: aliceblue;"> <b> + Thêm sách</b> </a>
+        <a href="/books/create_book" style="color: aliceblue;"> <h5> ➕ Thêm sách</h5> </a>
     </button>
 </div>
 {% endif %}
 
+
 <!-- Hiển thị từng cuốn sách -->
 <div class="card card-table comman-shadow">
     <div class="card-body">
-
         <div class="table-responsive">
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="row">
@@ -80,32 +81,46 @@
                     class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
                     id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
                     <thead class="student-thread">
-                        <tr style="text-align: center;">
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                        <tr style="text-align: center; font-size:larger;">
+                            {% if request.cookies.get('token') %}
+                                <th style="width: 100px;">Edit</th>
+                            {% endif %}
+                            <th rowspan="1" colspan="1"
                                 aria-label="ID: activate to sort column ascending">ID</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            <th rowspan="1" colspan="1"
                                 aria-label="Title: activate to sort column ascending">Title</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            <th rowspan="1" colspan="1"
                                 aria-label="Author: activate to sort column ascending">Author</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            <th rowspan="1" colspan="1"
                                 aria-label="Published Date: activate to sort column ascending">Published Date</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            <th rowspan="1" colspan="1"
                                 aria-label="Category: activate to sort column ascending">Category</th>
-                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            <th rowspan="1" colspan="1"
                                 aria-label="Action: activate to sort column ascending">Amount</th>
                         </tr>
                     </thead>
+
                     <tbody>
+                        <form action="">
                         {% for book in books %}
-                        <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
-                            <td style="text-align: center;">{{ book.id_book }}</td>
-                            <td> <a href="#">{{ book.title }}</a></td>
-                            <td style="text-align: center;">{{ book.author }}</td>
-                            <td style="text-align: center;">{{ book.year }}</td>
-                            <td style="text-align: center;">{{ book.category }}</td>
-                            <td style="text-align: center;">{{ book.quantity_amount }}</td>
-                        </tr>
+                            <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
+                                {% if request.cookies.get('token') %}
+                                <td style="text-align: center;">
+                                    <button type="button" class="btn btn-info">
+                                        <a href="/books/edit_book?id={{ book.id_book }}" style="color: aliceblue;"> <b>🖍 Edit</b> </a>
+                                    </button>
+                                </td>
+                                
+                                {% endif %}
+                                <td style="text-align: center;">{{ book.id_book }}</td>
+                                <td> <a href="#">{{ book.title }}</a></td>
+                                <td style="text-align: center;">{{ book.author }}</td>
+                                <td style="text-align: center;">{{ book.year }}</td>
+                                <td style="text-align: center;">{{ book.category }}</td>
+                                <td style="text-align: center;">{{ book.quantity_amount }}</td>
+                            </tr>
                         {% endfor %}
+                        </form>
                     </tbody>
                 </table>
 

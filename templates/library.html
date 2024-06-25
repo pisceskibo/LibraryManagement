@@ -33,9 +33,9 @@
 
 <!-- Hiển thị chức năng thêm sách -->
 {% if request.cookies.get('token') %}
-<div style="text-align: center;"> 
+<div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;"> 
     <button type="button" class="btn btn-primary">
-        <a href="/books/create_book" style="color: aliceblue;"> <b> ➕ Thêm sách</b> </a>
+        <a href="/books/create_book" style="color: aliceblue;"> <h5> ➕ Thêm sách</h5> </a>
     </button>
 </div>
 {% endif %}
@@ -77,7 +77,6 @@
                 
 
                 <!-- Tạo bảng dữ liệu -->
-                
                 <table
                     class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
                     id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
