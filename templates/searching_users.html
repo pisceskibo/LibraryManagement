@@ -44,7 +44,7 @@
                         <div class="card" style="width: 18rem;">
 
                             <!-- Responsive Image -->
-                            <img src="static/images/default_avatar.png" class="card-img-top"
+                            <img src="https://p.kindpng.com/picc/s/419-4196106_head-icon-user-user-head-icon-hd-png.png" class="card-img-top"
                                 alt="https://placehold.co/200x150"
                                 style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
@@ -54,7 +54,11 @@
                             <div class="card-body">
                                 <h5 class="card-title"> {{student.username}} </h5>
                                 <p class="card-text"> {{student.fullname}} </p>
-                                <a href="" class="btn btn-primary"> Go somewhere </a>
+
+                                <div class="btn-group mt-auto" role="group" aria-label="Button Click">
+                                    <button type="button" class="btn btn-primary me-3">Show Infor</button>
+                                    <button type="button" class="btn btn-warning">Change Role</button>
+                                </div>
                             </div>
                         </div>
                     </div>
