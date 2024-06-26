@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Thay đổi quyền Admin </h1> 
+                <br>
+                <h2 class="text-center"> "{{finded_username}}" </h2>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chức năng nhập liệu -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center"> Change Rule </h2>
+                        <hr>
+
+                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+                        <!-- Chức năng thay đổi quyền -->
+                        <form action="/users/get_admin" method="post" class="custom-form" role="form">
+                            
+                            <div class="form-floating mb-3">
+                                <input type="text" name="finded_username" id="finded_username" class="form-control" required=""
+                                    placeholder="Username" value="{{finded_username}}" readonly/>
+
+                                <label for="finded_username"> Username </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select name="new_role" id="new_role" class="form-control" required="">
+                                    {% if picked_this_role == 0 %}
+                                    <option value="0">User</option>
+                                    <option value="1">Admin</option>
+                                    {% else %}
+                                    <option value="1">Admin</option>
+                                    <option value="0">User</option>
+                                    {% endif %}
+
+                                </select>
+                                <label for="floatingSelect">Role</label>
+                            </div>
+
+                            <button type="submit" class="form-control btn btn-primary"> Update Role </button>
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="#"> Cancel </a></b> </button>
+                        
+                        </form>
+                        {% if success_message %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    alert('{{ success_message }}');
+                                    window.location.href = "/users"; // Redirect to users page
+                                </script>
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

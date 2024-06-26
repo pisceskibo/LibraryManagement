@@ -101,10 +101,19 @@ def get_current_user(request: Request):
     return None
 
 @app.get("/profile", response_class=HTMLResponse)
-async def read_profile(request: Request):
-    current_user = get_current_user(request)
-    if current_user:
-        return templates.TemplateResponse("profile.html", {"request": request, "username": current_user})
+async def read_profile(request: Request, db: Session = Depends(models.get_db)):
+    current_username = get_current_user(request)
+    
+    if current_username:
+        # Lấy dữ liệu từ username
+        user_logined = db.query(models.User).filter(models.User.username == current_username).first()
+        get_fullname = user_logined.username
+        get_email = user_logined.email
+        
+        return templates.TemplateResponse("profile.html", {
+            "request": request, "current_username": current_username,
+            "get_fullname": get_fullname,
+            "get_email": get_email})
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
     
@@ -241,7 +250,7 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
             username = decodeJSON["username"]
             
             user = get_user(db, username)
-            if user.role != 1:
+            if user.role == 0:
                 book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
             else:
                 book = db.query(models.Book).filter((models.Book.id_book == id)).first()
@@ -279,7 +288,7 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
         
         # Logic chỉ sửa được những sách
         user = get_user(db, username)
-        if user.role != 1:
+        if user.role == 0:
             book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
         else:
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()
@@ -360,29 +369,55 @@ async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size
 
 ## 3. QUẢN LÝ NGƯỜI DÙNG
 # Thêm admin
-@app.put('/users/get_admin')
-async def update_role(encoded_jwt: str, finded_username: str = Form(), new_role: int = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/users/get_admin')
+async def update_role(request: Request, finded_username: str = Form(), new_role: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             user = get_user(db, username)
 
-            if user.role == 1:
+            if user.role == 2:
                 user_update = db.query(models.User).filter(models.User.username == finded_username).first()
                 user_update.role = new_role
 
                 db.commit()
                 db.refresh(user_update)
                 
-                return f"Đã update quyền cho {finded_username}"
+                return templates.TemplateResponse("change_admin.html", {"request": request, "finded_username": finded_username, "success_message": f"Cập nhật quyền thành công cho {finded_username}!"})
+
             else:
-                return f"Không có quyền thay đổi cho {finded_username}"
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": f"Không có quyền thay đổi user/admin cho {finded_username}"})
+
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+    
+@app.get('/users/get_admin', response_class=HTMLResponse)
+async def get_change_admin(request: Request, finded_username: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        user = get_user(db, username)
+        
+        # Logic thay đổi chức năng của user
+        if user.role != 2:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi user/admin"})
+        else:
+            picked_student = get_user(db, finded_username)
+            picked_this_role = picked_student.role
+            return templates.TemplateResponse("change_admin.html", {
+                "request": request, 
+                "finded_username": finded_username,
+                "picked_this_role": picked_this_role
+                })
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+    
+    
     
 # Cập nhật lại thông tin người dùng
 @app.put('/users/update_user')

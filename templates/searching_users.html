@@ -55,10 +55,14 @@
                                 <h5 class="card-title"> {{student.username}} </h5>
                                 <p class="card-text"> {{student.fullname}} </p>
 
+                                {% if request.cookies.get('token') %}
                                 <div class="btn-group mt-auto" role="group" aria-label="Button Click">
-                                    <button type="button" class="btn btn-primary me-3">Show Infor</button>
-                                    <button type="button" class="btn btn-warning">Change Role</button>
+                                    <a href="" class="btn btn-primary"> Show Infor </a>
+                                    <a href="get_admin?finded_username={{student.username}}" class="btn btn-warning"> Change Rule </a>
                                 </div>
+                                {% else %}
+                                <a href="" class="btn btn-primary"> Show infor </a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
