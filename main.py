@@ -435,12 +435,32 @@ async def delete_username(encoded_jwt: str, deleted_username: str = Form(), db: 
             return "Sai tên đăng nhập hoặc mật khẩu"
     else:
         return "Đăng nhập bị lỗi"
+    
+    
+# Tìm kiếm sinh viên (Customer)
+@app.get('/users/search_students', response_class=HTMLResponse)
+async def search_student(searching: str, request: Request, db: Session = Depends(models.get_db)):
+    searching = searching.strip()       # Xóa các khoảng trắng dư thừa
+    
+    students = db.query(models.User).filter(
+        (models.User.username.contains(searching)) | 
+        (models.User.fullname.contains(searching))
+    )
+    students = students.filter(models.User.delete_flag != 1).all()
+    total_students = len(students)
+    
+    return templates.TemplateResponse("searching_users.html", {
+        "request": request, 
+        "students": students, 
+        "searching": searching,
+        "total_students": total_students})
 
 # Hiển thị tất cả danh sách người dùng
-@app.get('/users')
-async def get_all_users(db: Session = Depends(models.get_db)):
+@app.get('/users', response_class=HTMLResponse)
+async def get_all_users(request: Request, db: Session = Depends(models.get_db)):
     all_users = db.query(models.User).filter(models.User.delete_flag != 1).all()
-    return all_users
+    return templates.TemplateResponse("student_list.html", {"request": request, "all_users": all_users})
+
 
 
 ## 4. QUẢN LÝ THỂ LOẠI SÁCH
