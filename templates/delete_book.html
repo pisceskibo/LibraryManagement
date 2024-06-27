@@ -11,7 +11,7 @@
             <div class="col-lg-8 col-12 mx-auto">
                 <h1 class="text-white text-center"> Xóa sách trong thư viện </h1> 
                 <br>
-                <h2 class="text-center"> "{{book.id_book}} - {{book.title}}" </h2>
+                <h2 class="text-center"> "{{book.title}}" </h2>
 
             </div>
         </div>
@@ -27,11 +27,8 @@
                     <div class="card-body">
                         <h2 class="card-title text-center"> Bạn thực sự muốn xóa sách này? </h2>
                         <hr>
-                        <button type="button" class="btn btn-danger"> Có </button>
-                        <button type="button" class="btn btn-warning"> Không </button>
 
-
-
+                        
                         <form action="/books/delete_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
                                 <input type="text" name="id" id="id" class="form-control" required=""
@@ -42,6 +39,7 @@
                             <button type="submit" class="form-control btn btn-primary"> Có </button>
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/books/edit_book?id={{book.id_book}}"> Không </b> </a> </button>
                         </form>
+
 
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">

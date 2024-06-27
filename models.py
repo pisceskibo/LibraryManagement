@@ -69,6 +69,7 @@ class Category(Base):
     def __str__(self):
         return self.category_id
     
+    
 # Model BorrowBook
 class BorrowBook(Base):
     __tablename__ = 'borrow'

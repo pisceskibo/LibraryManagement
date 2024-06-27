@@ -69,7 +69,7 @@ async def login_account(request: Request, username: str = Form(), password: str 
         response.set_cookie(key="username", value=username)
         return response
     else:
-        # Usernaem hoặc Password bị sai
+        # Username hoặc Password bị sai
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials!"})
 
 @app.get('/login', response_class=HTMLResponse)
@@ -86,7 +86,7 @@ async def logout(request: Request):
     return response
 
 
-# Trang cá nhân của tài khoản - Đang hoàn thiện
+# Trang cá nhân của tài khoản
 def get_current_user(request: Request):
     token = request.cookies.get("token")
     if token:
@@ -109,11 +109,13 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
         user_logined = db.query(models.User).filter(models.User.username == current_username).first()
         get_fullname = user_logined.username
         get_email = user_logined.email
+        get_role = user_logined.role
         
         return templates.TemplateResponse("profile.html", {
             "request": request, "current_username": current_username,
             "get_fullname": get_fullname,
-            "get_email": get_email})
+            "get_email": get_email, 
+            "get_role": get_role})
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
     
@@ -348,7 +350,8 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
         
-# Đọc tất cả sách
+        
+# Đọc tất cả sách (kết hợp Logic phân trang)
 @app.get('/books', response_class=HTMLResponse)
 async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), db: Session = Depends(models.get_db)):        
     offset = (page - 1) * page_size
@@ -417,6 +420,28 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
+
+# Hiển thị thông tin từng sinh viên
+@app.get('/users/detail_student', response_class=HTMLResponse)
+async def get_detail_user(request: Request, username_choice: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    # Logic xem thông tin học sinh chi tiết
+    user_choice = db.query(models.User).filter((models.User.username == username_choice)).first()
+         
+    if user_choice:
+        get_fullname_userchoice = user_choice.fullname
+        get_email_userchoice = user_choice.email
+        get_role_userchoice = user_choice.role
+            
+        return templates.TemplateResponse("student_detail.html", {
+                "request": request, 
+                "username_choice": username_choice,
+                "get_fullname_userchoice": get_fullname_userchoice,
+                "get_email_userchoice": get_email_userchoice,
+                "get_role_userchoice": get_role_userchoice})
+    else:
+        # Không tìm thấy sinh viên này
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+
     
     
 # Cập nhật lại thông tin người dùng
