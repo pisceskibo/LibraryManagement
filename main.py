@@ -12,6 +12,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+# Thư viện gửi mail phản hồi
+import smtplib
+from email.mime.text import MIMEText
+
 
 # Cài đặt setting cho program
 app = FastAPI()
@@ -26,6 +30,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def create_account(request: Request, username: str = Form(), fullname: str = Form(), email: str = Form(), password: str = Form(), role: int = Form(), db: Session = Depends(models.get_db)):
     # Kiểm tra có trùng username không?
     user = get_user(db, username)
+    
     if user:
         # Username đã tồn tại, cần chọn username khác
         return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists!"})
@@ -38,8 +43,9 @@ async def create_account(request: Request, username: str = Form(), fullname: str
         return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully"})
 
 @app.get('/create_account', response_class=HTMLResponse)
-async def get_register(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
+async def get_register(request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    return templates.TemplateResponse("register.html", {"request": request, "mean_star": mean_star})
 
 
 # Kiểm tra password
@@ -73,8 +79,10 @@ async def login_account(request: Request, username: str = Form(), password: str 
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials!"})
 
 @app.get('/login', response_class=HTMLResponse)
-async def get_login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+async def get_login(request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
+    return templates.TemplateResponse("login.html", {"request": request, "mean_star": mean_star})
 
 
 # Chức năng đăng xuất tài khoản
@@ -103,6 +111,7 @@ def get_current_user(request: Request):
 @app.get("/profile", response_class=HTMLResponse)
 async def read_profile(request: Request, db: Session = Depends(models.get_db)):
     current_username = get_current_user(request)
+    mean_star = get_mean_star(db)
     
     if current_username:
         # Lấy dữ liệu từ username
@@ -115,7 +124,8 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
             "request": request, "current_username": current_username,
             "get_fullname": get_fullname,
             "get_email": get_email, 
-            "get_role": get_role})
+            "get_role": get_role,
+            "mean_star": mean_star})
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
     
@@ -159,9 +169,11 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Chưa có tài khoản đăng nhập!"})
 
 @app.get('/books/create_book', response_class=HTMLResponse)
-async def get_login(request: Request, token: str = Cookie(None)):
+async def get_login(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     if token:
-        return templates.TemplateResponse("add_book.html", {"request": request})
+        return templates.TemplateResponse("add_book.html", {"request": request, "mean_star": mean_star})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request})
     
@@ -169,6 +181,8 @@ async def get_login(request: Request, token: str = Cookie(None)):
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
 async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     # Chức năng tìm kiếm tất cả các sách
     if choice == "year":
         books = db.query(models.Book).order_by(models.Book.year)
@@ -181,11 +195,14 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
     return templates.TemplateResponse("sorting_book.html", {
         "request": request,
         "books": books,
-        "total_books": total_books})
+        "total_books": total_books,
+        "mean_star": mean_star})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)
 async def search_book(searching: str, request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
     books = db.query(models.Book).filter(
@@ -202,7 +219,8 @@ async def search_book(searching: str, request: Request, db: Session = Depends(mo
         "request": request, 
         "books": books, 
         "searching": searching,
-        "total_books": total_books})
+        "total_books": total_books,
+        "mean_star": mean_star})
 
 
 # Gộp các chức năng tìm kiếm, sắp xếp, phân trang (đang hoàn thiện)
@@ -283,6 +301,8 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
 
 @app.get('/books/edit_book', response_class=HTMLResponse)
 async def get_edit(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     if token:
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
@@ -296,7 +316,7 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()
         
         if book:
-            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book})
+            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "mean_star": mean_star})
         else:
             return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách"})
     else:
@@ -341,10 +361,12 @@ async def delete_book(request: Request, id: str = Form(), db: Session = Depends(
 
 @app.get('/books/delete_book', response_class=HTMLResponse)
 async def get_delete(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     if token:
         book = db.query(models.Book).filter(models.Book.id_book == id).first()
         if book:
-            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book})
+            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "mean_star": mean_star})
         else:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -353,7 +375,9 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
         
 # Đọc tất cả sách (kết hợp Logic phân trang)
 @app.get('/books', response_class=HTMLResponse)
-async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), db: Session = Depends(models.get_db)):        
+async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), db: Session = Depends(models.get_db)):       
+    mean_star = get_mean_star(db)
+     
     offset = (page - 1) * page_size
     books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size).all()
     
@@ -365,7 +389,8 @@ async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size
         "books": books,
         "total_books": total_books,
         "page": page,
-        "total_pages": total_pages
+        "total_pages": total_pages, 
+        "mean_star": mean_star
     })
 
 
@@ -401,6 +426,8 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
 @app.get('/users/get_admin', response_class=HTMLResponse)
 async def get_change_admin(request: Request, finded_username: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
+        mean_star = get_mean_star(db)
+        
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
@@ -415,7 +442,8 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
             return templates.TemplateResponse("change_admin.html", {
                 "request": request, 
                 "finded_username": finded_username,
-                "picked_this_role": picked_this_role
+                "picked_this_role": picked_this_role,
+                "mean_star": mean_star
                 })
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
@@ -424,6 +452,8 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
 # Hiển thị thông tin từng sinh viên
 @app.get('/users/detail_student', response_class=HTMLResponse)
 async def get_detail_user(request: Request, username_choice: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     # Logic xem thông tin học sinh chi tiết
     user_choice = db.query(models.User).filter((models.User.username == username_choice)).first()
          
@@ -434,6 +464,7 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
             
         return templates.TemplateResponse("student_detail.html", {
                 "request": request, 
+                "mean_star": mean_star,
                 "username_choice": username_choice,
                 "get_fullname_userchoice": get_fullname_userchoice,
                 "get_email_userchoice": get_email_userchoice,
@@ -442,7 +473,6 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
         # Không tìm thấy sinh viên này
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
-    
     
 # Cập nhật lại thông tin người dùng
 @app.post('/users/update_user')
@@ -470,10 +500,11 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
 
-    
 @app.get('/users/update_user', response_class=HTMLResponse)
 async def get_edit_user(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
+        mean_star = get_mean_star(db)
+        
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
@@ -482,7 +513,7 @@ async def get_edit_user(request: Request, token: str = Cookie(None), db: Session
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user})
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "mean_star": mean_star})
         else:
             return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
     else:
@@ -513,12 +544,14 @@ async def delete_username(request: Request, db: Session = Depends(models.get_db)
 @app.get('/users/delete_username', response_class=HTMLResponse)
 async def get_delete(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
+        mean_star = get_mean_star(db)
+        
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user})
+            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "mean_star": mean_star})
         else:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -528,6 +561,8 @@ async def get_delete(request: Request, token: str = Cookie(None), db: Session = 
 # Tìm kiếm sinh viên (Customer)
 @app.get('/users/search_students', response_class=HTMLResponse)
 async def search_student(searching: str, request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
     students = db.query(models.User).filter(
@@ -541,13 +576,16 @@ async def search_student(searching: str, request: Request, db: Session = Depends
         "request": request, 
         "students": students, 
         "searching": searching,
-        "total_students": total_students})
+        "total_students": total_students,
+        "mean_star": mean_star})
 
 # Hiển thị tất cả danh sách người dùng
 @app.get('/users', response_class=HTMLResponse)
 async def get_all_users(request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     all_users = db.query(models.User).filter(models.User.delete_flag != 1).all()
-    return templates.TemplateResponse("student_list.html", {"request": request, "all_users": all_users})
+    return templates.TemplateResponse("student_list.html", {"request": request, "all_users": all_users, "mean_star": mean_star})
 
 
 
@@ -855,10 +893,75 @@ async def restore_final_book(encoded_jwt: str, borrow_book_id: str = Form(), db:
     else:
         return  "Đăng nhập bị lỗi"
     
+    
+
+## 7. MỘT SỐ TÍNH NĂNG ĐẶC BIỆT KHÁC
+# Tính số star trung bình
+def get_mean_star(db: Session):
+    all_star = db.query(models.OverviewRate.rated_star).all()
+    total_star = sum([star[0] for star in all_star])
+    star_count = len(all_star)
+    mean_star = round(total_star / star_count, 1) if star_count > 0 else 0.0
+    return mean_star    
 
 # Trang chủ giao diện
 @app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
+async def read_root(request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
     # Render template với dữ liệu đã cho
-    return templates.TemplateResponse("home.html", {"request": request})
+    return templates.TemplateResponse("home.html", {"request": request, "mean_star": mean_star})
 
+
+# Trang web gửi góp ý phản hồi tới email máy chủ
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_form(request: Request, db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
+    return templates.TemplateResponse("contact.html", {"request": request, "mean_star": mean_star})
+
+@app.post("/contact")
+async def sending_email(request: Request, sending_by_name: str = Form(), sending_by_email: str = Form(), sending_content: str = Form(), rate_star: int = Form(), db: Session = Depends(models.get_db)):
+    # Lưu tỷ lệ đánh giá để tính tỷ lệ
+    customer_rating = models.OverviewRate(rated_email=sending_by_email, rated_star=rate_star)
+    db.add(customer_rating)
+    db.commit()
+    db.refresh(customer_rating)
+    
+    # Nội dung email
+    subject = "Góp ý và đánh giá Project"
+    email_from = "kibo0603@gmail.com"
+    email_to = "tungtq2@rikkeisoft.com"
+    
+    body = f"""
+    SUBJECT: GÓP Ý VÀ ĐÁNH GIÁ TỚI PROJECT from {sending_by_email} - {sending_by_name} \n
+    Rating: {rate_star}
+    
+    Content:
+    {sending_content}
+    
+    Xin chân thành cảm ơn!
+    """
+
+    # Tiếp tục thực hiện Logic gửi email
+    message = MIMEText(body)
+    message["Subject"] = subject
+    message["From"] = email_from
+    message["To"] = email_to
+    
+    # Khởi tạo kết nối
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()       # Bật vùng an toàn lên
+    
+    # Login tài khoản email
+    smtp_email_login = "kibo0603@gmail.com"
+    smtp_password_login = "qbkcynrqpegqbman"        # Mật khẩu mã hóa từ App Password
+    server.login(smtp_email_login, smtp_password_login)
+    
+    # Gửi email
+    server.sendmail(email_from, email_to, message.as_string())
+    
+    # Thoát exit
+    server.quit()
+    
+    return templates.TemplateResponse("contact.html", {"request": request, "success_message": "Gửi email thành công!"})

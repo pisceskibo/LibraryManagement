@@ -95,7 +95,14 @@ class BorrowBookFinal(Base):
     borrow_actual = Column(Date, index = True)
     
     book_borrow_final = relationship("Book", back_populates="borrowfinal")
-    
+
+
+# Model OverviewRate
+class OverviewRate(Base):
+    __tablename__ = 'ratetable'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rated_email = Column(String(100), index=True)
+    rated_star = Column(Integer)
 
 Base.metadata.create_all(bind=engine)
 
