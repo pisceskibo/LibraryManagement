@@ -489,37 +489,42 @@ async def get_edit_user(request: Request, token: str = Cookie(None), db: Session
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
     
-
 # Xóa người dùng theo username
-@app.delete('/users/delete_username')
-async def delete_username(encoded_jwt: str, deleted_username: str = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/users/delete_username')
+async def delete_username(request: Request, db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             user = get_user(db, username)
         
-            if user.role == 1:
-                user_clear = db.query(models.User).filter(models.User.username == deleted_username).first()
+            user.delete_flag = 1            
+            db.commit()
+            db.refresh(user)
+                    
+            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "success_message": "Xóa tài khoản thành công"})
 
-                if user_clear.role != 1:
-                    user_clear.delete_flag = 1
-                    
-                    db.commit()
-                    db.refresh(user_clear)
-                    
-                    return f"Người {user_clear.username} dùng đã bị xóa"
-                else:
-                    return "Không xóa được người dùng"
-            else:
-                return "Không có quyền xóa người dùng"
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
+@app.get('/users/delete_username', response_class=HTMLResponse)
+async def get_delete(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token:
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        user = get_user(db, username)
+        
+        if user:
+            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user})
+        else:
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     
-    
+        
 # Tìm kiếm sinh viên (Customer)
 @app.get('/users/search_students', response_class=HTMLResponse)
 async def search_student(searching: str, request: Request, db: Session = Depends(models.get_db)):
