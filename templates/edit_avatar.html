@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Sửa thông tin cá nhân </h1> 
+                <br>
+                <h2 class="text-center"> "{{user.username}}" </h2>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<!-- Chức năng nhập liệu -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center"> Edit your profile </h2>
+                        <hr>
+
+                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+                        <!-- Chức năng sửa thông tin người dùng -->
+                        <form action="/users/update_user" method="post" class="custom-form" role="form">
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="fullname" id="fullname" class="form-control" required=""
+                                    placeholder="Fullname" value="{{user.fullname}}">
+                                <label for="fullname"> Fullname </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="email" id="email" class="form-control" required=""
+                                    placeholder="Email" value="{{user.email}}">
+                                <label for="email"> Email </label>
+                            </div>
+
+                            
+                            <button type="submit" class="form-control btn btn-primary"> Edit your Profile </button>
+                            
+                        </form>
+                        {% if success_message %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    alert('{{ success_message }}');
+                                    window.location.href = "/profile"; // Redirect to profile page
+                                </script>
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

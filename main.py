@@ -107,7 +107,7 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
     if current_username:
         # Lấy dữ liệu từ username
         user_logined = db.query(models.User).filter(models.User.username == current_username).first()
-        get_fullname = user_logined.username
+        get_fullname = user_logined.fullname
         get_email = user_logined.email
         get_role = user_logined.role
         
@@ -445,12 +445,12 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
     
     
 # Cập nhật lại thông tin người dùng
-@app.put('/users/update_user')
-async def update_user(encoded_jwt: str, fullname: str = Form(), email: str = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/users/update_user')
+async def update_user(request: Request, fullname: str = Form(), email: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    if token != "":
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             user = get_user(db, username)
             
@@ -461,11 +461,34 @@ async def update_user(encoded_jwt: str, fullname: str = Form(), email: str = For
             db.commit()
             db.refresh(user)
             
-            return f"Đã update thông tin {user.username}"
+            # Đã update thông tin user.username
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "success_message": "Cập nhật thông tin thành công!"})
+
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+
+    
+@app.get('/users/update_user', response_class=HTMLResponse)
+async def get_edit_user(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        
+        # Logic chỉnh sửa thông tin cá nhân
+        user = get_user(db, username)
+        
+        if user:
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user})
+        else:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+    
+    
 
 # Xóa người dùng theo username
 @app.delete('/users/delete_username')
