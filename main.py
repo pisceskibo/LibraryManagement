@@ -40,7 +40,7 @@ async def create_account(request: Request, username: str = Form(), fullname: str
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully"})
+        return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully!"})
 
 @app.get('/create_account', response_class=HTMLResponse)
 async def get_register(request: Request, db: Session = Depends(models.get_db)):
@@ -323,7 +323,7 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
         if book:
             return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "all_category": all_category, "mean_star": mean_star})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
@@ -420,7 +420,7 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
                 
                 return templates.TemplateResponse("change_admin.html", {"request": request, "finded_username": finded_username, "success_message": f"Cập nhật quyền thành công cho {finded_username}!"})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": f"Không có quyền thay đổi user/admin cho {finded_username}"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": f"Không có quyền thay đổi user/admin cho {finded_username}!"})
 
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
@@ -519,7 +519,7 @@ async def get_edit_user(request: Request, token: str = Cookie(None), db: Session
         if user:
             return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "mean_star": mean_star})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân!"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
@@ -538,7 +538,7 @@ async def delete_username(request: Request, db: Session = Depends(models.get_db)
             db.commit()
             db.refresh(user)
                     
-            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "success_message": "Xóa tài khoản thành công"})
+            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "success_message": "Xóa tài khoản thành công!"})
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -656,7 +656,7 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         if user.role != 0:
             return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm sách!"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request})
     
@@ -674,7 +674,7 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             if user.role != 0:
                 category = db.query(models.Category).filter(models.Category.category_id == choice_category_id).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"})
 
             if category:
                 category.category_name = new_category_name
@@ -715,7 +715,7 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
             if user.role != 0:
                 this_category = db.query(models.Category).filter(models.Category.category_id == choice_category_id, models.Category.delete_flag == 0).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa thể loại sách!"})
  
             if this_category:
                 return templates.TemplateResponse("edit_category.html", {
@@ -725,7 +725,7 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "choice_category_id": choice_category_id, "mean_star": mean_star})
 
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có thể loại sách này!"})
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
@@ -785,7 +785,6 @@ async def search_category(searching: str, request: Request, db: Session = Depend
         "total_searching_category": total_searching_category,
         "mean_star": mean_star})
     
-
 # Hiển thị tất cả các thể loại sách
 @app.get('/category_books', response_class=HTMLResponse)
 async def get_all_category(request: Request, db: Session = Depends(models.get_db)):
