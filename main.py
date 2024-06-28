@@ -614,7 +614,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
             username = decodeJSON["username"]
             user = get_user(db, username)
             
-            # Chỉ có role = 1 mới thêm được thể loại mới
+            # Chỉ có role != 0 mới thêm được thể loại mới
             if user.role != 0:               
                 # Thời gian xử lý thể loại
                 insert_at = datetime.datetime.now()
@@ -635,7 +635,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
             
                 return templates.TemplateResponse("add_category.html", {"request": request, "success": "Category created successfully!"})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm sách"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm thể loại sách"})
             
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
@@ -647,7 +647,16 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
     mean_star = get_mean_star(db)
     
     if token:
-        return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star})
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+            
+        # Logic chỉnh sửa thông tin cá nhân
+        user = get_user(db, username)
+        if user.role != 0:
+            return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star})
+        else:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request})
     
@@ -667,7 +676,6 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             else:
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
 
-
             if category:
                 category.category_name = new_category_name
                 category.update_at = datetime.datetime.now()
@@ -675,7 +683,6 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                 
                 db.commit()
                 db.refresh(category)
-                print("Thành công")
                         
                 return templates.TemplateResponse("edit_category.html", {
                         "request": request, 
@@ -711,7 +718,6 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
  
             if this_category:
-                print("44")
                 return templates.TemplateResponse("edit_category.html", {
                         "request": request, 
                         "user": user, 
@@ -719,17 +725,12 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "choice_category_id": choice_category_id, "mean_star": mean_star})
 
             else:
-                print("22")
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân"})
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
     else:
-        print("11")
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
-    
-    
-    
     
     
         
