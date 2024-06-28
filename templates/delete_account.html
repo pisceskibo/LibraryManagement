@@ -18,6 +18,7 @@
     </div>
 </section>
 
+
 <!-- Chức năng đăng nhập -->
 <section class="featured-section">
     <div class="container">
@@ -28,7 +29,7 @@
                         <h2 class="card-title text-center"> Bạn thực sự muốn xóa tài khoản này? </h2>
                         <hr>
 
-                        
+                        <!-- Form hỏi xác nhận xóa không? -->
                         <form action="/users/delete_username" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
                                 <input type="text" name="deleted_username" id="deleted_username" class="form-control" required=""
@@ -51,7 +52,6 @@
                         {% endif %}
                     </div>
                         
-                    
                 </div>
             </div>
         </div>

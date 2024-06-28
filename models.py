@@ -104,6 +104,7 @@ class OverviewRate(Base):
     rated_email = Column(String(100), index=True)
     rated_star = Column(Integer)
 
+
 Base.metadata.create_all(bind=engine)
 
 # Kết nối tới cơ sở dữ liệu

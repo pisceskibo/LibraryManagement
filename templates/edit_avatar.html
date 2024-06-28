@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- Giao diện thêm sách -->
+<!-- Giao diện chỉnh sửa giao diện Avatar -->
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
     style="padding-bottom: 50px;">
     <div class="container">
@@ -19,7 +19,7 @@
 </section>
 
 
-<!-- Chức năng nhập liệu -->
+<!-- Chức năng nhập liệu thông tin -->
 <section class="featured-section">
     <div class="container">
         <div class="row justify-content-center">
@@ -29,7 +29,7 @@
                         <h2 class="card-title text-center"> Edit your profile </h2>
                         <hr>
 
-                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+
                         <!-- Chức năng sửa thông tin người dùng -->
                         <form action="/users/update_user" method="post" class="custom-form" role="form">
 
@@ -45,10 +45,10 @@
                                 <label for="email"> Email </label>
                             </div>
 
-                            
                             <button type="submit" class="form-control btn btn-primary"> Edit your Profile </button>
                             
                         </form>
+
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">

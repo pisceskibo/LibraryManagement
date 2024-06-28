@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+
+<!-- NỘI DUNG ĐƯỢC THAY ĐỔI -->
 {% block content %}
 
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
@@ -9,13 +11,11 @@
 
             <div class="col-lg-8 col-12 mx-auto">
                 <h1 class="text-white text-center"> Danh sách các sinh viên </h1>
-
                 <h6 class="text-center"> Student List </h6>
 
                 <form action="/users/search_students" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
                     <div class="input-group input-group-lg">
-                        <span class="input-group-text bi-search" id="basic-addon1">
-                        </span>
+                        <span class="input-group-text bi-search" id="basic-addon1"> </span>
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Searching for something..." aria-label="Search Anywhere">
@@ -36,10 +36,10 @@
         <div class="container text-center bg-body-secondary">
             <div style="padding-top: 110px;">
 
-
+                <!-- Tạo bảng hiển thị danh sách các sinh viên được tìm kiếm -->
                 <div class="row">
                     {% for student in students %}
-                    <!-- Thực hiện vòng lặp sinh viên 1 -->
+                    <!-- Thực hiện vòng lặp từng sinh viên -->
                     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                         <div class="card" style="width: 18rem;">
 
@@ -49,7 +49,6 @@
                                 style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
-
 
                             <div class="card-body">
                                 <h5 class="card-title"> {{student.username}} </h5>
@@ -64,9 +63,9 @@
                                 <a href="detail_student?username_choice={{student.username}}" class="btn btn-primary"> Show infor </a>
                                 {% endif %}
                             </div>
+
                         </div>
                     </div>
-
                     {% endfor %}
 
                 </div>
@@ -75,6 +74,7 @@
         </div>
     </div>
 </section>
+
 
 <div style="text-align: center;">
     <h3> TIN TỨC MỚI VỀ TRANG WEB </h3>
@@ -101,7 +101,5 @@
     </div>
 </div>
 <hr>
-
-
 
 {% endblock content %}

@@ -11,11 +11,12 @@
             <div class="col-lg-8 col-12 mx-auto">
                 <h1 class="text-white text-center"> Thêm sách vào thư viện </h1>
                 <h6 class="text-center"> Add your Book in Library </h6>
-
             </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Chức năng đăng nhập -->
 <section class="featured-section">
@@ -27,7 +28,7 @@
                         <h2 class="card-title text-center">Add Book in Library </h2>
                         <hr>
 
-                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+
                         <!-- Chức năng thêm sách -->
                         <form action="/books/create_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
@@ -39,9 +40,9 @@
                             <div class="form-floating mb-3">
                                 <select name="category_id" id="category_id" class="form-control" required="">
                                     <option value="default_category_id"> default_category_id </option>
-                                    <option value="PYT"> PYT </option>
-                                    <option value="JAV"> JAV </option>
-                                    
+                                    {% for category in all_category %}
+                                        <option value="{{category.category_id}}"> {{category.category_id}} </option>
+                                    {% endfor %}
                                 </select>
                                 <label for="category_id">Category</label>
                             </div>

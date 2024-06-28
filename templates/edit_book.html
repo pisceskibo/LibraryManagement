@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- Giao diện thêm sách -->
+<!-- Giao diện sửa sách -->
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
     style="padding-bottom: 50px;">
     <div class="container">
@@ -29,7 +29,7 @@
                         <h2 class="card-title text-center"> Edit Book </h2>
                         <hr>
 
-                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+
                         <!-- Chức năng sửa sách -->
                         <form action="/books/edit_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
@@ -40,10 +40,13 @@
 
                             <div class="form-floating mb-3">
                                 <select name="category_id" id="category_id" class="form-control" required="">
+                                    <option value="{{book.category_id}}"> {{book.category_id}} </option>
                                     <option value="default_category_id"> default_category_id </option>
-                                    <option value="PYT"> PYT </option>
-                                    <option value="JAV"> JAV </option>
-                                    
+                                    {% for category in all_category %}
+                                    {% if category.category_id != book.category_id %}
+                                    <option value="{{category.category_id}}"> {{category.category_id}} </option>
+                                    {% endif %}
+                                    {% endfor %}
                                 </select>
                                 <label for="category_id">Category</label>
                             </div>
@@ -76,6 +79,7 @@
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/books/delete_book?id={{book.id_book}}"> Delete Book </a></b> </button>
                         
                         </form>
+
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">

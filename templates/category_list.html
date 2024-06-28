@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
-
-<!-- NỘI DUNG THAY ĐỔI -->
+<!-- Nội dung thay đổi -->
 {% block content %}
 
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
@@ -10,10 +9,10 @@
         <div class="row">
 
             <div class="col-lg-8 col-12 mx-auto">
-                <h1 class="text-white text-center"> Danh sách các sinh viên </h1>
-                <h6 class="text-center"> Student List </h6>
+                <h1 class="text-white text-center"> Danh sách các thể loại </h1>
+                <h6 class="text-center"> Category Book </h6>
 
-                <form action="/users/search_students" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
+                <form action="/category_books/search_category" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
                     role="search">
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1">
@@ -32,42 +31,49 @@
 </section>
 
 
-<!-- Chức năng hiển thị sinh viên -->
+<!-- Hiển thị chức năng thêm Category -->
+{% if request.cookies.get('token') %}
+<div style="text-align: center; background-color: aquamarine;"> 
+    <button type="button" class="btn btn-primary">
+        <a href="/category_books/create_category" style="color: aliceblue;"> <h5> ➕ Thêm thể loại </h5> </a>
+    </button>
+</div>
+{% endif %}
+
+
+<!-- Chức năng hiển thị từng thể loại sách-->
 <section class="featured-section">
     <div class="container">
         <div class="container text-center bg-body-secondary">
             <div style="padding-top: 110px;">
 
                 <div class="row">
-                    {% for student in all_users %}
-                    <!-- Thực hiện vòng lặp từng sinh viên -->
+                    {% for category in all_category %}
+                    <!-- Thực hiện vòng lặp sinh viên 1 -->
                     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                         <div class="card" style="width: 18rem;">
 
                             <!-- Responsive Image -->
-                            <img src="static/images/default_avatar.png" class="card-img-top"
+                            <img src="https://placehold.co/200x150" class="card-img-top"
                                 alt="https://placehold.co/200x150"
                                 style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
 
                             <div class="card-body">
-                                <h5 class="card-title"> {{student.username}} </h5>
-                                <p class="card-text"> {{student.fullname}} </p>
+                                <h5 class="card-title"> {{category.category_name}} </h5>
+                                <p class="card-text"> {{category.category_id}} </p>
                         
                                 {% if request.cookies.get('token') %}
-                                <div class="btn-group mt-auto" role="group" aria-label="Button Click">
-                                    <a href="users/detail_student?username_choice={{student.username}}" class="btn btn-primary"> Show Infor </a>
-                                    <a href="users/get_admin?finded_username={{student.username}}" class="btn btn-warning"> Change Rule </a>
-                                </div>
-                                {% else %}
-                                <a href="users/detail_student?username_choice={{student.username}}" class="btn btn-primary"> Show infor </a>
+                                <a href="/category_books/update_category?choice_category_id={{category.category_id}}" class="btn btn-primary"> Edit Category </a>
                                 {% endif %}
-                            </div>
 
+                            </div>
                         </div>
                     </div>
+
                     {% endfor %}
+
                 </div>
 
             </div>
@@ -75,30 +81,6 @@
     </div>
 </section>
 
-<!-- Phân trang -->
-<div style="text-align: center;">
-    <nav aria-label="Page navigation example" style="display: inline-block;">
-        <ul class="pagination">
-            <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                <a class="page-link" href="/users?page={{ page - 1 }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            {% for num in range(1, total_pages + 1) %}
-            <li class="page-item {% if num == page %}active{% endif %}">
-                <a class="page-link" href="/users?page={{ num }}">{{ num }}</a>
-            </li>
-            {% endfor %}
-            <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                <a class="page-link" href="/users?page={{ page + 1 }}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<hr>
 <div style="text-align: center;">
     <h3> TIN TỨC MỚI VỀ TRANG WEB </h3>
     <div class="spinner-border text-primary" role="status">
@@ -124,5 +106,6 @@
     </div>
 </div>
 <hr>
+
 
 {% endblock content %}

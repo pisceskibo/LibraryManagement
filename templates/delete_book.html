@@ -12,11 +12,12 @@
                 <h1 class="text-white text-center"> Xóa sách trong thư viện </h1> 
                 <br>
                 <h2 class="text-center"> "{{book.title}}" </h2>
-
             </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Chức năng đăng nhập -->
 <section class="featured-section">
@@ -28,7 +29,7 @@
                         <h2 class="card-title text-center"> Bạn thực sự muốn xóa sách này? </h2>
                         <hr>
 
-                        
+                        <!-- Form sửa sách -->
                         <form action="/books/delete_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
                                 <input type="text" name="id" id="id" class="form-control" required=""
@@ -51,7 +52,6 @@
                         {% endif %}
                     </div>
                         
-                    
                 </div>
             </div>
         </div>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm thể loại sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Sửa thể loại {{choice_category_id}} </h1>
+                <h6 class="text-center"> {{this_category.category_name}} </h6>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Chức năng đăng nhập -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 10%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Edit Category</h2>
+                        <hr>
+
+                        <!-- Chức năng thêm Category -->
+                        <form action="/category_books/update_category" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="choice_category_id" id="choice_category_id" class="form-control"
+                                    placeholder="ID Category" required="" value="{{choice_category_id}}" readonly>
+                                <label for="choice_category_id"> Category ID </label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="new_category_name" id="new_category_name" class="form-control"
+                                    placeholder="Name of Category" required="" value="{{this_category.category_name}}">
+                                <label for="new_category_name"> Category Name </label>
+                            </div>
+                            
+                            <button type="submit" class="form-control btn btn-primary"> Edit Category </button>
+                        </form>
+
+                        {% if success %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    if(confirm('Sửa thể loại sách thành công!')){
+                                        window.location.href = "/category_books";         // Redirect to category_books page
+                                    }
+                                </script>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

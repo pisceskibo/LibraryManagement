@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- Giao diện thêm sách -->
+<!-- Giao diện thay đổi quyền Admin -->
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
     style="padding-bottom: 50px;">
     <div class="container">
@@ -12,8 +12,8 @@
                 <h1 class="text-white text-center"> Thay đổi quyền Admin </h1> 
                 <br>
                 <h2 class="text-center"> "{{finded_username}}" </h2>
-
             </div>
+
         </div>
     </div>
 </section>
@@ -28,7 +28,7 @@
                         <h2 class="card-title text-center"> Change Rule </h2>
                         <hr>
 
-                        <!-- CẦN THỰC HIỆN VÀ SỬA CHỮA -->
+
                         <!-- Chức năng thay đổi quyền -->
                         <form action="/users/get_admin" method="post" class="custom-form" role="form">
                             
@@ -48,7 +48,6 @@
                                     <option value="1">Admin</option>
                                     <option value="0">User</option>
                                     {% endif %}
-
                                 </select>
                                 <label for="floatingSelect">Role</label>
                             </div>
