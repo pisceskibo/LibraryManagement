@@ -13,7 +13,7 @@
                 <h1 class="text-white text-center"> Sách trong thư viện </h1>
                 <h6 class="text-center"> Book Store in Library </h6>
 
-                <form method="get" action="/books/search_book" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                <form method="get" action="/books/search_book?bookview={{bookview}}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1"></span>
 
@@ -31,9 +31,11 @@
 
 <!-- Hiển thị chức năng thêm sách -->
 {% if request.cookies.get('token') %}
-<div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;"> 
+<div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;">
     <button type="button" class="btn btn-primary">
-        <a href="/books/create_book" style="color: aliceblue;"> <h5> ➕ Thêm sách</h5> </a>
+        <a href="/books/create_book" style="color: aliceblue;">
+            <h5> ➕ Thêm sách</h5>
+        </a>
     </button>
 </div>
 {% endif %}
@@ -45,6 +47,38 @@
         <div class="table-responsive">
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="row">
+                    {% if bookview == 0 %}
+                    <!-- Cách hiển thị lên giao diện -->
+                    <div class="container">
+                        <div class="button-container">
+                            <button class="btn btn-primary button">
+                                <a href="/books?bookview=0">
+                                    <i class="bi bi-list"></i>
+                                </a>
+                            </button>
+                            <button class="btn btn-light button">
+                                <a href="/books?bookview=1">
+                                    <i class="bi bi-grid"></i>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="container">
+                        <div class="button-container">
+                            <button class="btn btn-light button">
+                                <a href="/books?bookview=0">
+                                    <i class="bi bi-list"></i>
+                                </a>
+                            </button>
+                            <button class="btn btn-primary button">
+                                <a href="/books?bookview=1">
+                                    <i class="bi bi-grid"></i>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
 
                     <!-- Tổng số sách của thư viện -->
                     <div class="col-md-6">
@@ -53,22 +87,31 @@
                             </label>
                         </div>
                     </div>
-                                    
+
                     <!-- Chức năng sắp xếp sách (Bên phải) -->
                     <div class="col-md-6 text-md-end">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 Sort by:
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/books/sort_books?choice=id">Sort by ID</a></li>
-                                <li><a class="dropdown-item" href="/books/sort_books?choice=year">Sort by Year</a></li>
+                                <li><a class="dropdown-item"
+                                        href="/books/sort_books?bookview={{bookview}}&choice=id">Sort by ID</a></li>
+                                <li><a class="dropdown-item"
+                                        href="/books/sort_books?bookview={{bookview}}&choice=name">Sort by Title</a>
+                                </li>
+                                {% if bookview == 0 %}
+                                <li><a class="dropdown-item"
+                                        href="/books/sort_books?bookview={{bookview}}&choice=year">Sort by Year</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
                 </div>
 
 
+                {% if bookview == 0 %}
                 <!-- Tạo bảng dữ liệu -->
                 <table
                     class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
@@ -76,34 +119,33 @@
                     <thead class="student-thread">
                         <tr style="text-align: center; font-size:larger;">
                             {% if request.cookies.get('token') %}
-                                <th style="width: 100px;">Edit</th>
+                            <th style="width: 100px;">Edit</th>
                             {% endif %}
-                            <th rowspan="1" colspan="1"
-                                aria-label="ID: activate to sort column ascending">ID</th>
-                            <th rowspan="1" colspan="1"
-                                aria-label="Title: activate to sort column ascending">Title</th>
-                            <th rowspan="1" colspan="1"
-                                aria-label="Author: activate to sort column ascending">Author</th>
-                            <th rowspan="1" colspan="1"
-                                aria-label="Published Date: activate to sort column ascending">Published Date</th>
-                            <th rowspan="1" colspan="1"
-                                aria-label="Category: activate to sort column ascending">Category</th>
-                            <th rowspan="1" colspan="1"
-                                aria-label="Action: activate to sort column ascending">Amount</th>
+                            <th rowspan="1" colspan="1" aria-label="ID: activate to sort column ascending">ID</th>
+                            <th rowspan="1" colspan="1" aria-label="Title: activate to sort column ascending">Title</th>
+                            <th rowspan="1" colspan="1" aria-label="Author: activate to sort column ascending">Author
+                            </th>
+                            <th rowspan="1" colspan="1" aria-label="Published Date: activate to sort column ascending">
+                                Published Date</th>
+                            <th rowspan="1" colspan="1" aria-label="Category: activate to sort column ascending">
+                                Category</th>
+                            <th rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Amount
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <form action="">
-                        {% for book in books %}
+                            {% for book in books %}
                             <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
                                 {% if request.cookies.get('token') %}
                                 <td style="text-align: center;">
                                     <button type="button" class="btn btn-info">
-                                        <a href="/books/edit_book?id={{ book.id_book }}" style="color: aliceblue;"> <b>🖍 Edit</b> </a>
+                                        <a href="/books/edit_book?id={{ book.id_book }}" style="color: aliceblue;">
+                                            <b>🖍 Edit</b> </a>
                                     </button>
                                 </td>
-                                
+
                                 {% endif %}
                                 <td style="text-align: center;">{{ book.id_book }}</td>
                                 <td> <a href="#">{{ book.title }}</a></td>
@@ -112,10 +154,56 @@
                                 <td style="text-align: center;">{{ book.category }}</td>
                                 <td style="text-align: center;">{{ book.quantity_amount }}</td>
                             </tr>
-                        {% endfor %}
+                            {% endfor %}
                         </form>
                     </tbody>
                 </table>
+
+                {% else %}
+                <!-- Chức năng hiển thị sách -->
+                <section class="featured-section">
+                    <div class="container">
+                        <div class="container text-center bg-body-secondary">
+                            <div style="padding-top: 110px;">
+
+                                <div class="row">
+                                    {% for book in books %}
+                                    <!-- Thực hiện vòng lặp từng sinh viên -->
+                                    <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                                        <div class="card" style="width: 18rem;">
+
+                                            <!-- Responsive Image -->
+                                            <img src="https://placehold.co/200x150" class="card-img-top"
+                                                alt="https://placehold.co/200x150"
+                                                style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
+                                                onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
+                                                onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+
+                                            <div class="card-body">
+                                                <h5 class="card-title"> {{book.title}} </h5>
+                                                <p class="card-text"> {{book.id_book}} </p>
+
+                                                {% if request.cookies.get('token') %}
+                                                <div class="btn-group mt-auto" role="group" aria-label="Button Click">
+                                                    <a href="#" class="btn btn-primary"> Show Book </a>
+                                                    <a href="/books/edit_book?id={{ book.id_book }}"
+                                                        class="btn btn-warning"> Edit Book </a>
+                                                </div>
+                                                {% else %}
+                                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                                                {% endif %}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {% endif %}
 
             </div>
         </div>
@@ -124,30 +212,29 @@
 
 <div style="text-align: center;">
     <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-secondary" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-success" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-danger" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-warning" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-info" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-dark" role="status">
-      <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
     </div>
-  </div>
-  </hr>
+</div>
+</hr>
 
 
 {% endblock content %}
 <!-- NỘI DUNG THAY ĐỔI -->
- 

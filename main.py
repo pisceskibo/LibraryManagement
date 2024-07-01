@@ -182,7 +182,7 @@ async def get_login(request: Request, token: str = Cookie(None), db: Session = D
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
 @app.get('/books/sort_books', response_class=HTMLResponse)
-async def sort_books(choice: str, request: Request, db: Session = Depends(models.get_db)):
+async def sort_books(bookview: int, choice: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     
     # Chức năng tìm kiếm tất cả các sách
@@ -190,6 +190,8 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
         books = db.query(models.Book).order_by(models.Book.year)
     elif choice == "id":
         books = db.query(models.Book).order_by(models.Book.id_book)
+    elif choice == "name":
+        books = db.query(models.Book).order_by(models.Book.title)
     
     books = books.filter(models.Book.delete_flag != 1).all()
     total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
@@ -198,14 +200,16 @@ async def sort_books(choice: str, request: Request, db: Session = Depends(models
         "request": request,
         "books": books,
         "total_books": total_books,
+        "bookview": bookview,
         "mean_star": mean_star})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)
-async def search_book(searching: str, request: Request, db: Session = Depends(models.get_db)):
+async def search_book(request: Request, bookview: int, searching: str, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
+    print(bookview)
     
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
@@ -220,6 +224,7 @@ async def search_book(searching: str, request: Request, db: Session = Depends(mo
     return templates.TemplateResponse("searching_book.html", {
         "request": request, 
         "books": books, 
+        "bookview": bookview,
         "searching": searching,
         "total_books": total_books,
         "mean_star": mean_star})
@@ -380,23 +385,42 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
         
 # Đọc tất cả sách (kết hợp Logic phân trang)
 @app.get('/books', response_class=HTMLResponse)
-async def read_all_books(request: Request, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), db: Session = Depends(models.get_db)):       
+async def read_all_books(request: Request, bookview: int, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), page_size2: int = Query(12, gt = 0), db: Session = Depends(models.get_db)):       
     mean_star = get_mean_star(db)
-     
-    offset = (page - 1) * page_size
-    books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size).all()
     
-    total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
-    total_pages = (total_books + page_size - 1) // page_size  # Tính toán tổng số trang
+    if bookview == 0: 
+        offset = (page - 1) * page_size
+        books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size).all()
+        
+        total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
+        total_pages = (total_books + page_size - 1) // page_size  # Tính toán tổng số trang
 
-    return templates.TemplateResponse("library.html", {
-        "request": request,
-        "books": books,
-        "total_books": total_books,
-        "page": page,
-        "total_pages": total_pages, 
-        "mean_star": mean_star
-    })
+        return templates.TemplateResponse("library.html", {
+            "request": request,
+            "books": books,
+            "total_books": total_books,
+            "page": page,
+            "total_pages": total_pages, 
+            "mean_star": mean_star,
+            "bookview": bookview
+        })
+    else:
+        # Hiển thi view ảnh chung
+        offset = (page - 1) * page_size2
+        books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size2).all()
+        
+        total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
+        total_pages = (total_books + page_size2 - 1) // page_size2  # Tính toán tổng số trang
+
+        return templates.TemplateResponse("library_view.html", {
+            "request": request,
+            "books": books,
+            "total_books": total_books,
+            "page": page,
+            "total_pages": total_pages, 
+            "mean_star": mean_star,
+            "bookview": bookview
+        })
 
 
 

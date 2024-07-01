@@ -14,7 +14,8 @@
                 <h1 class="text-white text-center"> Sách trong thư viện </h1>
                 <h6 class="text-center"> Book Store in Library </h6>
 
-                <form method="get" action="/books/search_book" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                <form method="get" action="/books/search_book?bookview={{bookview}}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                    <input type="hidden" name="bookview" value="{{bookview}}">
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1"></span>
 
@@ -47,6 +48,23 @@
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
                 <div class="row">
 
+                    <!-- Cách hiển thị lên giao diện -->
+                    <div class="container">
+                        <div class="button-container">
+                            <button class="btn btn-primary button">
+                                <a href="/books?bookview=0">
+                                    <i class="bi bi-list"></i>
+                                </a>
+                            </button>
+                            <button class="btn btn-light button">
+                                <a href="/books?bookview=1">
+                                    <i class="bi bi-grid"></i>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    
+
                     <!-- Tổng số sách của thư viện -->
                     <div class="col-md-6">
                         <div class="dataTables_length" id="DataTables_Table_0_length">
@@ -55,6 +73,8 @@
                         </div>
                     </div>
                 
+
+
                     <!-- Chức năng sắp xếp sách (Bên phải) -->
                     <div class="col-md-6 text-md-end">
                         <div class="dropdown">
@@ -62,8 +82,9 @@
                                 Sort by:
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/books/sort_books?choice=id">Sort by ID</a></li>
-                                <li><a class="dropdown-item" href="/books/sort_books?choice=year">Sort by Year</a></li>
+                                <li><a class="dropdown-item" href="/books/sort_books?bookview=0&choice=id">Sort by ID</a></li>
+                                <li><a class="dropdown-item" href="/books/sort_books?bookview=0&choice=name">Sort by Title</a></li>
+                                <li><a class="dropdown-item" href="/books/sort_books?bookview=0&choice=year">Sort by Year</a></li>
                             </ul>
                         </div>
                     </div>
@@ -124,17 +145,17 @@
                     <nav aria-label="Page navigation example" style="display: inline-block;">
                         <ul class="pagination">
                             <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                <a class="page-link" href="/books?page={{ page - 1 }}" aria-label="Previous">
+                                <a class="page-link" href="/books?bookview=0&page={{ page - 1 }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                             {% for num in range(1, total_pages + 1) %}
                             <li class="page-item {% if num == page %}active{% endif %}">
-                                <a class="page-link" href="/books?page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="/books?bookview=0&page={{ num }}">{{ num }}</a>
                             </li>
                             {% endfor %}
                             <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                                <a class="page-link" href="/books?page={{ page + 1 }}" aria-label="Next">
+                                <a class="page-link" href="/books?bookview=0&page={{ page + 1 }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
