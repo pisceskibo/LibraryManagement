@@ -87,7 +87,7 @@ async def get_login(request: Request, db: Session = Depends(models.get_db)):
 
 # Chức năng đăng xuất tài khoản
 @app.get('/logout')
-async def logout(request: Request):
+async def logout():
     response = RedirectResponse(url='/login', status_code=303)
     response.delete_cookie('token')
     response.delete_cookie('username')
@@ -209,7 +209,6 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
     mean_star = get_mean_star(db)
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
-    print(bookview)
     
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
@@ -405,7 +404,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
             "bookview": bookview
         })
     else:
-        # Hiển thi view ảnh chung
+        # Hiển thị view ảnh chung ở template khác
         offset = (page - 1) * page_size2
         books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size2).all()
         
@@ -425,7 +424,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
 
 
 ## 3. QUẢN LÝ NGƯỜI DÙNG
-# Thêm admin
+# Thêm admin (chỉ user.role == 2 thì mới thêm được quyền admin)
 @app.post('/users/get_admin')
 async def update_role(request: Request, finded_username: str = Form(), new_role: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
     if token != "":
@@ -474,12 +473,12 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
                 "mean_star": mean_star
                 })
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+       return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
 
-# Hiển thị thông tin từng sinh viên
+# Hiển thị thông tin chi tiết từng sinh viên
 @app.get('/users/detail_student', response_class=HTMLResponse)
-async def get_detail_user(request: Request, username_choice: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def get_detail_user(request: Request, username_choice: Optional[str] = None, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     
     # Logic xem thông tin học sinh chi tiết
@@ -502,7 +501,7 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
     
-# Cập nhật lại thông tin người dùng
+# Cập nhật chỉnh sửa lại thông tin người dùng
 @app.post('/users/update_user')
 async def update_user(request: Request, fullname: str = Form(), email: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
     if token != "":
@@ -524,7 +523,6 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
 
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
-
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
 
@@ -675,7 +673,7 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
             
-        # Logic chỉnh sửa thông tin cá nhân
+        # Logic truy cập tới template tạo thể loại sách
         user = get_user(db, username)
         if user.role != 0:
             return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star})
@@ -710,7 +708,7 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                         
                 return templates.TemplateResponse("edit_category.html", {
                         "request": request, 
-                        "success": "Category update successfully!",
+                        "success": "Category updated successfully!",
                         "this_category": category,
                         "choice_category_id": choice_category_id
                     })
@@ -757,7 +755,7 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
     
-# Xóa thể loại sách theo id_category
+# Xóa thể loại sách theo id_category (chỉ có role != 0 mới có quyền thực hiện)
 @app.post('/category_books/delete_category')
 async def delete_category(request: Request, deleted_category_id: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token != "":
@@ -837,7 +835,6 @@ async def get_all_category(request: Request, db: Session = Depends(models.get_db
     all_category = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
 
     return templates.TemplateResponse("category_list.html", {"request": request, "all_category": all_category, "mean_star": mean_star})
-
 
 
 
@@ -943,7 +940,7 @@ async def show_all_borrowed(db: Session = Depends(models.get_db)):
     return all_borrowed_books
 
 
-## 6. NÂNG CẤP MƯỢN SÁCH 
+## 6. NÂNG CẤP MƯỢN SÁCH (Logic mượn sách khác)
 # Mượn sách có thời gian truyền vào
 @app.post('/books/borrow_final')
 async def borrow_final_book(encoded_jwt: str, borrow_book_id: str = Form(), borrow_start: str = Form(), borrow_delta: int = Form(), db: Session = Depends(models.get_db)):
@@ -1054,7 +1051,7 @@ def get_mean_star(db: Session):
     mean_star = round(total_star / star_count, 1) if star_count > 0 else 0.0
     return mean_star    
 
-# Trang chủ giao diện
+# Trang chủ giao diện (trang '/home')
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
@@ -1072,7 +1069,7 @@ async def contact_form(request: Request, db: Session = Depends(models.get_db)):
 
 @app.post("/contact")
 async def sending_email(request: Request, sending_by_name: str = Form(), sending_by_email: str = Form(), sending_content: str = Form(), rate_star: int = Form(), db: Session = Depends(models.get_db)):
-    # Lưu tỷ lệ đánh giá để tính tỷ lệ
+    # Lưu tỷ lệ đánh giá 
     customer_rating = models.OverviewRate(rated_email=sending_by_email, content=sending_content, rated_star=rate_star)
     db.add(customer_rating)
     db.commit()

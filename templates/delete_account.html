@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+<!-- NỘI DUNG CẦN THAY ĐỔI -->
 {% block content %}
 
 <!-- Giao diện thêm sách -->
@@ -12,8 +13,8 @@
                 <h1 class="text-white text-center"> Xóa tài khoản </h1> 
                 <br>
                 <h2 class="text-center"> "{{user.username}}" </h2>
-
             </div>
+
         </div>
     </div>
 </section>
@@ -41,15 +42,15 @@
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/profile"> Không </b> </a> </button>
                         </form>
 
-
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">
-                                    alert('Bạn đã xóa tài khoản');
+                                    alert('Bạn đã xóa tài khoản!');
                                     window.location.href = "/logout"; // Redirect to books page
                                 </script>
                             </div>
                         {% endif %}
+
                     </div>
                         
                 </div>

@@ -41,11 +41,10 @@
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/category_books/update_category?choice_category_id={{choiced_category.category_id}}"> Không </b> </a> </button>
                         </form>
 
-
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">
-                                    alert('Xóa thể loại thành công');
+                                    alert('Xóa thể loại thành công!');
                                     window.location.href = "/category_books"; // Redirect to category page
                                 </script>
                             </div>

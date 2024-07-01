@@ -28,7 +28,6 @@
                         <h2 class="card-title text-center"> Change Rule </h2>
                         <hr>
 
-
                         <!-- Chức năng thay đổi quyền -->
                         <form action="/users/get_admin" method="post" class="custom-form" role="form">
                             
@@ -53,9 +52,9 @@
                             </div>
 
                             <button type="submit" class="form-control btn btn-primary"> Update Role </button>
-                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="#"> Cancel </a></b> </button>
-                        
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/users"> Cancel </a></b> </button>
                         </form>
+
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">

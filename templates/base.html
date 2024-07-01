@@ -20,7 +20,7 @@
         <div id="sticky-wrapper" class="sticky-wrapper" style="height: 78px;">
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container">
-                    <a class="navbar-brand" href="http://127.0.0.1:8000/">
+                    <a class="navbar-brand" href="/">
                         <i class="bi-back"></i>
                         <span> Library Manager </span>
                     </a>
@@ -34,11 +34,11 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-lg-5 me-lg-auto">
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="http://127.0.0.1:8000"> Home </a>
+                                <a class="nav-link click-scroll" href="/"> Home </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="http://127.0.0.1:8000/books?bookview=0"> Library </a>
+                                <a class="nav-link click-scroll" href="/books?bookview=0"> Library </a>
                             </li>
 
                             <li class="nav-item">
@@ -46,7 +46,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="http://127.0.0.1:8000/users"> Student </a>
+                                <a class="nav-link click-scroll" href="/users"> Student </a>
                             </li>
 
                             <li class="nav-item">
@@ -64,8 +64,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                    <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{
-                                    request.cookies.get('username') }}
+                                    <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{request.cookies.get('username')}}
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li> <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{
@@ -118,15 +117,15 @@
 
                 <ul class="site-footer-links">
                     <li class="site-footer-link-item">
-                        <a href="http://127.0.0.1:8000/" class="site-footer-link"> Home </a>
+                        <a href="/" class="site-footer-link"> Home </a>
                     </li>
 
                     <li class="site-footer-link-item">
-                        <a href="http://127.0.0.1:8000/books?bookview=0" class="site-footer-link"> Library </a>
+                        <a href="/books?bookview=0" class="site-footer-link"> Library </a>
                     </li>
 
                     <li class="site-footer-link-item">
-                        <a href="http://127.0.0.1:8000/users" class="site-footer-link"> Student </a>
+                        <a href="/users" class="site-footer-link"> Student </a>
                     </li>
 
                     <li class="site-footer-link-item">

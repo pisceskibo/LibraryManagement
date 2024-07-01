@@ -2,7 +2,6 @@
 
 
 <!-- NỘI DUNG BỊ THAY ĐỔI -->
-
 {% block content %}
 
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
@@ -12,7 +11,6 @@
 
             <div class="col-lg-8 col-12 mx-auto">
                 <h1 class="text-white text-center"> Sách trong thư viện </h1>
-
                 <h6 class="text-center"> Book Store in Library </h6>
 
                 <form method="get" action="/books/search_book?bookview={{bookview}}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
@@ -31,7 +29,6 @@
     </div>
 </section>
 
-
 <!-- Hiển thị chức năng thêm sách -->
 {% if request.cookies.get('token') %}
 <div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;">
@@ -43,7 +40,7 @@
 </div>
 {% endif %}
 
-<!-- Hiển thị từng cuốn sách -->
+<!-- Hiển thị từng cuốn sách sau khi searching -->
 <div class="card card-table comman-shadow">
     <div class="card-body">
 
@@ -112,6 +109,7 @@
                 </div>
 
 
+                <!-- HIỂN THỊ LAYOUT THEO TEMPLATE TƯƠNG ỨNG -->
                 {% if bookview == 0 %}
                 <!-- Tạo bảng dữ liệu -->
                 <table
@@ -145,7 +143,6 @@
                                             <b>🖍 Edit</b> </a>
                                     </button>
                                 </td>
-
                                 {% endif %}
                                 <td style="text-align: center;">{{ book.id_book }}</td>
                                 <td> <a href="#">{{ book.title }}</a></td>
@@ -209,6 +206,7 @@
     </div>
 </div>
 
+<hr>
 <div style="text-align: center;">
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -232,7 +230,7 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 </div>
-</hr>
+<hr>
 
 {% endblock content %}
 

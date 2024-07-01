@@ -19,7 +19,6 @@
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Searching for something..." aria-label="Search Anywhere">
-
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -60,7 +59,7 @@
                                     <a href="get_admin?finded_username={{student.username}}" class="btn btn-warning"> Change Rule </a>
                                 </div>
                                 {% else %}
-                                <a href="detail_student?username_choice={{student.username}}" class="btn btn-primary"> Show infor </a>
+                                <a href="detail_student?username_choice={{student.username}}" class="btn btn-primary"> Go somewhere </a>
                                 {% endif %}
                             </div>
 
@@ -75,9 +74,8 @@
     </div>
 </section>
 
-
+<hr>
 <div style="text-align: center;">
-    <h3> TIN TỨC MỚI VỀ TRANG WEB </h3>
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>

@@ -20,7 +20,6 @@
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Search for something..." aria-label="Search">
-
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -42,69 +41,90 @@
 
 
 <!-- Chức năng hiển thị từng thể loại sách-->
-<section class="featured-section">
-    <div class="container">
-        <div class="container text-center bg-body-secondary">
-            <div style="padding-top: 110px;">
+<div class="card card-table comman-shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row">                
 
-                <div class="row">
-                    {% for category in all_category %}
-                    <!-- Thực hiện vòng lặp sinh viên 1 -->
-                    <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                        <div class="card" style="width: 18rem;">
-
-                            <!-- Responsive Image -->
-                            <img src="https://placehold.co/200x150" class="card-img-top"
-                                alt="https://placehold.co/200x150"
-                                style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
-                                onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
-                                onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
-
-                            <div class="card-body">
-                                <h5 class="card-title"> {{category.category_name}} </h5>
-                                <p class="card-text"> {{category.category_id}} </p>
-                        
+                <!-- Tạo bảng dữ liệu -->
+                <table
+                    class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                    id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+                    <thead class="student-thread">
+                        <tr style="text-align: center; font-size:larger;">
+                            {% if request.cookies.get('token') %}
+                                <th style="width: 200px;">Edit</th>
+                            {% endif %}
+                            <th rowspan="1" colspan="1"
+                                aria-label="ID: activate to sort column ascending"> Category ID </th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Title: activate to sort column ascending">Category Name</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Inserted At: activate to sort column ascending">Inserted At</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Inserted By: activate to sort column ascending">Inserted By</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Updated At: activate to sort column ascending">Updated At</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Updated By: activate to sort column ascending">Updated By</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <form action="">
+                            {% for category in all_category %}
+                            <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
                                 {% if request.cookies.get('token') %}
-                                <a href="/category_books/update_category?choice_category_id={{category.category_id}}" class="btn btn-primary"> Edit Category </a>
+                                <td style="text-align: center;">
+                                    <button type="button" class="btn btn-info">
+                                        <a href="/category_books/update_category?choice_category_id={{category.category_id}}" style="color: aliceblue;"> <b>🖍 Edit Category</b> </a>
+                                    </button>
+                                </td>
                                 {% endif %}
 
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                                <td style="text-align: center;">{{category.category_id}}</td>
+                                <td style="text-align: center;"> <a href="#">{{category.category_name}}</a></td>
+                                <td style="text-align: center;"> {{category.insert_at}}</td>
+                                <td style="text-align: center;"> {{category.insert_id}}</td>
+                                <td style="text-align: center;"> {{category.update_at}}</td>
+                                <td style="text-align: center;"> {{category.update_id}}</td>
 
-                </div>
+                            </tr>
+                        {% endfor %}
+                        </form>
+                    </tbody>
+                </table>
 
             </div>
         </div>
     </div>
-</section>
+</div>
 
+<hr>
 <div style="text-align: center;">
-    <h3> TIN TỨC MỚI VỀ TRANG WEB </h3>
     <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-secondary" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-success" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-danger" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-warning" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-info" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
     <div class="spinner-border text-dark" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
 </div>
 <hr>
-
 
 {% endblock content %}

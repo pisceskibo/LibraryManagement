@@ -25,9 +25,8 @@
             <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
                 <div class="card" style="border-radius: 10%;">
                     <div class="card-body">
-                        <h2 class="card-title text-center">Add Book in Library </h2>
+                        <h2 class="card-title text-center"> Add Book in Library </h2>
                         <hr>
-
 
                         <!-- Chức năng thêm sách -->
                         <form action="/books/create_book" method="post" class="custom-form" role="form">
@@ -78,7 +77,7 @@
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">
                                     if(confirm('Thêm sách thành công!')){
-                                        window.location.href = "/books";         // Redirect to home page
+                                        window.location.href = "/books?bookview=0";         // Redirect to library page
                                     }
                                 </script>
                             </div>
