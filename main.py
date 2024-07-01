@@ -733,18 +733,19 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     
     
-        
 # Xóa thể loại sách theo id_category
-@app.delete('/category_books/delete_category')
-async def delete_category(encoded_jwt: str, deleted_category_id: str = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
+@app.post('/category_books/delete_category')
+async def delete_category(request: Request, deleted_category_id: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    if token != "":
+        mean_star = get_mean_star(db)
+        
         try:
             # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             user = get_user(db, username)
         
-            if user.role == 1:
+            if user.role != 0:
                 category_clear = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
                 
                 category_clear.delete_at = datetime.datetime.now()
@@ -754,14 +755,33 @@ async def delete_category(encoded_jwt: str, deleted_category_id: str = Form(), d
                 db.commit()
                 db.refresh(category_clear)
 
-                return f"Thể loại {category_clear.category_id} đã bị xóa"
+                # return f"Thể loại {category_clear.category_id} đã bị xóa"
+                return templates.TemplateResponse("delete_category.html", {
+                    "request": request, 
+                    "success_message": "Xóa thể loại thành công!", 
+                    "user": user, 
+                    "deleted_category_id": deleted_category_id,
+                    "choiced_category": category_clear,
+                    "mean_star": mean_star})
             else:
-                return "Không xóa được thể loại sách"
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền xóa thể loại sách này!"})
         except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
     else:
-        return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
 
+@app.get('/category_books/delete_category', response_class=HTMLResponse)
+async def get_delete(request: Request, deleted_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    
+    if token:
+        choiced_category = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
+        if choiced_category:
+            return templates.TemplateResponse("delete_category.html", {"request": request, "choiced_category": choiced_category, "mean_star": mean_star})
+        else:
+            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
 
 
 # Tìm kiếm thể loại sách
@@ -1029,7 +1049,7 @@ async def contact_form(request: Request, db: Session = Depends(models.get_db)):
 @app.post("/contact")
 async def sending_email(request: Request, sending_by_name: str = Form(), sending_by_email: str = Form(), sending_content: str = Form(), rate_star: int = Form(), db: Session = Depends(models.get_db)):
     # Lưu tỷ lệ đánh giá để tính tỷ lệ
-    customer_rating = models.OverviewRate(rated_email=sending_by_email, rated_star=rate_star)
+    customer_rating = models.OverviewRate(rated_email=sending_by_email, content=sending_content, rated_star=rate_star)
     db.add(customer_rating)
     db.commit()
     db.refresh(customer_rating)

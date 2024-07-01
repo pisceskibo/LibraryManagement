@@ -1,6 +1,8 @@
-from sqlalchemy import Column, String, Integer, DateTime, Date, ForeignKey
+# Thư viện xây dựng Models
+from sqlalchemy import Column, String, Integer, DateTime, Date, ForeignKey, Text
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import relationship
+
 
 # Model User
 class User(Base):
@@ -97,11 +99,12 @@ class BorrowBookFinal(Base):
     book_borrow_final = relationship("Book", back_populates="borrowfinal")
 
 
-# Model OverviewRate
+# Model OverviewRate (tỷ lệ đánh giá sao)
 class OverviewRate(Base):
     __tablename__ = 'ratetable'
     id = Column(Integer, primary_key=True, autoincrement=True)
     rated_email = Column(String(100), index=True)
+    content = Column(Text, nullable=False, index=True)
     rated_star = Column(Integer)
 
 

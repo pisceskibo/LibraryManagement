@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Giao diện thêm sách -->
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Xóa thể loại </h1> 
+                <br>
+                <h2 class="text-center"> "{{choiced_category.category_name}}" </h2>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Chức năng đăng nhập -->
+<section class="featured-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
+                <div class="card" style="border-radius: 5%;">
+                    <div class="card-body">
+                        <h2 class="card-title text-center"> Bạn thực sự muốn xóa thể loại này? </h2>
+                        <hr>
+
+                        <!-- Form xóa thể loại sách -->
+                        <form action="/category_books/delete_category" method="post" class="custom-form" role="form">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="deleted_category_id" id="deleted_category_id" class="form-control" required=""
+                                    placeholder="Category ID" value="{{choiced_category.category_id}}" readonly>
+                                <label for="id_book"> Category ID </label>
+                            </div>
+                            
+                            <button type="submit" class="form-control btn btn-primary"> Có </button>
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/category_books/update_category?choice_category_id={{choiced_category.category_id}}"> Không </b> </a> </button>
+                        </form>
+
+
+                        {% if success_message %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <script type="text/javascript">
+                                    alert('Xóa thể loại thành công');
+                                    window.location.href = "/category_books"; // Redirect to category page
+                                </script>
+                            </div>
+                        {% endif %}
+                    </div>
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
