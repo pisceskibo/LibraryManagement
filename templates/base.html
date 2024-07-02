@@ -53,6 +53,17 @@
                                 <a class="nav-link click-scroll" href="/category_books"> Category </a>
                             </li>
 
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  BookType
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    {% for category in all_category2 %}
+                                    <a class="dropdown-item" href="#">{{category.category_name}}</a>
+                                    {% endfor %}
+                                </div>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="/contact"> Contact </a>
                             </li>
@@ -76,7 +87,6 @@
                             <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                             {% endif %}
                         </div>
-
 
                     </div>
                 </div>
@@ -110,6 +120,7 @@
                 </a>
 
                 <h2>⭐ {{mean_star}}/5 </h2>
+                <progress max="100" value="{{ mean_star*20 }}" style="width: 230px;"></progress>
             </div>
 
             <div class="col-lg-3 col-md-4 col-6">

@@ -45,7 +45,8 @@ async def create_account(request: Request, username: str = Form(), fullname: str
 @app.get('/create_account', response_class=HTMLResponse)
 async def get_register(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
-    return templates.TemplateResponse("register.html", {"request": request, "mean_star": mean_star})
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    return templates.TemplateResponse("register.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
 
 
 # Kiểm tra password
@@ -81,8 +82,9 @@ async def login_account(request: Request, username: str = Form(), password: str 
 @app.get('/login', response_class=HTMLResponse)
 async def get_login(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("login.html", {"request": request, "mean_star": mean_star})
+    return templates.TemplateResponse("login.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
 
 
 # Chức năng đăng xuất tài khoản
@@ -112,6 +114,7 @@ def get_current_user(request: Request):
 async def read_profile(request: Request, db: Session = Depends(models.get_db)):
     current_username = get_current_user(request)
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if current_username:
         # Lấy dữ liệu từ username
@@ -125,7 +128,8 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
             "get_fullname": get_fullname,
             "get_email": get_email, 
             "get_role": get_role,
-            "mean_star": mean_star})
+            "mean_star": mean_star,
+            "all_category2": all_category2})
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
     
@@ -171,11 +175,12 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
 @app.get('/books/create_book', response_class=HTMLResponse)
 async def get_login(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         all_category = db.query(models.Category.category_id).filter(models.Category.delete_flag != 1).all()
         
-        return templates.TemplateResponse("add_book.html", {"request": request, "all_category": all_category, "mean_star": mean_star})
+        return templates.TemplateResponse("add_book.html", {"request": request, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request})
     
@@ -184,6 +189,7 @@ async def get_login(request: Request, token: str = Cookie(None), db: Session = D
 @app.get('/books/sort_books', response_class=HTMLResponse)
 async def sort_books(bookview: int, choice: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     # Chức năng tìm kiếm tất cả các sách
     if choice == "year":
@@ -201,12 +207,14 @@ async def sort_books(bookview: int, choice: str, request: Request, db: Session =
         "books": books,
         "total_books": total_books,
         "bookview": bookview,
-        "mean_star": mean_star})
+        "mean_star": mean_star, 
+        "all_category2": all_category2})
 
 # Tìm kiếm sách (Customer)
 @app.get('/books/search_book', response_class=HTMLResponse)
 async def search_book(request: Request, bookview: int, searching: str, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
@@ -226,7 +234,8 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
         "bookview": bookview,
         "searching": searching,
         "total_books": total_books,
-        "mean_star": mean_star})
+        "mean_star": mean_star,
+        "all_category2": all_category2})
 
 
 # Gộp các chức năng tìm kiếm, sắp xếp, phân trang (đang hoàn thiện)
@@ -308,6 +317,7 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
 @app.get('/books/edit_book', response_class=HTMLResponse)
 async def get_edit(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         # Decode
@@ -325,7 +335,7 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()
         
         if book:
-            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "all_category": all_category, "mean_star": mean_star})
+            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"})
     else:
@@ -371,11 +381,12 @@ async def delete_book(request: Request, id: str = Form(), db: Session = Depends(
 @app.get('/books/delete_book', response_class=HTMLResponse)
 async def get_delete(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         book = db.query(models.Book).filter(models.Book.id_book == id).first()
         if book:
-            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "mean_star": mean_star})
+            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -386,6 +397,7 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
 @app.get('/books', response_class=HTMLResponse)
 async def read_all_books(request: Request, bookview: int, page: int = Query(1, gt=0), page_size: int = Query(10, gt=0), page_size2: int = Query(12, gt = 0), db: Session = Depends(models.get_db)):       
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if bookview == 0: 
         offset = (page - 1) * page_size
@@ -401,7 +413,8 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
             "page": page,
             "total_pages": total_pages, 
             "mean_star": mean_star,
-            "bookview": bookview
+            "bookview": bookview, 
+            "all_category2": all_category2
         })
     else:
         # Hiển thị view ảnh chung ở template khác
@@ -418,7 +431,8 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
             "page": page,
             "total_pages": total_pages, 
             "mean_star": mean_star,
-            "bookview": bookview
+            "bookview": bookview, 
+            "all_category2": all_category2
         })
 
 
@@ -454,6 +468,7 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
 async def get_change_admin(request: Request, finded_username: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
         mean_star = get_mean_star(db)
+        all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
         
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
@@ -470,7 +485,8 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
                 "request": request, 
                 "finded_username": finded_username,
                 "picked_this_role": picked_this_role,
-                "mean_star": mean_star
+                "mean_star": mean_star,
+                'all_category2': all_category2
                 })
     else:
        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
@@ -480,6 +496,7 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
 @app.get('/users/detail_student', response_class=HTMLResponse)
 async def get_detail_user(request: Request, username_choice: Optional[str] = None, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     # Logic xem thông tin học sinh chi tiết
     user_choice = db.query(models.User).filter((models.User.username == username_choice)).first()
@@ -495,7 +512,8 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
                 "username_choice": username_choice,
                 "get_fullname_userchoice": get_fullname_userchoice,
                 "get_email_userchoice": get_email_userchoice,
-                "get_role_userchoice": get_role_userchoice})
+                "get_role_userchoice": get_role_userchoice,
+                "all_category2": all_category2})
     else:
         # Không tìm thấy sinh viên này
         return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
@@ -530,6 +548,7 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
 async def get_edit_user(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
         mean_star = get_mean_star(db)
+        all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
         
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
@@ -539,7 +558,7 @@ async def get_edit_user(request: Request, token: str = Cookie(None), db: Session
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "mean_star": mean_star})
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân!"})
     else:
@@ -570,13 +589,14 @@ async def delete_username(request: Request, db: Session = Depends(models.get_db)
 async def get_delete(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
         mean_star = get_mean_star(db)
+        all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
         
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "mean_star": mean_star})
+            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -587,6 +607,7 @@ async def get_delete(request: Request, token: str = Cookie(None), db: Session = 
 @app.get('/users/search_students', response_class=HTMLResponse)
 async def search_student(searching: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
@@ -602,12 +623,14 @@ async def search_student(searching: str, request: Request, db: Session = Depends
         "students": students, 
         "searching": searching,
         "total_students": total_students,
-        "mean_star": mean_star})
+        "mean_star": mean_star, 
+        "all_category2": all_category2})
 
 # Hiển thị tất cả danh sách người dùng (kết hợp phân trang)
 @app.get('/users', response_class=HTMLResponse)
 async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size: int = Query(8, gt=0), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     offset = (page - 1) * page_size
     all_users = db.query(models.User).filter(models.User.delete_flag == 0).offset(offset).limit(page_size).all()
@@ -621,7 +644,8 @@ async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size:
         "mean_star": mean_star,
         "page": page,
         "total_users": total_users,
-        "total_pages": total_pages})
+        "total_pages": total_pages, 
+        "all_category2": all_category2})
 
 
 
@@ -667,6 +691,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
 @app.get('/category_books/create_category', response_class=HTMLResponse)
 async def get_create_category(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         # Decode
@@ -676,7 +701,7 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         # Logic truy cập tới template tạo thể loại sách
         user = get_user(db, username)
         if user.role != 0:
-            return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star})
+            return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm sách!"})
     else:
@@ -724,6 +749,7 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
 @app.get('/category_books/update_category', response_class=HTMLResponse)
 async def get_edit_category(request: Request, choice_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         try:        
@@ -744,7 +770,7 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "request": request, 
                         "user": user, 
                         "this_category": this_category,
-                        "choice_category_id": choice_category_id, "mean_star": mean_star})
+                        "choice_category_id": choice_category_id, "mean_star": mean_star, "all-category2": all_category2})
 
             else:
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có thể loại sách này!"})
@@ -795,11 +821,12 @@ async def delete_category(request: Request, deleted_category_id: str = Form(), t
 @app.get('/category_books/delete_category', response_class=HTMLResponse)
 async def get_delete(request: Request, deleted_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     if token:
         choiced_category = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
         if choiced_category:
-            return templates.TemplateResponse("delete_category.html", {"request": request, "choiced_category": choiced_category, "mean_star": mean_star})
+            return templates.TemplateResponse("delete_category.html", {"request": request, "choiced_category": choiced_category, "mean_star": mean_star, "all_category2": all_category2})
         else:
             return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
     else:
@@ -810,6 +837,7 @@ async def get_delete(request: Request, deleted_category_id: Optional[str] = None
 @app.get('/category_books/search_category', response_class=HTMLResponse)
 async def search_category(searching: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
@@ -825,16 +853,17 @@ async def search_category(searching: str, request: Request, db: Session = Depend
         "searching_category": searching_category, 
         "searching": searching,
         "total_searching_category": total_searching_category,
-        "mean_star": mean_star})
+        "mean_star": mean_star,
+        "all_category2": all_category2})
     
 # Hiển thị tất cả các thể loại sách
 @app.get('/category_books', response_class=HTMLResponse)
 async def get_all_category(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
-    
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()    
     all_category = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
 
-    return templates.TemplateResponse("category_list.html", {"request": request, "all_category": all_category, "mean_star": mean_star})
+    return templates.TemplateResponse("category_list.html", {"request": request, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
 
 
 
@@ -1056,16 +1085,19 @@ def get_mean_star(db: Session):
 async def read_root(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    
     # Render template với dữ liệu đã cho
-    return templates.TemplateResponse("home.html", {"request": request, "mean_star": mean_star})
+    return templates.TemplateResponse("home.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
 
 
 # Trang web gửi góp ý phản hồi tới email máy chủ
 @app.get("/contact", response_class=HTMLResponse)
 async def contact_form(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("contact.html", {"request": request, "mean_star": mean_star})
+    return templates.TemplateResponse("contact.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
 
 @app.post("/contact")
 async def sending_email(request: Request, sending_by_name: str = Form(), sending_by_email: str = Form(), sending_content: str = Form(), rate_star: int = Form(), db: Session = Depends(models.get_db)):

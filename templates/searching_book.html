@@ -10,17 +10,17 @@
         <div class="row">
 
             <div class="col-lg-8 col-12 mx-auto">
-                <h1 class="text-white text-center"> Sách trong thư viện </h1>
-                <h6 class="text-center"> Book Store in Library </h6>
+                <h1 class="text-white text-center"> Tìm sách trong thư viện </h1>
+                <h6 class="text-center"> Searching Book in Library </h6>
 
-                <form method="get" action="/books/search_book?bookview={{bookview}}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                <form method="get" action="/books/search_book?bookview={{bookview}}"
+                    class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
                     <input type="hidden" name="bookview" value="{{bookview}}">
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1"></span>
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Searching for something..." aria-label="Search Anywhere" value={{searching}}>
-
                         <button type="submit" class="btn btn-primary">Search</button>
                     </div>
                 </form>
@@ -157,48 +157,41 @@
                 </table>
                 {% else %}
                 <!-- Chức năng hiển thị sách -->
-                <section class="featured-section">
-                    <div class="container">
-                        <div class="container text-center bg-body-secondary">
-                            <div style="padding-top: 110px;">
+                <div class="container text-center bg-body-secondary">
+                    <div class="row">
+                        {% for book in books %}
+                        <!-- Thực hiện vòng lặp từng cuốn sách -->
+                        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                            <div class="card" style="width: 18rem;">
 
-                                <div class="row">
-                                    {% for book in books %}
-                                    <!-- Thực hiện vòng lặp từng cuốn sách -->
-                                    <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-                                        <div class="card" style="width: 18rem;">
+                                <!-- Responsive Image -->
+                                <img src="https://placehold.co/200x150" class="card-img-top"
+                                    alt="https://placehold.co/200x150"
+                                    style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
+                                    onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
+                                    onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
 
-                                            <!-- Responsive Image -->
-                                            <img src="https://placehold.co/200x150" class="card-img-top"
-                                                alt="https://placehold.co/200x150"
-                                                style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
-                                                onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
-                                                onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                                <div class="card-body">
+                                    <h5 class="card-title"> {{book.title}} </h5>
+                                    <p class="card-text"> {{book.id_book}} </p>
 
-                                            <div class="card-body">
-                                                <h5 class="card-title"> {{book.title}} </h5>
-                                                <p class="card-text"> {{book.id_book}} </p>
-
-                                                {% if request.cookies.get('token') %}
-                                                <div class="btn-group mt-auto" role="group" aria-label="Button Click">
-                                                    <a href="#" class="btn btn-primary"> Show Book </a>
-                                                    <a href="/books/edit_book?id={{ book.id_book }}"
-                                                        class="btn btn-warning"> Edit Book </a>
-                                                </div>
-                                                {% else %}
-                                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                                                {% endif %}
-                                            </div>
-
-                                        </div>
+                                    {% if request.cookies.get('token') %}
+                                    <div class="btn-group mt-auto" role="group" aria-label="Button Click">
+                                        <a href="#" class="btn btn-primary"> Show Book </a>
+                                        <a href="/books/edit_book?id={{ book.id_book }}" class="btn btn-warning"> Edit
+                                            Book </a>
                                     </div>
-                                    {% endfor %}
+                                    {% else %}
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    {% endif %}
                                 </div>
 
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                </section>
+
+                </div>
                 {% endif %}
 
             </div>
@@ -235,3 +228,4 @@
 {% endblock content %}
 
 <!-- NỘI DUNG THAY ĐỔI -->
+ 
