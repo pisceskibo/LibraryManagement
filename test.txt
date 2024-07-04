@@ -8,4 +8,4 @@ searching_book.html --> tìm kiếm sách
 sorting_book.html --> sắp xếp sách
 
 # Thêm chức năng bình luận cho từng loại sách
-# Trang trí giao diện ở trang chủ
+# Trang trí giao diện ở trang chủ 
