@@ -1144,3 +1144,5 @@ async def sending_email(request: Request, sending_by_name: str = Form(), sending
     server.quit()
     
     return templates.TemplateResponse("contact.html", {"request": request, "success_message": "Gửi email thành công!"})
+
+# Writing something
