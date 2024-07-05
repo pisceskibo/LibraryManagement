@@ -42,7 +42,7 @@ class Book(Base):
     delete_id = Column(String(30), index = True)
     delete_flag = Column(Integer, index=True)
     
-    # Tạo mối liên hệ giữa hai bảng
+    # Tạo mối liên hệ giữa các bảng
     user = relationship("User", back_populates="books")
     category = relationship("Category", back_populates="category_books")
     borrows = relationship("BorrowBook", back_populates="book_borrow")
@@ -56,12 +56,12 @@ class Category(Base):
     category_name = Column(String(50), index=True)
     
      # Các chức năng thêm, sửa, xóa thể loại
-    insert_at = Column(DateTime, index = True)
-    insert_id = Column(String(30), index = True)
+    insert_at = Column(DateTime, index=True)
+    insert_id = Column(String(30), index=True)
     update_at = Column(DateTime,index=True)
-    update_id = Column(String(30), index = True)
+    update_id = Column(String(30), index=True)
     delete_at = Column(DateTime,index=True)
-    delete_id = Column(String(30), index = True)
+    delete_id = Column(String(30), index=True)
     delete_flag = Column(Integer, index=True)
     
     # Tạo mối liên hệ giữa hai bảng
@@ -75,14 +75,15 @@ class Category(Base):
 # Model BorrowBook
 class BorrowBook(Base):
     __tablename__ = 'borrow'
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Khóa chính mới
+    id = Column(Integer, primary_key=True, autoincrement=True)          # Khóa chính mới
     book_id = Column(String(30), ForeignKey('books.id_book'), nullable=False)
-    username_id = Column(String(50), index = True)
-    borrow_at = Column(DateTime, index = True)
-    borrow_predict = Column(DateTime, index = True)
-    borrow_actual = Column(DateTime, index = True)
+    username_id = Column(String(50), index=True)
+    borrow_at = Column(DateTime, index=True)
+    borrow_predict = Column(DateTime, index=True)
+    borrow_actual = Column(DateTime, index=True)
     status = Column(Integer, index=True, default=0)
     
+    # Tạo mối liên hệ giữa 2 bảng
     book_borrow = relationship("Book", back_populates="borrows")
     
     
@@ -91,11 +92,12 @@ class BorrowBookFinal(Base):
     __tablename__ = 'finalborrow'
     id = Column(Integer, primary_key=True, autoincrement=True)
     book_id = Column(String(30), ForeignKey('books.id_book'), nullable=False)
-    username_id = Column(String(50), index = True)
-    borrow_at = Column(Date, index = True)
-    borrow_predict = Column(Date, index = True)
-    borrow_actual = Column(Date, index = True)
+    username_id = Column(String(50), index=True)
+    borrow_at = Column(Date, index=True)
+    borrow_predict = Column(Date, index=True)
+    borrow_actual = Column(Date, index=True)
     
+    # Tại mối liên hệ giữa 2 bảng
     book_borrow_final = relationship("Book", back_populates="borrowfinal")
 
 

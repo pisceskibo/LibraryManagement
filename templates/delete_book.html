@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
+<!-- NỘI DUNG THAY ĐỔI -->
 {% block content %}
 
-<!-- Giao diện thêm sách -->
+<!-- Giao diện xóa sách -->
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
     style="padding-bottom: 50px;">
     <div class="container">
@@ -19,7 +20,7 @@
 </section>
 
 
-<!-- Chức năng đăng nhập -->
+<!-- Chức năng xóa sách -->
 <section class="featured-section">
     <div class="container">
         <div class="row justify-content-center">
@@ -29,7 +30,7 @@
                         <h2 class="card-title text-center"> Bạn thực sự muốn xóa sách này? </h2>
                         <hr>
 
-                        <!-- Form sửa sách -->
+                        <!-- Form xóa sách -->
                         <form action="/books/delete_book" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
                                 <input type="text" name="id" id="id" class="form-control" required=""

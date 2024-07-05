@@ -30,23 +30,30 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def create_account(request: Request, username: str = Form(), fullname: str = Form(), email: str = Form(), password: str = Form(), role: int = Form(), db: Session = Depends(models.get_db)):
     # Kiểm tra có trùng username không?
     user = get_user(db, username)
+    mean_star = get_mean_star(db)    
     
     if user:
         # Username đã tồn tại, cần chọn username khác
-        return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists!"})
+        return templates.TemplateResponse("register.html", {"request": request, 
+                                                            "mean_star": mean_star, 
+                                                            "error": "Username already exists!"})
     else:    
         passwordHash = get_password_hash(password)
         new_user = models.User(username = username, fullname = fullname, email = email, password = passwordHash, role = role, delete_flag = 0)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return templates.TemplateResponse("register.html", {"request": request, "success": "Account created successfully!"})
+        return templates.TemplateResponse("register.html", {"request": request, 
+                                                            "mean_star": mean_star, 
+                                                            "success": "Account created successfully!"})
 
 @app.get('/create_account', response_class=HTMLResponse)
 async def get_register(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
-    return templates.TemplateResponse("register.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
+    return templates.TemplateResponse("register.html", {"request": request, 
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2})
 
 
 # Kiểm tra password
@@ -65,6 +72,8 @@ def get_password_hash(password):
 # Chức năng login lấy token tương ứng
 @app.post('/login')
 async def login_account(request: Request, username: str = Form(), password: str = Form(), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+
     user = get_user(db, username)
     passwordCheck = verify_password(password, user.password)
     if user and passwordCheck and user.delete_flag != 1:
@@ -77,14 +86,18 @@ async def login_account(request: Request, username: str = Form(), password: str 
         return response
     else:
         # Username hoặc Password bị sai
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials!"})
+        return templates.TemplateResponse("login.html", {"request": request, 
+                                                         "mean_star": mean_star, 
+                                                         "error": "Invalid credentials!"})
 
 @app.get('/login', response_class=HTMLResponse)
 async def get_login(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("login.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
+    return templates.TemplateResponse("login.html", {"request": request, 
+                                                     "mean_star": mean_star, 
+                                                     "all_category2": all_category2})
 
 
 # Chức năng đăng xuất tài khoản
@@ -131,7 +144,9 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
             "mean_star": mean_star,
             "all_category2": all_category2})
     else:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "You are not logged in."})
+        return templates.TemplateResponse("login.html", {"request": request, 
+                                                         "mean_star": mean_star, 
+                                                         "error": "You are not logged in."})
     
 
 
@@ -139,6 +154,8 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
 # Tạo sách mới khi có quyền User
 @app.post('/books/create_book')
 async def create_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(),  quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         # Decode
         try:
@@ -166,11 +183,17 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             db.add(new_book)
             db.commit()
             db.refresh(new_book)
-            return templates.TemplateResponse("add_book.html", {"request": request, "success": "Book added successfully!"})
+            return templates.TemplateResponse("add_book.html", {"request": request, 
+                                                                "mean_star": mean_star, 
+                                                                "success": "Book added successfully!"})
         except:
-            return templates.TemplateResponse("add_book.html", {"request": request, "error": "Nhập thiếu dữ liệu thông tin sách!"})
+            return templates.TemplateResponse("add_book.html", {"request": request, 
+                                                                "mean_star": mean_star, 
+                                                                "error": "Nhập thiếu dữ liệu thông tin sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Chưa có tài khoản đăng nhập!"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Chưa có tài khoản đăng nhập!"})
 
 @app.get('/books/create_book', response_class=HTMLResponse)
 async def get_login(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -180,9 +203,13 @@ async def get_login(request: Request, token: str = Cookie(None), db: Session = D
     if token:
         all_category = db.query(models.Category.category_id).filter(models.Category.delete_flag != 1).all()
         
-        return templates.TemplateResponse("add_book.html", {"request": request, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
+        return templates.TemplateResponse("add_book.html", {"request": request, 
+                                                            "all_category": all_category, 
+                                                            "mean_star": mean_star, 
+                                                            "all_category2": all_category2})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star})
     
     
 # Sắp xếp thứ tự sách theo lựu chọn id hoặc là năm (Customer)
@@ -278,6 +305,8 @@ async def search_and_sort(searching_title_book: str = None, searching_author: st
 # Chỉnh sửa sách đối với những sách của User (khác sách User tạo thì không thể sửa)
 @app.post('/books/edit_book')
 async def edit_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(), quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -303,16 +332,25 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                 db.commit()
                 db.refresh(book)
                 
-                return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "success_message": "Sửa sách thành công!"})
+                return templates.TemplateResponse("edit_book.html", {"request": request, 
+                                                                     "book": book, 
+                                                                     "mean_star": mean_star, 
+                                                                     "success_message": "Sửa sách thành công!"})
 
             else:
                 # Không có quyền sửa sách khác User hoặc Admin
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"}) 
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có quyền sửa sách!"}) 
         except:
             # Chưa đăng nhập nên không vào được
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 @app.get('/books/edit_book', response_class=HTMLResponse)
 async def get_edit(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -335,16 +373,26 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()
         
         if book:
-            return templates.TemplateResponse("edit_book.html", {"request": request, "book": book, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("edit_book.html", {"request": request, 
+                                                                 "book": book, 
+                                                                 "all_category": all_category, 
+                                                                 "mean_star": mean_star, 
+                                                                 "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                         "mean_star": mean_star, 
+                                                                         "error": "Không có quyền sửa sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
 
 
 # Xóa sách theo id có quyền admin và user tương ứng
 @app.post('/books/delete_book')
 async def delete_book(request: Request, id: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -368,15 +416,24 @@ async def delete_book(request: Request, id: str = Form(), db: Session = Depends(
                 db.commit()
                 db.refresh(book)
                     
-                return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "success_message": "Sách đã bị xóa!"})
+                return templates.TemplateResponse("delete_book.html", {"request": request, 
+                                                                       "book": book, 
+                                                                       "mean_star": mean_star, 
+                                                                       "success_message": "Sách đã bị xóa!"})
             else:
                 # Không có quyền xóa sách
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Page not found"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Page not found"})
 
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 @app.get('/books/delete_book', response_class=HTMLResponse)
 async def get_delete(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -386,11 +443,18 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
     if token:
         book = db.query(models.Book).filter(models.Book.id_book == id).first()
         if book:
-            return templates.TemplateResponse("delete_book.html", {"request": request, "book": book, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("delete_book.html", {"request": request, 
+                                                                   "book": book, 
+                                                                   "mean_star": mean_star, 
+                                                                   "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
         
         
 # Đọc tất cả sách (kết hợp Logic phân trang)
@@ -441,6 +505,8 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
 # Thêm admin (chỉ user.role == 2 thì mới thêm được quyền admin)
 @app.post('/users/get_admin')
 async def update_role(request: Request, finded_username: str = Form(), new_role: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -455,14 +521,23 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
                 db.commit()
                 db.refresh(user_update)
                 
-                return templates.TemplateResponse("change_admin.html", {"request": request, "finded_username": finded_username, "success_message": f"Cập nhật quyền thành công cho {finded_username}!"})
+                return templates.TemplateResponse("change_admin.html", {"request": request, 
+                                                                        "finded_username": finded_username, 
+                                                                        "mean_star": mean_star, 
+                                                                        "success_message": f"Cập nhật quyền thành công cho {finded_username}!"})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": f"Không có quyền thay đổi user/admin cho {finded_username}!"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": f"Không có quyền thay đổi user/admin cho {finded_username}!"})
 
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
     
 @app.get('/users/get_admin', response_class=HTMLResponse)
 async def get_change_admin(request: Request, finded_username: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -477,7 +552,9 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
         
         # Logic thay đổi chức năng của user
         if user.role != 2:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi user/admin"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                         "mean_star": mean_star, 
+                                                                         "error": "Không có quyền thay đổi user/admin"})
         else:
             picked_student = get_user(db, finded_username)
             picked_this_role = picked_student.role
@@ -489,7 +566,9 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
                 'all_category2': all_category2
                 })
     else:
-       return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+       return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                 "mean_star": mean_star, 
+                                                                 "error": "Page Not Found"})
     
 
 # Hiển thị thông tin chi tiết từng sinh viên
@@ -516,12 +595,16 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
                 "all_category2": all_category2})
     else:
         # Không tìm thấy sinh viên này
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
 
     
 # Cập nhật chỉnh sửa lại thông tin người dùng
 @app.post('/users/update_user')
 async def update_user(request: Request, fullname: str = Form(), email: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -537,12 +620,19 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
             db.refresh(user)
             
             # Đã update thông tin user.username
-            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "success_message": "Cập nhật thông tin thành công!"})
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, 
+                                                                   "user": user, 
+                                                                   "mean_star": mean_star, 
+                                                                   "success_message": "Cập nhật thông tin thành công!"})
 
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 @app.get('/users/update_user', response_class=HTMLResponse)
 async def get_edit_user(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -558,16 +648,25 @@ async def get_edit_user(request: Request, token: str = Cookie(None), db: Session
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("edit_avatar.html", {"request": request, "user": user, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("edit_avatar.html", {"request": request, 
+                                                                   "user": user, 
+                                                                   "mean_star": mean_star, 
+                                                                   "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thay đổi trang cá nhân!"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                         "mean_star": mean_star, 
+                                                                         "error": "Không có quyền thay đổi trang cá nhân!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
     
     
 # Xóa người dùng theo username
 @app.post('/users/delete_username')
 async def delete_username(request: Request, db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -579,11 +678,18 @@ async def delete_username(request: Request, db: Session = Depends(models.get_db)
             db.commit()
             db.refresh(user)
                     
-            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "success_message": "Xóa tài khoản thành công!"})
+            return templates.TemplateResponse("delete_account.html", {"request": request, 
+                                                                      "user": user, 
+                                                                      "mean_star": mean_star, 
+                                                                      "success_message": "Xóa tài khoản thành công!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 @app.get('/users/delete_username', response_class=HTMLResponse)
 async def get_delete(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -596,11 +702,18 @@ async def get_delete(request: Request, token: str = Cookie(None), db: Session = 
         user = get_user(db, username)
         
         if user:
-            return templates.TemplateResponse("delete_account.html", {"request": request, "user": user, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("delete_account.html", {"request": request, 
+                                                                      "user": user, 
+                                                                      "mean_star": mean_star, 
+                                                                      "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
     
         
 # Tìm kiếm sinh viên (Customer)
@@ -653,6 +766,8 @@ async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size:
 # Thêm thể loại sách mới
 @app.post('/category_books/create_category')
 async def create_category(request: Request, category_id: str = Form(), category_name: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         # Decode
         try:
@@ -679,14 +794,22 @@ async def create_category(request: Request, category_id: str = Form(), category_
                 db.commit()
                 db.refresh(new_category)
             
-                return templates.TemplateResponse("add_category.html", {"request": request, "success": "Category created successfully!"})
+                return templates.TemplateResponse("add_category.html", {"request": request, 
+                                                                        "mean_star": mean_star, 
+                                                                        "success": "Category created successfully!"})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm thể loại sách"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có quyền thêm thể loại sách"})
             
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 @app.get('/category_books/create_category', response_class=HTMLResponse)
 async def get_create_category(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -701,16 +824,22 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         # Logic truy cập tới template tạo thể loại sách
         user = get_user(db, username)
         if user.role != 0:
-            return templates.TemplateResponse("add_category.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("add_category.html", {"request": request, 
+                                                                    "mean_star": mean_star, 
+                                                                    "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền thêm sách!"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                         "mean_star": mean_star, 
+                                                                         "error": "Không có quyền thêm sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request})
+        return templates.TemplateResponse("error_template.html", {"request": request, "mean_star": mean_star})
     
 
 # Cập nhật thông tin thể loại theo id_category
 @app.post('/category_books/update_category')
 async def update_category(request: Request, choice_category_id: str = Form(), new_category_name: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+
     if token != "":
         try:
             # Decode
@@ -721,7 +850,9 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             if user.role != 0:
                 category = db.query(models.Category).filter(models.Category.category_id == choice_category_id).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa sách!"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có quyền sửa sách!"})
 
             if category:
                 category.category_name = new_category_name
@@ -735,16 +866,23 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                         "request": request, 
                         "success": "Category updated successfully!",
                         "this_category": category,
-                        "choice_category_id": choice_category_id
+                        "choice_category_id": choice_category_id,
+                        "mean_star": mean_star
                     })
                 
             else:
                 # "Không có thể loại sách '{category.category_id}' cần thay đổi"
-                return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+                return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                          "mean_star": mean_star, 
+                                                                          "error": "Page Not Found"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
     
 @app.get('/category_books/update_category', response_class=HTMLResponse)
 async def get_edit_category(request: Request, choice_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -763,22 +901,31 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
             if user.role != 0:
                 this_category = db.query(models.Category).filter(models.Category.category_id == choice_category_id, models.Category.delete_flag == 0).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền sửa thể loại sách!"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có quyền sửa thể loại sách!"})
  
             if this_category:
                 return templates.TemplateResponse("edit_category.html", {
                         "request": request, 
                         "user": user, 
                         "this_category": this_category,
-                        "choice_category_id": choice_category_id, "mean_star": mean_star, "all-category2": all_category2})
+                        "choice_category_id": choice_category_id, 
+                        "mean_star": mean_star, "all-category2": all_category2})
 
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có thể loại sách này!"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có thể loại sách này!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page Not Found"})
 
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
     
     
 # Xóa thể loại sách theo id_category (chỉ có role != 0 mới có quyền thực hiện)
@@ -812,11 +959,17 @@ async def delete_category(request: Request, deleted_category_id: str = Form(), t
                     "choiced_category": category_clear,
                     "mean_star": mean_star})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, "error": "Không có quyền xóa thể loại sách này!"})
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Không có quyền xóa thể loại sách này!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page Not Found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
 
 @app.get('/category_books/delete_category', response_class=HTMLResponse)
 async def get_delete(request: Request, deleted_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
@@ -826,11 +979,18 @@ async def get_delete(request: Request, deleted_category_id: Optional[str] = None
     if token:
         choiced_category = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
         if choiced_category:
-            return templates.TemplateResponse("delete_category.html", {"request": request, "choiced_category": choiced_category, "mean_star": mean_star, "all_category2": all_category2})
+            return templates.TemplateResponse("delete_category.html", {"request": request, 
+                                                                       "choiced_category": choiced_category, 
+                                                                       "mean_star": mean_star, 
+                                                                       "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                      "mean_star": mean_star, 
+                                                                      "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "error": "Page not found"})
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page not found"})
 
 
 # Tìm kiếm thể loại sách
@@ -863,7 +1023,10 @@ async def get_all_category(request: Request, db: Session = Depends(models.get_db
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()    
     all_category = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
 
-    return templates.TemplateResponse("category_list.html", {"request": request, "all_category": all_category, "mean_star": mean_star, "all_category2": all_category2})
+    return templates.TemplateResponse("category_list.html", {"request": request, 
+                                                             "all_category": all_category, 
+                                                             "mean_star": mean_star, 
+                                                             "all_category2": all_category2})
 
 
 
@@ -1088,7 +1251,9 @@ async def read_root(request: Request, db: Session = Depends(models.get_db)):
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     # Render template với dữ liệu đã cho
-    return templates.TemplateResponse("home.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
+    return templates.TemplateResponse("home.html", {"request": request, 
+                                                    "mean_star": mean_star, 
+                                                    "all_category2": all_category2})
 
 
 # Trang web gửi góp ý phản hồi tới email máy chủ
@@ -1097,10 +1262,14 @@ async def contact_form(request: Request, db: Session = Depends(models.get_db)):
     mean_star = get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("contact.html", {"request": request, "mean_star": mean_star, "all_category2": all_category2})
+    return templates.TemplateResponse("contact.html", {"request": request, 
+                                                       "mean_star": mean_star, 
+                                                       "all_category2": all_category2})
 
 @app.post("/contact")
 async def sending_email(request: Request, sending_by_name: str = Form(), sending_by_email: str = Form(), sending_content: str = Form(), rate_star: int = Form(), db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+
     # Lưu tỷ lệ đánh giá 
     customer_rating = models.OverviewRate(rated_email=sending_by_email, content=sending_content, rated_star=rate_star)
     db.add(customer_rating)
@@ -1134,7 +1303,7 @@ async def sending_email(request: Request, sending_by_name: str = Form(), sending
     
     # Login tài khoản email
     smtp_email_login = "kibo0603@gmail.com"
-    smtp_password_login = "qbkcynrqpegqbman"        # Mật khẩu mã hóa từ App Password
+    smtp_password_login = "ftzhstecmczzlpmn"        # Mật khẩu mã hóa từ App Password
     server.login(smtp_email_login, smtp_password_login)
     
     # Gửi email
@@ -1143,6 +1312,6 @@ async def sending_email(request: Request, sending_by_name: str = Form(), sending
     # Thoát exit
     server.quit()
     
-    return templates.TemplateResponse("contact.html", {"request": request, "success_message": "Gửi email thành công!"})
-
-# Writing something
+    return templates.TemplateResponse("contact.html", {"request": request, 
+                                                       "mean_star": mean_star,
+                                                       "success_message": "Gửi email thành công!"})
