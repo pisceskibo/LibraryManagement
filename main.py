@@ -264,6 +264,35 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
         "mean_star": mean_star,
         "all_category2": all_category2})
 
+# Tìm kiếm sách theo category
+@app.get('/books/booktype', response_class=HTMLResponse)
+async def search_category_book(request: Request, searching: str, sortby: str = "id", db: Session = Depends(models.get_db)):
+    mean_star = get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    this_category_by_searching = db.query(models.Category).filter(models.Category.delete_flag != 1,
+                                                                  models.Category.category_id == searching).first()
+    
+    searching = searching.strip()       # Xóa các khoảng trắng dư thừa
+    
+    books = db.query(models.Book).filter(
+        (models.Book.category_id.contains(searching))
+    )
+
+    if sortby == "title":
+        books = books.filter(models.Book.delete_flag != 1).order_by(models.Book.title).all()
+    else:
+        books = books.filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
+    total_books = len(books)
+    
+    return templates.TemplateResponse("booktype.html", {
+        "request": request, 
+        "books": books, 
+        "searching": searching,
+        "total_books": total_books,
+        "mean_star": mean_star,
+        "this_category_by_searching": this_category_by_searching,
+        "all_category2": all_category2})
+
 
 # Gộp các chức năng tìm kiếm, sắp xếp, phân trang (đang hoàn thiện)
 @app.get('/books/extension')
@@ -738,6 +767,7 @@ async def search_student(searching: str, request: Request, db: Session = Depends
         "total_students": total_students,
         "mean_star": mean_star, 
         "all_category2": all_category2})
+
 
 # Hiển thị tất cả danh sách người dùng (kết hợp phân trang)
 @app.get('/users', response_class=HTMLResponse)

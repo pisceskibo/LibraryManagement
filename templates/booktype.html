@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+
+<!-- NỘI DUNG BỊ THAY ĐỔI -->
+{% block content %}
+
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Thể loại sách trong thư viện </h1>
+                <h6 class="text-center"> {{searching}} - {{this_category_by_searching.category_name}} </h6>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Hiển thị từng cuốn sách sau khi searching -->
+<div class="card card-table comman-shadow">
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row">
+                    
+                    <!-- Limit trên một trang (Bên trái) -->
+                    <div class="col-md-6">
+                        <div class="dataTables_length" id="DataTables_Table_0_length">
+                            <label> <b> Show {{total_books}} books </b>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Chức năng sắp xếp sách (Bên phải) -->
+                    <div class="col-md-6 text-md-end">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Sort by:
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item"
+                                        href="/books/booktype?searching={{searching}}&sortby=id">Sort by ID</a></li>
+                                <li><a class="dropdown-item"
+                                        href="/books/booktype?searching={{searching}}&sortby=title">Sort by Title</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- Chức năng hiển thị sách -->
+                <div class="container text-center bg-body-secondary">
+                    <div class="row">
+                        {% for book in books %}
+                        <!-- Thực hiện vòng lặp từng cuốn sách -->
+                        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                            <div class="card" style="width: 18rem;">
+
+                                <!-- Responsive Image -->
+                                <img src="https://placehold.co/200x150" class="card-img-top"
+                                    alt="https://placehold.co/200x150"
+                                    style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
+                                    onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
+                                    onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+
+                                <div class="card-body">
+                                    <h5 class="card-title"> {{book.title}} </h5>
+                                    <p class="card-text"> {{book.id_book}} </p>
+
+                                    {% if request.cookies.get('token') %}
+                                    <div class="btn-group mt-auto" role="group" aria-label="Button Click">
+                                        <a href="#" class="btn btn-primary"> Show Book </a>
+                                        <a href="/books/edit_book?id={{ book.id_book }}" class="btn btn-warning"> Edit
+                                            Book </a>
+                                    </div>
+                                    {% else %}
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+<div style="text-align: center;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-info" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-dark" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<hr>
+
+{% endblock content %}
+
+<!-- NỘI DUNG THAY ĐỔI -->
+ 
