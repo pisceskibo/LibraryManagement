@@ -263,7 +263,7 @@ async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size:
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     offset = (page - 1) * page_size
-    all_users = db.query(models.User).filter(models.User.delete_flag == 0).offset(offset).limit(page_size).all()
+    all_users = db.query(models.User).filter(models.User.delete_flag == 0).order_by(models.User.username).offset(offset).limit(page_size).all()
     
     total_users = db.query(models.User).filter(models.User.delete_flag == 0).count()
     total_pages = (total_users + page_size - 1) // page_size    # Tinh tổng số trang sẽ có
