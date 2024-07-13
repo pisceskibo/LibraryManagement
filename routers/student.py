@@ -21,6 +21,7 @@ templates = Jinja2Templates(directory="templates")
 UPLOAD_FOLDER = "static/media/avatars"
 
 
+
 ## 3. QUẢN LÝ NGƯỜI DÙNG
 # Thêm admin (chỉ user.role == 2 thì mới thêm được quyền admin)
 @router.post('/users/get_admin')
@@ -263,7 +264,7 @@ async def search_student(searching: str, request: Request, db: Session = Depends
         (models.User.username.contains(searching)) | 
         (models.User.fullname.contains(searching))
     )
-    students = students.filter(models.User.delete_flag != 1).all()
+    students = students.filter(models.User.delete_flag != 1).order_by(models.User.username).all()
     total_students = len(students)
     
     return templates.TemplateResponse("searching_users.html", {

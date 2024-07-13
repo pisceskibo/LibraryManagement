@@ -1,10 +1,12 @@
 # Thư viện Backend Python
-from fastapi import APIRouter, Depends, Request, Form, Query, Cookie
+from fastapi import APIRouter, Depends, Request, Form, Query, Cookie, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import Optional
 import models
 import jwt
 import datetime
+import shutil
+import os
 from routers import function
 
 # Thư viện giao diện
@@ -16,12 +18,19 @@ from fastapi.responses import HTMLResponse
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+# Cấu hình đường dẫn lưu trữ file
+UPLOAD_IMAGE_FOLDER = "static/media/books"
+UPLOAD_PDF_FOLDER = "static/media/files"
+
 
 
 ## 2. CHỨC NĂNG QUẢN LÝ SÁCH - Thực hiện cách chức năng sử lý sách tương ứng với từng user
 # Tạo sách mới khi có quyền User
 @router.post('/books/create_book')
-async def create_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(),  quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+async def create_book(request: Request, id: str = Form(), category_id: str = Form(), 
+                      title: str = Form(), author: str = Form(), year: int = Form(),  
+                      quantity: int = Form(), book_image: UploadFile = File(), book_pdf: UploadFile = File(),
+                      db: Session = Depends(models.get_db), token: str = Cookie(None)):
     mean_star = function.get_mean_star(db)
 
     if token != "":
@@ -30,12 +39,45 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
             username = decodeJSON["username"]
             
+            # Category tương ứng
             this_category = db.query(models.Category).filter(models.Category.category_id == category_id and models.Category.delete_flag != 1).first()
             if this_category:
                 category_taken = this_category.category_id
             else:
                 category_taken = "default_category_id"
             
+            
+            # Ảnh cho sách và file cho chúng
+            book_image_path = None
+            book_pdf_path = None
+
+            if book_image:
+                if len(book_image.filename) != 0:
+                    # Tạo tên file book_image dựa trên book và tên file gốc
+                    book_image_filename = f"{username}_{book_image.filename}"
+
+                    # Lưu file vào thư mục upload
+                    file_path_image_book = os.path.join(UPLOAD_IMAGE_FOLDER, book_image_filename)
+                    with open(file_path_image_book, "wb") as buffer:
+                        shutil.copyfileobj(book_image.file, buffer)
+
+                    # Lưu đường dẫn file avatar vào cơ sở dữ liệu
+                    book_image_path = f"books/{book_image_filename}"
+            
+            if book_pdf:
+                if len(book_pdf.filename) != 0:
+                    # Tạo tên file book_pdf dựa trên book và tên file gốc
+                    book_pdf_filename = f"{username}_{book_pdf.filename}"
+
+                    # Lưu file vào thư mục upload
+                    file_path_image_book = os.path.join(UPLOAD_PDF_FOLDER, book_pdf_filename)
+                    with open(file_path_image_book, "wb") as buffer:
+                        shutil.copyfileobj(book_pdf.file, buffer)
+
+                    # Lưu đường dẫn file avatar vào cơ sở dữ liệu
+                    book_pdf_path = f"files/{book_pdf_filename}"
+
+                    
             # Thời gian xử lý sách
             insert_at = datetime.datetime.now()
             insert_id = username
@@ -47,7 +89,8 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             
             new_book = models.Book(username_id = username, id_book=id, title=title, author=author, year=year, category_id=category_taken, quantity_amount = quantity,
                                 insert_at=insert_at, insert_id=insert_id, update_at=update_at, update_id=update_id,
-                                delete_at=delete_at, delete_id=delete_id, delete_flag=delete_flag)
+                                delete_at=delete_at, delete_id=delete_id, delete_flag=delete_flag,
+                                image_book=book_image_path, pdf_book=book_pdf_path)
             db.add(new_book)
             db.commit()
             db.refresh(new_book)
@@ -120,7 +163,7 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
         (models.Book.author.contains(searching)) | 
         (models.Book.year.contains(searching))
     )
-    books = books.filter(models.Book.delete_flag != 1).all()
+    books = books.filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
     total_books = len(books)
     
     return templates.TemplateResponse("searching_book.html", {
@@ -202,7 +245,10 @@ async def search_and_sort(searching_title_book: str = None, searching_author: st
     
 # Chỉnh sửa sách đối với những sách của User (khác sách User tạo thì không thể sửa)
 @router.post('/books/edit_book')
-async def edit_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), author: str = Form(), year: int = Form(), quantity: int = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+async def edit_book(request: Request, id: str = Form(), category_id: str = Form(), title: str = Form(), 
+                    author: str = Form(), year: int = Form(), quantity: int = Form(), 
+                    book_image: UploadFile = File(), book_pdf: UploadFile = File(), 
+                    db: Session = Depends(models.get_db), token: str = Cookie(None)):
     mean_star = function.get_mean_star(db)
 
     if token != "":
@@ -216,7 +262,7 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                 book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
             else:
                 book = db.query(models.Book).filter((models.Book.id_book == id)).first()
-                
+
             # Sửa sách
             if book:
                 book.title = title
@@ -226,6 +272,33 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                 book.category_id = category_id
                 book.update_at = datetime.datetime.now()
                 book.update_id = username
+
+                # Chỉnh sửa ảnh và file sách
+                if book_image and book_image.filename:
+                    if len(book_image.filename) != 0:
+                        # Tạo tên file book_image dựa trên book và tên file gốc
+                        book_image_filename = f"{username}_{book_image.filename}"
+
+                        # Lưu file vào thư mục upload
+                        file_path_image_book = os.path.join(UPLOAD_IMAGE_FOLDER, book_image_filename)
+                        with open(file_path_image_book, "wb") as buffer:
+                            shutil.copyfileobj(book_image.file, buffer)
+
+                        # Lưu đường dẫn file avatar vào cơ sở dữ liệu
+                        book.image_book = f"books/{book_image_filename}"
+                
+                if book_pdf and book_pdf.filename:
+                    if len(book_pdf.filename) != 0:
+                        # Tạo tên file book_pdf dựa trên book và tên file gốc
+                        book_pdf_filename = f"{username}_{book_pdf.filename}"
+
+                        # Lưu file vào thư mục upload
+                        file_path_image_book = os.path.join(UPLOAD_PDF_FOLDER, book_pdf_filename)
+                        with open(file_path_image_book, "wb") as buffer:
+                            shutil.copyfileobj(book_pdf.file, buffer)
+
+                        # Lưu đường dẫn file avatar vào cơ sở dữ liệu
+                        book.pdf_book= f"files/{book_pdf_filename}"
                 
                 db.commit()
                 db.refresh(book)
@@ -362,7 +435,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
     
     if bookview == 0: 
         offset = (page - 1) * page_size
-        books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size).all()
+        books = db.query(models.Book).filter(models.Book.delete_flag == 0).order_by(models.Book.id_book).offset(offset).limit(page_size).all()
         
         total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
         total_pages = (total_books + page_size - 1) // page_size  # Tính toán tổng số trang
@@ -380,7 +453,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
     else:
         # Hiển thị view ảnh chung ở template khác
         offset = (page - 1) * page_size2
-        books = db.query(models.Book).filter(models.Book.delete_flag == 0).offset(offset).limit(page_size2).all()
+        books = db.query(models.Book).filter(models.Book.delete_flag == 0).order_by(models.Book.id_book).offset(offset).limit(page_size2).all()
         
         total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
         total_pages = (total_books + page_size2 - 1) // page_size2  # Tính toán tổng số trang

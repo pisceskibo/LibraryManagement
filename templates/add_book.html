@@ -30,7 +30,7 @@
                         <hr>
 
                         <!-- Chức năng thêm sách -->
-                        <form action="/books/create_book" method="post" class="custom-form" role="form">
+                        <form action="/books/create_book" method="post" class="custom-form" role="form" enctype="multipart/form-data">
                             <div class="form-floating mb-3">
                                 <input type="text" name="id" id="id" class="form-control"
                                     placeholder="ID Book" required="">
@@ -69,6 +69,16 @@
                                 <input type="number" name="quantity" id="quantity" class="form-control"
                                     placeholder="quantity" required="">
                                 <label for="quantity"> Quantity </label>
+                            </div>
+
+                            <!-- Thêm phần upload ảnh và file -->
+                            <div class="form-group mb-3">
+                                <label for="book_image">Image Book</label>
+                                <input type="file" class="form-control-file" id="book_image" name="book_image">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="book_pdf">File Book</label>
+                                <input type="file" class="form-control-file" id="book_pdf" name="book_pdf" required="">
                             </div>
                             
                             <button type="submit" class="form-control btn btn-primary"> Create Book </button>

@@ -31,7 +31,7 @@
                         <hr>
 
                         <!-- Chức năng sửa sách -->
-                        <form action="/books/edit_book" method="post" class="custom-form" role="form">
+                        <form action="/books/edit_book" method="post" class="custom-form" role="form" enctype="multipart/form-data">
                             <div class="form-floating mb-3">
                                 <input type="text" name="id" id="id" class="form-control" required=""
                                     placeholder="ID Book" value="{{book.id_book}}" readonly>
@@ -74,10 +74,20 @@
                                     placeholder="quantity" value="{{book.quantity_amount}}">
                                 <label for="quantity"> Quantity </label>
                             </div>
+
+                            <!-- Thêm phần upload ảnh và file -->
+                            <div class="form-group mb-3">
+                                <label for="book_image">Image Book</label>
+                                <input type="file" class="form-control-file" id="book_image" name="book_image" value="{{book.image_book}}"> {{book.image_book}}
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="book_pdf">File Book</label>
+                                <input type="file" class="form-control-file" id="book_pdf" name="book_pdf" value="{{book.pdf_book}}"> {{book.pdf_book}}
+                            </div>
                             
                             <button type="submit" class="form-control btn btn-primary"> Edit Book </button>
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/books/delete_book?id={{book.id_book}}"> Delete Book </a></b> </button>
-                        
                         </form>
 
                         {% if success_message %}

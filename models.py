@@ -42,7 +42,12 @@ class Book(Base):
     delete_at = Column(DateTime,index=True)
     delete_id = Column(String(30), index = True)
     delete_flag = Column(Integer, index=True)
+
+    # Thông tin thêm về ảnh và file PDF
+    image_book = Column(String(100), index=True, nullable=True)         # Đường dẫn tới ảnh của sách
+    pdf_book = Column(String(100), index=True, nullable=True)           # Đường dẫn tới file PDF của sách
     
+
     # Tạo mối liên hệ giữa các bảng
     user = relationship("User", back_populates="books")
     category = relationship("Category", back_populates="category_books")
