@@ -31,7 +31,12 @@
                         <hr>
 
                         <!-- Chức năng sửa thông tin người dùng -->
-                        <form action="/users/update_user" method="post" class="custom-form" role="form">
+                        <form action="/users/update_user" method="post" class="custom-form" role="form" enctype="multipart/form-data">
+                            <!-- Thêm phần upload avatar -->
+                            <div class="form-group mb-3">
+                                <label for="avatar">Avatar</label>
+                                <input type="file" class="form-control-file" id="avatar" name="avatar" value="{{user.avatar}}"> {{user.avatar}}
+                            </div>
 
                             <div class="form-floating mb-3">
                                 <input type="text" name="fullname" id="fullname" class="form-control" required=""

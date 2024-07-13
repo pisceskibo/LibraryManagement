@@ -1,9 +1,11 @@
 # Thư viện Backend Python
-from fastapi import  APIRouter, Depends, Request, Form, Query, Cookie
+from fastapi import  APIRouter, Depends, Request, Form, Query, Cookie, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import Optional
 import models
 import jwt
+import shutil
+import os
 from routers import function
 
 # Thư viện giao diện
@@ -15,6 +17,8 @@ from fastapi.responses import HTMLResponse
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+# Cấu hình đường dẫn lưu trữ avatar
+UPLOAD_FOLDER = "static/media/avatars"
 
 
 ## 3. QUẢN LÝ NGƯỜI DÙNG
@@ -105,6 +109,7 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
                 "request": request, 
                 "mean_star": mean_star,
                 "username_choice": username_choice,
+                "user": user_choice,
                 "get_fullname_userchoice": get_fullname_userchoice,
                 "get_email_userchoice": get_email_userchoice,
                 "get_role_userchoice": get_role_userchoice,
@@ -115,10 +120,10 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
-    
+
 # Cập nhật chỉnh sửa lại thông tin người dùng
 @router.post('/users/update_user')
-async def update_user(request: Request, fullname: str = Form(), email: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+async def update_user(request: Request, fullname: str = Form(), email: str = Form(), avatar: UploadFile = File(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
     mean_star = function.get_mean_star(db)
 
     if token != "":
@@ -131,6 +136,20 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
             # Update lại thông tin người dùng hiện tại 
             user.fullname = fullname
             user.email = email
+
+            # Xử lý upload avatar nếu có
+            if avatar:
+                if len(avatar.filename) != 0:
+                    # Tạo tên file avatar dựa trên username và tên file gốc
+                    avatar_filename = f"{username}_{avatar.filename}"
+
+                    # Lưu file vào thư mục upload
+                    file_path = os.path.join(UPLOAD_FOLDER, avatar_filename)
+                    with open(file_path, "wb") as buffer:
+                        shutil.copyfileobj(avatar.file, buffer)
+
+                    # Lưu đường dẫn file avatar vào cơ sở dữ liệu
+                    user.avatar = f"avatars/{avatar_filename}"
             
             db.commit()
             db.refresh(user)

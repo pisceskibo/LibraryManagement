@@ -13,6 +13,7 @@ class User(Base):
     password = Column(String(100), index=True)
     role = Column(Integer, index=True)
     delete_flag = Column(Integer, index=True)
+    avatar = Column(String(500), index=True, nullable=True)     # Trường thông tin avatar
     
     # Tạo mối quan hệ giữa hai bảng
     books = relationship("Book", back_populates="user")

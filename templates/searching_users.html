@@ -18,7 +18,7 @@
                         <span class="input-group-text bi-search" id="basic-addon1"> </span>
 
                         <input name="searching" type="search" class="form-control" id="searching"
-                            placeholder="Searching for something..." aria-label="Search Anywhere">
+                            placeholder="Searching for something..." aria-label="Search Anywhere" value={{searching}}>
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -43,11 +43,20 @@
                         <div class="card" style="width: 18rem;">
 
                             <!-- Responsive Image -->
-                            <img src="https://p.kindpng.com/picc/s/419-4196106_head-icon-user-user-head-icon-hd-png.png" class="card-img-top"
+                            {% if student.avatar %}
+                                <img src="/static/media/{{student.avatar}}" class="card-img-top"
+                                alt="https://placehold.co/200x150"
+                                style="object-fit: cover; width:287px; height: 287px;
+                                    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
+                                onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
+                                onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                            {% else %}
+                                <img src="/static/images/default_avatar.png" class="card-img-top"
                                 alt="https://placehold.co/200x150"
                                 style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                            {% endif %}
 
                             <div class="card-body">
                                 <h5 class="card-title"> {{student.username}} </h5>

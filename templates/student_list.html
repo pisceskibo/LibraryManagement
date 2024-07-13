@@ -45,12 +45,21 @@
                         <div class="card" style="width: 18rem;">
 
                             <!-- Responsive Image -->
-                            <img src="static/images/default_avatar.png" class="card-img-top"
+                            {% if student.avatar %}
+                                <img src="/static/media/{{student.avatar}}" class="card-img-top"
+                                alt="https://placehold.co/200x150"
+                                style="object-fit: cover; width:287px; height: 287px; 
+                                    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
+                                onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
+                                onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                            {% else %}
+                                <img src="/static/images/default_avatar.png" class="card-img-top"
                                 alt="https://placehold.co/200x150"
                                 style="transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;"
                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';"
                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
-
+                            {% endif %}
+                            
                             <div class="card-body">
                                 <h5 class="card-title"> {{student.username}} </h5>
                                 <p class="card-text"> {{student.fullname}} </p>

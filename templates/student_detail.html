@@ -31,7 +31,11 @@
                         <div class="card card-style1 border-0">
                             <div class="row align-items-center">
                                 <div class="col-lg-6 mb-4 mb-lg-0">
-                                    <img src="https://p.kindpng.com/picc/s/419-4196106_head-icon-user-user-head-icon-hd-png.png" style="width: 70%; height: 70%; border-radius: 100%;">
+                                    {% if user.avatar %}
+                                        <img src="/static/media/{{user.avatar}}" style="width: 400px; height: 400px; border-radius: 100%; object-fit: cover;">
+                                    {% else %}
+                                        <img src="https://p.kindpng.com/picc/s/419-4196106_head-icon-user-user-head-icon-hd-png.png" style="width: 70%; height: 70%; border-radius: 100%;">
+                                    {% endif %}
                                 </div>
 
                                 <div class="col-lg-6 px-xl-10">

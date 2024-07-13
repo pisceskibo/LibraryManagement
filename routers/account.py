@@ -103,7 +103,9 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
         get_role = user_logined.role
         
         return templates.TemplateResponse("profile.html", {
-            "request": request, "current_username": current_username,
+            "request": request, 
+            "current_username": current_username,
+            "user": user_logined,
             "get_fullname": get_fullname,
             "get_email": get_email, 
             "get_role": get_role,

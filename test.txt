@@ -1,5 +1,3 @@
-# Thêm trường thông tin Avatar cho models User
-
 # Thêm trường thông tin file.pdf và avatar.png cho models Book (tạo thêm book_detail.html) --> chức băng mượn sách
 library.html --> trang chủ library1
 library_view.html --> trang chủ library2
