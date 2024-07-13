@@ -1,2 +1,2 @@
 ## THÔNG TIN VỀ LIBRARY PROJECT
-> Link ý tưởng: <a href="https://rikkeisoft0-my.sharepoint.com/:x:/r/personal/nguyennp_rikkeisoft_com/Documents/Trainning%20-%20Cloco%20Car/Library%20management.xlsx?d=wb00f786991c04c1da13712afa6ffd8e7&csf=1&web=1&e=6GPlUV"> https://rikkeisoft0-my.sharepoint.com/personal/tungtq_rikkeisoft/Documents/LibraryManagement.xlsx </a>
+> Link ý tưởng: <a href="https://rikkeisoft0-my.sharepoint.com/:x:/r/personal/nguyennp_rikkeisoft_com/Documents/Trainning%20-%20Cloco%20Car/Library%20management.xlsx?d=wb00f786991c04c1da13712afa6ffd8e7&csf=1&web=1&e=6GPlUV"> https://rikkeisoft0.com/personal/tungtq_rikkeisoft/Documents/LibraryManagement.xlsx </a>
