@@ -29,6 +29,21 @@
 </section>
 
 
+<!-- Chức năng tìm sinh viên theo quyền -->
+<div style="background-color: #66FFCC;">
+    <div class="dropdown" style="text-align: right; padding-right: 10px;">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false"> Role by:
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/users/sort_user?choice=User">User</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?choice=Admin">Admin</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?choice=SuperAdmin">SuperAdmin</a></li>
+        </ul>
+    </div>
+</div>
+
+
 <!-- Chức năng hiển thị sinh viên -->
 <section class="featured-section">
     <h3 style="text-align: center;"> Show {{total_students}} students </h3>

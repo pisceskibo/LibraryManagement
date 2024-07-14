@@ -129,7 +129,7 @@ async def sort_books(bookview: int, choice: str, request: Request, db: Session =
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    # Chức năng tìm kiếm tất cả các sách
+    # Chức năng sắp xếp tất cả các sách
     if choice == "year":
         books = db.query(models.Book).order_by(models.Book.year)
     elif choice == "id":

@@ -276,6 +276,31 @@ async def search_student(searching: str, request: Request, db: Session = Depends
         "all_category2": all_category2})
 
 
+# Lọc sinh viên theo quyền hạn
+@router.get('/users/sort_user', response_class=HTMLResponse)
+async def search_student_role(choice: str, request: Request, db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+
+    # Chức năng tìm kiếm tất cả các sách
+    if choice == "SuperAdmin":
+        this_user = db.query(models.User).filter(models.User.role == 2)
+    elif choice == "Admin":
+        this_user = db.query(models.User).filter(models.User.role == 1)
+    elif choice == "User":
+        this_user = db.query(models.User).filter(models.User.role == 0)
+    
+    this_user = this_user.filter(models.User.delete_flag != 1).order_by(models.User.username).all()
+    total_this_user = len(this_user)
+
+    return templates.TemplateResponse("student_role.html", {
+        "request": request,
+        "this_user": this_user,
+        "total_this_user": total_this_user,
+        "mean_star": mean_star, 
+        "all_category2": all_category2})
+
+
 # Hiển thị tất cả danh sách người dùng (kết hợp phân trang)
 @router.get('/users', response_class=HTMLResponse)
 async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size: int = Query(8, gt=0), db: Session = Depends(models.get_db)):
