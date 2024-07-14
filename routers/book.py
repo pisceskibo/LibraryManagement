@@ -47,7 +47,7 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
                 category_taken = "default_category_id"
             
             
-            # Ảnh cho sách và file cho chúng
+            # Ảnh và file cho sách
             book_image_path = None
             book_pdf_path = None
 
@@ -349,9 +349,9 @@ async def get_edit(request: Request, id: Optional[str] = None, token: str = Cook
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
-                                                                         "error": "Không có quyền sửa sách!"})
+                                                                         "error": "Không thấy sách cần sửa!"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
@@ -425,7 +425,64 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
         return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
-        
+
+
+# Hiển thị chi tiết thông tin từng cuốn sách
+@router.get('/books/detail_book', response_class=HTMLResponse)
+async def get_book_detail(request: Request, token: str = Cookie(None), choice_book: Optional[str] = None, db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+
+    # Logic xem thông tin chi tiết từng loại sách
+    this_book_choice = db.query(models.Book).filter(models.Book.id_book == choice_book,
+                                                    models.Book.delete_flag == 0).first()
+    
+    if this_book_choice:
+        if token:
+            try:
+                # Decode
+                decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+                username = decodeJSON["username"]
+                user = function.get_user(db, username)
+
+                # Kiểm tra sách xem người dùng này đang mượn không
+                this_user_borrow = db.query(models.BorrowBook).filter(models.BorrowBook.username_id == username,
+                                                                      models.BorrowBook.book_id == choice_book,
+                                                                      models.BorrowBook.status == 1).all()
+
+                if this_user_borrow != []:
+                    this_user_borrow = this_user_borrow[0]
+                    return templates.TemplateResponse("book_detail.html", {
+                        "request": request, 
+                        "user": user,
+                        "mean_star": mean_star,
+                        "all_category2": all_category2,
+                        "this_book_choice": this_book_choice,
+                        "this_user_borrow": this_user_borrow})
+                else:
+                    return templates.TemplateResponse("book_detail.html", {
+                        "request": request, 
+                        "user": user,
+                        "mean_star": mean_star,
+                        "all_category2": all_category2,
+                        "this_book_choice": this_book_choice})
+            except:
+                # Đăng nhập bị sai
+                return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Page not found"})
+        else:
+            return templates.TemplateResponse("book_detail.html", {
+                    "request": request, 
+                    "mean_star": mean_star,
+                    "all_category2": all_category2,
+                    "this_book_choice": this_book_choice})
+    else:
+        # Không tìm thấy sách này
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
         
 # Đọc tất cả sách (kết hợp Logic phân trang)
 @router.get('/books', response_class=HTMLResponse)

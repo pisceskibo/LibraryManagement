@@ -1,3 +1,5 @@
-# Thêm thông tin chi tiết từng loại sách (tạo thêm book_detail.html) --> chức năng mượn sách
+# Trang hiện thị các sách của mình và sách đang mượn (kèm thời gian mượn còn lại)
+# Lọc từng sinh viên theo Role
+# Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, không có quyền category, không có quyền phân quyền)
 # Thêm chức năng bình luận cho từng loại sách
 # Trang trí giao diện ở trang chủ 

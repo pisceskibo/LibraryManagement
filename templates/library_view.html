@@ -120,12 +120,12 @@
 
                                     {% if request.cookies.get('token') %}
                                     <div class="btn-group mt-auto" role="group" aria-label="Button Click">
-                                        <a href="#" class="btn btn-primary"> Show Book </a>
+                                        <a href="/books/detail_book?choice_book={{book.id_book}}" class="btn btn-primary"> Show Book </a>
                                         <a href="/books/edit_book?id={{ book.id_book }}" class="btn btn-warning"> Edit
                                             Book </a>
                                     </div>
                                     {% else %}
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    <a href="/books/detail_book?choice_book={{book.id_book}}" class="btn btn-primary">Go somewhere</a>
                                     {% endif %}
                                 </div>
 

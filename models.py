@@ -35,12 +35,12 @@ class Book(Base):
     category_id = Column(String(10), ForeignKey('category.category_id'), nullable=False)
     
     # Các chức năng thêm, sửa, xóa
-    insert_at = Column(DateTime, index = True)
-    insert_id = Column(String(30), index = True)
+    insert_at = Column(DateTime, index=True)
+    insert_id = Column(String(30), index=True)
     update_at = Column(DateTime,index=True)
-    update_id = Column(String(30), index = True)
+    update_id = Column(String(30), index=True)
     delete_at = Column(DateTime,index=True)
-    delete_id = Column(String(30), index = True)
+    delete_id = Column(String(30), index=True)
     delete_flag = Column(Integer, index=True)
 
     # Thông tin thêm về ảnh và file PDF
