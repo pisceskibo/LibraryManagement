@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+
+<!-- NỘI DUNG BỊ THAY ĐỔI -->
+{% block content %}
+
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 50px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Thư viện sách của bạn </h1>
+                <h6 class="text-center"> Your Book in Library </h6>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Hiển thị từng cuốn sách -->
+<div class="card card-table comman-shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row">
+
+                    <!-- Cách hiển thị lên giao diện -->
+                    <div class="container">
+                        <div class="button-container">
+                            <button class="btn btn-light button">
+                                <a href="/books/all_borrowed_book">
+                                    <i class="bi bi-list"></i>
+                                </a>
+                            </button>
+                            <button class="btn btn-primary button">
+                                <a href="/books/all_my_books">
+                                    <i class="bi bi-grid"></i>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tổng số sách của bạn trong thư viện -->
+                    <div class="col-md-6">
+                        <div class="dataTables_length" id="DataTables_Table_0_length">
+                            <label> <b> Total Book: {{total_my_book}} books </b>
+                            </label>
+                        </div>
+                    </div>
+                
+                </div>
+
+                <!-- Tạo bảng dữ liệu -->
+                <table
+                    class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                    id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+                    <thead class="student-thread">
+                        <tr style="text-align: center; font-size:larger;">
+                            <th style="width: 100px;">Edit</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="ID: activate to sort column ascending">ID</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Title: activate to sort column ascending">Title</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Author: activate to sort column ascending">Author</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Published Date: activate to sort column ascending">Published Date</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Category: activate to sort column ascending">Category</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Action: activate to sort column ascending">Limit Access</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <form action="">
+                            {% for book in my_book %}
+                                <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
+                                    {% if request.cookies.get('token') %}
+                                    <td style="text-align: center;">
+                                        <button type="button" class="btn btn-info">
+                                            <a href="/books/edit_book?id={{ book.id_book }}" style="color: aliceblue;"> <b>🖍 Edit</b> </a>
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                    <td style="text-align: center;">{{ book.id_book }}</td>
+                                    <td> <a href="/books/detail_book?choice_book={{book.id_book}}">{{ book.title }}</a></td>
+                                    <td style="text-align: center;">{{ book.author }}</td>
+                                    <td style="text-align: center;">{{ book.year }}</td>
+                                    <td style="text-align: center;">{{ book.category }}</td>
+                                    <td style="text-align: center;">{{ book.quantity_amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </form>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+<div style="text-align: center;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-warning" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-info" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-border text-dark" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<hr>
+
+{% endblock content %}
+
+<!-- NỘI DUNG THAY ĐỔI -->

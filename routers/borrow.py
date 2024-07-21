@@ -108,7 +108,6 @@ async def restore_bookstore(request: Request, borrow_book_id: str = Form(), toke
             find_book_to_restore = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
                                                                       models.BorrowBook.status == 1,
                                                                       models.BorrowBook.username_id == username).all()
-            print(borrow_book_id)
 
             if find_book_to_restore != []:
                 find_book_to_restore = find_book_to_restore[0]
@@ -168,6 +167,174 @@ async def get_restore_book(request: Request, borrow_book_id: Optional[str] = Non
                                                                   "error": "Page Not Found"})
 
 
+# Hiển thị những sách đang mượn
+@router.get('/books/all_borrowed_book', response_class=HTMLResponse)
+async def show_all_borrowed_book(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        user = function.get_user(db, username)
+
+        if user.role != 2:
+            borrowing_book = (db.query(models.BorrowBook, models.BorrowBook.book_id, models.Book.title,
+                                    models.BorrowBook.borrow_at, models.BorrowBook.borrow_predict)
+                            .join(models.Book, models.BorrowBook.book_id == models.Book.id_book)
+                            .filter(models.BorrowBook.username_id == username, models.BorrowBook.status == 1)
+                            .order_by(models.BorrowBook.book_id)
+                            .all())
+            
+            current_time = datetime.datetime.now()
+            total_borrowing_books = len(borrowing_book)
+
+            return templates.TemplateResponse("book_borrowing.html", {"request": request, 
+                                                                    "borrowing_book": borrowing_book,
+                                                                    "total_borrowing_books": total_borrowing_books,
+                                                                    "current_time": current_time, 
+                                                                    "user": user,
+                                                                    "mean_star": mean_star, 
+                                                                    "all_category2": all_category2})
+        else:
+            # Hiển thị lịch sử mượn trả sách (chỉ có SuperAdmin có quyền theo dõi)
+            all_borrowed_books = db.query(models.BorrowBook).filter(models.BorrowBook.status == 1).order_by(models.BorrowBook.borrow_at).all()
+            total_borrowed_books = len(all_borrowed_books)
+            current_time = datetime.datetime.now()
+
+            return templates.TemplateResponse("book_borrowing.html", {"request": request, 
+                                                                    "borrowed_book": all_borrowed_books,
+                                                                    "total_borrowed_books": total_borrowed_books,
+                                                                    "user": user,
+                                                                    "current_time": current_time,
+                                                                    "mean_star": mean_star, 
+                                                                    "all_category2": all_category2})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
+
+# Hiển thị những sách của mình
+@router.get('/books/all_my_books', response_class=HTMLResponse)
+async def show_all_my_book(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+
+        my_book = db.query(models.Book).filter(models.Book.insert_id == username,
+                                               models.Book.delete_flag == 0).order_by(models.Book.id_book).all()
+        
+        total_my_book = len(my_book)
+        
+        return templates.TemplateResponse("bookme.html", {"request": request, 
+                                                                 "my_book": my_book,
+                                                                 "total_my_book": total_my_book, 
+                                                                 "mean_star": mean_star, 
+                                                                 "all_category2": all_category2})
+    
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
+
+# Tự động trả sách cho user đó (dành cho SuperAdmin)
+@router.post('/books/restore_book_user')
+async def restore_bookstore(request: Request, username_res: str = Form(), borrow_book_id: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    
+    if token != "":
+        try:
+            # Decode
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = decodeJSON["username"]
+            user = function.get_user(db, username)
+            
+            if user.role == 2:
+                find_book_to_restore = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
+                                                                        models.BorrowBook.status == 1,
+                                                                        models.BorrowBook.username_id == username_res).all()
+                
+
+                if find_book_to_restore != []:
+                    find_book_to_restore = find_book_to_restore[0]
+                    find_book_to_restore.borrow_actual = datetime.datetime.now()
+                    book_in_library = db.query(models.Book).filter(models.Book.id_book == borrow_book_id).first()
+                    book_in_library.quantity_amount += 1
+                    find_book_to_restore.status = 0
+
+                    db.commit()
+                    db.refresh(find_book_to_restore)
+
+                    return templates.TemplateResponse("book_restore_username.html", {"request": request, 
+                                                                    "restored_book": find_book_to_restore, 
+                                                                    "mean_star": mean_star, 
+                                                                    "all_category2": all_category2,
+                                                                    "success_message": "Trả sách thành công!"})
+                else:
+                    # return "Sách này chưa được mượn"
+                    print("Lỗi")
+                    return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                    "mean_star": mean_star, 
+                                                                    "error": "Page Not Found"})
+            else:
+                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Page not found"})
+        except:
+            # return "Sai tên đăng nhập hoặc mật khẩu"
+            return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+    else:
+        # return "Đăng nhập bị lỗi"
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
+@router.get('/books/restore_book_user', response_class=HTMLResponse)
+async def get_restore_book(request: Request, username_res: str, borrow_book_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    
+    if token:
+        # Decode
+        decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+        username = decodeJSON["username"]
+        user = function.get_user(db, username)
+
+        if user.role == 2:
+            restored_book = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
+                                                           models.BorrowBook.status == 1,
+                                                           models.BorrowBook.username_id == username_res).first()
+        
+            return templates.TemplateResponse("book_restore_username.html", {"request": request, 
+                                                                 "restored_book": restored_book, 
+                                                                 "mean_star": mean_star, 
+                                                                 "all_category2": all_category2})
+        else:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Page not found"})
+    else:
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
+
+
+# Hiển thị lịch sử mượn trả sách (chỉ có SuperAdmin có quyền theo dõi)
+@router.get('/books/borrows')
+async def show_all_borrowed(db: Session = Depends(models.get_db)):
+    all_borrowed_books = db.query(models.BorrowBook).all()
+    return all_borrowed_books
 
 # Kiểm tra trạng thái sách (đang mượn và chưa được mượn)
 @router.get('/books/show_status_books')
@@ -193,8 +360,4 @@ async def show_status(encoded_jwt: str, looking_for_book: str = Form(), db: Sess
     else:
         return "Đăng nhập bị lỗi"
     
-# Hiển thị lịch sử mượn trả sách
-@router.get('/books/borrows')
-async def show_all_borrowed(db: Session = Depends(models.get_db)):
-    all_borrowed_books = db.query(models.BorrowBook).all()
-    return all_borrowed_books
+

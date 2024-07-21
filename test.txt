@@ -1,4 +1,5 @@
-# Trang hiển thị các sách của mình và sách đang mượn (kèm thời gian mượn còn lại)
 # Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, không có quyền category, không có quyền phân quyền)
 # Thêm chức năng bình luận và đánh giá cho từng loại sách
+# Thêm trợ lý ảo cho website
+# Thêm bảng phân tích, biểu đồ đánh giá 
 # Trang trí giao diện ở trang chủ 
