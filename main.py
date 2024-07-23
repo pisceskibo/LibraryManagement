@@ -12,7 +12,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 # Thư viện nhánh con API
-from routers import account, book, student, category, contact, borrow
+from routers import account, book, student, category, contact, borrow, comment
 
 
 # Cài đặt setting cho program
@@ -28,6 +28,7 @@ app.include_router(student.router)
 app.include_router(category.router)
 app.include_router(contact.router)
 app.include_router(borrow.router)
+app.include_router(comment.router)
 
 
 # Trang chủ giao diện (trang '/home')

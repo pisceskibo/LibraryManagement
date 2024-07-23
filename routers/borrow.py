@@ -58,7 +58,7 @@ async def borrowing_book(request: Request, borrow_book_id: str = Form(), token: 
                                                                  "user": user,
                                                                  "borrowed_book": borrowed_book,
                                                                  "new_borrow_book": new_borrow_book,
-                                                                 "success_message": "Mượn sách thành công",
+                                                                 "success_message": "Mượn sách thành công!",
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
             else:
@@ -237,7 +237,6 @@ async def show_all_my_book(request: Request, token: str = Cookie(None), db: Sess
                                                                  "total_my_book": total_my_book, 
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
-    
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
@@ -261,8 +260,7 @@ async def restore_bookstore(request: Request, username_res: str = Form(), borrow
                 find_book_to_restore = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
                                                                         models.BorrowBook.status == 1,
                                                                         models.BorrowBook.username_id == username_res).all()
-                
-
+                # Có tìm thấy sách cần trả không?
                 if find_book_to_restore != []:
                     find_book_to_restore = find_book_to_restore[0]
                     find_book_to_restore.borrow_actual = datetime.datetime.now()
@@ -360,4 +358,3 @@ async def show_status(encoded_jwt: str, looking_for_book: str = Form(), db: Sess
     else:
         return "Đăng nhập bị lỗi"
     
-

@@ -21,7 +21,8 @@ templates = Jinja2Templates(directory="templates")
 ## 4. QUẢN LÝ THỂ LOẠI SÁCH
 # Thêm thể loại sách mới
 @router.post('/category_books/create_category')
-async def create_category(request: Request, category_id: str = Form(), category_name: str = Form(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+async def create_category(request: Request, category_id: str = Form(), category_name: str = Form(), 
+                          db: Session = Depends(models.get_db), token: str = Cookie(None)):
     mean_star = function.get_mean_star(db)
 
     if token != "":
@@ -56,7 +57,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
             else:
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
-                                                                             "error": "Không có quyền thêm thể loại sách"})
+                                                                             "error": "Không có quyền thêm thể loại sách!"})
         except:
             return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
@@ -92,7 +93,8 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
 
 # Cập nhật thông tin thể loại theo id_category
 @router.post('/category_books/update_category')
-async def update_category(request: Request, choice_category_id: str = Form(), new_category_name: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def update_category(request: Request, choice_category_id: str = Form(), new_category_name: str = Form(), 
+                          token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
 
     if token != "":
@@ -140,7 +142,8 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                                                                   "error": "Page Not Found"})
     
 @router.get('/category_books/update_category', response_class=HTMLResponse)
-async def get_edit_category(request: Request, choice_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def get_edit_category(request: Request, choice_category_id: Optional[str] = None, 
+                            token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
@@ -154,7 +157,8 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
             user = function.get_user(db, username)
             
             if user.role != 0:
-                this_category = db.query(models.Category).filter(models.Category.category_id == choice_category_id, models.Category.delete_flag == 0).first()
+                this_category = db.query(models.Category).filter(models.Category.category_id == choice_category_id, 
+                                                                 models.Category.delete_flag == 0).first()
             else:
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
@@ -166,7 +170,8 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "user": user, 
                         "this_category": this_category,
                         "choice_category_id": choice_category_id, 
-                        "mean_star": mean_star, "all-category2": all_category2})
+                        "mean_star": mean_star, 
+                        "all-category2": all_category2})
             else:
                 return templates.TemplateResponse("not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
@@ -183,7 +188,8 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
     
 # Xóa thể loại sách theo id_category (chỉ có role != 0 mới có quyền thực hiện)
 @router.post('/category_books/delete_category')
-async def delete_category(request: Request, deleted_category_id: str = Form(), token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def delete_category(request: Request, deleted_category_id: str = Form(), 
+                          token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token != "":
         mean_star = function.get_mean_star(db)
         
@@ -225,7 +231,8 @@ async def delete_category(request: Request, deleted_category_id: str = Form(), t
                                                                   "error": "Page Not Found"})
 
 @router.get('/category_books/delete_category', response_class=HTMLResponse)
-async def get_delete(request: Request, deleted_category_id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def get_delete(request: Request, deleted_category_id: Optional[str] = None, 
+                     token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     

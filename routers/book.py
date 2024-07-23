@@ -1,6 +1,8 @@
 # Thư viện Backend Python
 from fastapi import APIRouter, Depends, Request, Form, Query, Cookie, UploadFile, File
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from typing import Optional
 import models
 import jwt
@@ -40,7 +42,8 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             username = decodeJSON["username"]
             
             # Category tương ứng
-            this_category = db.query(models.Category).filter(models.Category.category_id == category_id and models.Category.delete_flag != 1).first()
+            this_category = db.query(models.Category).filter(models.Category.category_id == category_id,
+                                                            models.Category.delete_flag != 1).first()
             if this_category:
                 category_taken = this_category.category_id
             else:
@@ -87,7 +90,8 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             delete_id = None
             delete_flag = 0
             
-            new_book = models.Book(username_id = username, id_book=id, title=title, author=author, year=year, category_id=category_taken, quantity_amount = quantity,
+            new_book = models.Book(username_id = username, id_book=id, title=title, author=author, year=year, 
+                                category_id=category_taken, quantity_amount = quantity,
                                 insert_at=insert_at, insert_id=insert_id, update_at=update_at, update_id=update_id,
                                 delete_at=delete_at, delete_id=delete_id, delete_flag=delete_flag,
                                 image_book=book_image_path, pdf_book=book_pdf_path)
@@ -178,7 +182,8 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
 
 # Tìm kiếm sách theo category
 @router.get('/books/booktype', response_class=HTMLResponse)
-async def search_category_book(request: Request, searching: str, sortby: str = "id", db: Session = Depends(models.get_db)):
+async def search_category_book(request: Request, searching: str, sortby: str = "id", 
+                               db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     this_category_by_searching = db.query(models.Category).filter(models.Category.delete_flag != 1,
@@ -323,7 +328,8 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                                                                   "error": "Page not found"})
 
 @router.get('/books/edit_book', response_class=HTMLResponse)
-async def get_edit(request: Request, id: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def get_edit(request: Request, id: Optional[str] = None, 
+                   token: str = Cookie(None), db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
@@ -432,10 +438,18 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
 async def get_book_detail(request: Request, token: str = Cookie(None), choice_book: Optional[str] = None, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+    this_book_mean_star = function.get_mean_star_for_book(choice_book, db)
 
     # Logic xem thông tin chi tiết từng loại sách
     this_book_choice = db.query(models.Book).filter(models.Book.id_book == choice_book,
                                                     models.Book.delete_flag == 0).first()
+    
+    # Hiển thị các bình luận và đánh giá cho sách
+    this_comment_book = db.query(models.CommentBook, models.User).join(
+        models.User, models.CommentBook.username_id == models.User.username).filter(
+            models.CommentBook.book_id == choice_book,
+            models.CommentBook.delete_flag == False
+    ).order_by(desc(models.CommentBook.insert_at)).all()
     
     if this_book_choice:
         if token:
@@ -449,7 +463,7 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                 this_user_borrow = db.query(models.BorrowBook).filter(models.BorrowBook.username_id == username,
                                                                       models.BorrowBook.book_id == choice_book,
                                                                       models.BorrowBook.status == 1).all()
-
+                
                 if this_user_borrow != []:
                     this_user_borrow = this_user_borrow[0]
                     return templates.TemplateResponse("book_detail.html", {
@@ -458,14 +472,18 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                         "mean_star": mean_star,
                         "all_category2": all_category2,
                         "this_book_choice": this_book_choice,
-                        "this_user_borrow": this_user_borrow})
+                        "this_user_borrow": this_user_borrow,
+                        "this_comment_book": this_comment_book,
+                        "this_book_mean_star": this_book_mean_star})
                 else:
                     return templates.TemplateResponse("book_detail.html", {
                         "request": request, 
                         "user": user,
                         "mean_star": mean_star,
                         "all_category2": all_category2,
-                        "this_book_choice": this_book_choice})
+                        "this_book_choice": this_book_choice, 
+                        "this_comment_book": this_comment_book,
+                        "this_book_mean_star": this_book_mean_star})
             except:
                 # Đăng nhập bị sai
                 return templates.TemplateResponse("error_template.html", {"request": request, 
@@ -476,9 +494,46 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                     "request": request, 
                     "mean_star": mean_star,
                     "all_category2": all_category2,
-                    "this_book_choice": this_book_choice})
+                    "this_book_choice": this_book_choice,
+                    "this_comment_book": this_comment_book,
+                    "this_book_mean_star": this_book_mean_star})
     else:
         # Không tìm thấy sách này
+        return templates.TemplateResponse("error_template.html", {"request": request, 
+                                                                  "mean_star": mean_star, 
+                                                                  "error": "Page Not Found"})
+
+# Chức năng bình luận sách
+@router.post('/books/detail_book')
+async def comment_this_book(request: Request,  
+                            choice_book: str = Form(), 
+                            description: str = Form(),
+                            star_book: int = Form(),
+                            token: str = Cookie(None),
+                            db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+
+    if token != "":
+        # Decode
+        try:
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = decodeJSON["username"]
+
+            new_comment = models.CommentBook(username_id=username, book_id=choice_book,
+                                             description_reviewer=description, rate_book=star_book, 
+                                             insert_at=datetime.datetime.now(),
+                                             update_at=None, delete_at=None, delete_flag=False)
+            
+            db.add(new_comment)
+            db.commit()
+            db.refresh(new_comment)
+    
+            return RedirectResponse(url=f"/books/detail_book?choice_book={choice_book}", status_code=303)
+        except:
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                            "mean_star": mean_star, 
+                                                                            "error": "Page not found"})
+    else:
         return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})

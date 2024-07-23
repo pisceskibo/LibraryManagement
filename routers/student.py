@@ -52,16 +52,17 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
                                                                              "error": f"Không có quyền thay đổi user/admin cho {finded_username}!"})
 
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
-                                                                      "mean_star": mean_star, 
-                                                                      "error": "Page Not Found"})
+            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                                                                             "mean_star": mean_star, 
+                                                                             "error": "Page Not Found"})
     else:
         return templates.TemplateResponse("error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     
 @router.get('/users/get_admin', response_class=HTMLResponse)
-async def get_change_admin(request: Request, finded_username: Optional[str] = None, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+async def get_change_admin(request: Request, finded_username: Optional[str] = None, 
+                           token: str = Cookie(None), db: Session = Depends(models.get_db)):
     if token:
         mean_star = function.get_mean_star(db)
         all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
@@ -94,7 +95,8 @@ async def get_change_admin(request: Request, finded_username: Optional[str] = No
 
 # Hiển thị thông tin chi tiết từng sinh viên
 @router.get('/users/detail_student', response_class=HTMLResponse)
-async def get_detail_user(request: Request, username_choice: Optional[str] = None, db: Session = Depends(models.get_db)):
+async def get_detail_user(request: Request, username_choice: Optional[str] = None, 
+                          db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
@@ -124,7 +126,8 @@ async def get_detail_user(request: Request, username_choice: Optional[str] = Non
 
 # Cập nhật chỉnh sửa lại thông tin người dùng
 @router.post('/users/update_user')
-async def update_user(request: Request, fullname: str = Form(), email: str = Form(), avatar: UploadFile = File(), db: Session = Depends(models.get_db), token: str = Cookie(None)):
+async def update_user(request: Request, fullname: str = Form(), email: str = Form(), avatar: UploadFile = File(), 
+                      db: Session = Depends(models.get_db), token: str = Cookie(None)):
     mean_star = function.get_mean_star(db)
 
     if token != "":

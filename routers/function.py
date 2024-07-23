@@ -42,3 +42,15 @@ def get_mean_star(db: Session):
     star_count = len(all_star)
     mean_star = round(total_star / star_count, 1) if star_count > 0 else 0.0
     return mean_star  
+
+
+# Tính số star trung bình của mỗi sách
+def get_mean_star_for_book(id_book, db: Session):
+    all_this_book_star = db.query(models.CommentBook.rate_book).filter(
+        models.CommentBook.book_id == id_book,
+        models.CommentBook.delete_flag == False).all()
+    
+    total_this_book_star = sum([star[0] for star in all_this_book_star])
+    count_this_book_star = len(all_this_book_star)
+    mean_this_book_star = round(total_this_book_star / count_this_book_star, 1) if count_this_book_star > 0 else 0.0
+    return mean_this_book_star

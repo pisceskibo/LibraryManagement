@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 <!-- NỘI DUNG THAY ĐỔI -->
 {% block content %}
 
@@ -39,7 +40,9 @@
                             </div>
                             
                             <button type="submit" class="form-control btn btn-primary"> Có </button>
-                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/category_books/update_category?choice_category_id={{choiced_category.category_id}}"> Không </b> </a> </button>
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> 
+                                <b> <a href="/category_books/update_category?choice_category_id={{choiced_category.category_id}}"> Không </b> </a> 
+                            </button>
                         </form>
 
                         {% if success_message %}

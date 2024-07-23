@@ -19,7 +19,9 @@ templates = Jinja2Templates(directory="templates")
 ## 1. ĐĂNG NHẬP VÀ ĐĂNG KÝ
 # Tạo tài khoản
 @router.post("/create_account", response_class=HTMLResponse)
-async def create_account(request: Request, username: str = Form(), fullname: str = Form(), email: str = Form(), password: str = Form(), role: int = Form(), db: Session = Depends(models.get_db)):
+async def create_account(request: Request, username: str = Form(), fullname: str = Form(), 
+                         email: str = Form(), password: str = Form(), role: int = Form(), 
+                         db: Session = Depends(models.get_db)):
     # Kiểm tra có trùng username không?
     user = function.get_user(db, username)
     mean_star = function.get_mean_star(db)    
@@ -31,7 +33,8 @@ async def create_account(request: Request, username: str = Form(), fullname: str
                                                             "error": "Username already exists!"})
     else:    
         passwordHash = function.get_password_hash(password)
-        new_user = models.User(username = username, fullname = fullname, email = email, password = passwordHash, role = role, delete_flag = 0)
+        new_user = models.User(username = username, fullname = fullname, email = email, 
+                               password = passwordHash, role = role, delete_flag = 0)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
@@ -50,7 +53,8 @@ async def get_register(request: Request, db: Session = Depends(models.get_db)):
 
 # Chức năng login lấy token tương ứng
 @router.post('/login')
-async def login_account(request: Request, username: str = Form(), password: str = Form(), db: Session = Depends(models.get_db)):
+async def login_account(request: Request, username: str = Form(), password: str = Form(), 
+                        db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
 
     user = function.get_user(db, username)

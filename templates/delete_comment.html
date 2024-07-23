@@ -1,58 +1,52 @@
 {% extends "base.html" %}
 
-<!-- NỘI DUNG CẦN THAY ĐỔI -->
+
+<!-- NỘI DUNG THAY ĐỔI -->
 {% block content %}
 
-<!-- Giao diện xóa tài khoản -->
+<!-- Giao diện xóa bình luận -->
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
-    style="padding-bottom: 50px;">
+    style="padding-bottom: 25px;">
     <div class="container">
         <div class="row">
-
             <div class="col-lg-8 col-12 mx-auto">
-                <h1 class="text-white text-center"> Xóa tài khoản </h1> 
+                <h1 class="text-white text-center"> Xóa bình luận </h1>
+                <h2 class="text-white text-center"> "{{your_comment_choice.book_id}} - {{your_comment_choice.username_id}}" </h2> 
                 <br>
-                <h2 class="text-center"> "{{user.username}}" </h2>
             </div>
-
         </div>
     </div>
 </section>
 
 
-<!-- Chức năng xóa tài khoản -->
+<!-- Chức năng xóa sách -->
 <section class="featured-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-5 col-md-7 col-12" style="padding-top: 80px;">
                 <div class="card" style="border-radius: 5%;">
                     <div class="card-body">
-                        <h2 class="card-title text-center"> Bạn thực sự muốn xóa tài khoản này? </h2>
+                        <h2 class="card-title text-center"> Bạn thực sự muốn xóa bình luận này? </h2>
                         <hr>
 
-                        <!-- Form hỏi xác nhận xóa không? -->
-                        <form action="/users/delete_username" method="post" class="custom-form" role="form">
+                        <!-- Form xóa sách -->
+                        <form action="#" method="post" class="custom-form" role="form">
                             <div class="form-floating mb-3">
-                                <input type="text" name="deleted_username" id="deleted_username" class="form-control" required=""
-                                    placeholder="Username" value="{{user.username}}" readonly>
-                                <label for="id_book"> Username </label>
+                                <input type="hidden" id="id_choice" name="id_choice" value="{{ your_comment_choice.id }}">
                             </div>
                             
                             <button type="submit" class="form-control btn btn-primary"> Có </button>
-                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> 
-                                <b> <a href="/profile"> Không </b> </a> 
-                            </button>
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/books/comment_edit?id_choice={{your_comment_choice.id}}"> Không </b> </a> </button>
                         </form>
 
                         {% if success_message %}
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">
-                                    alert('Bạn đã xóa tài khoản!');
-                                    window.location.href = "/logout"; // Redirect to login page
+                                    alert('Xóa bình luận thành công!');
+                                    window.location.href = "/books/detail_book?choice_book={{your_comment_choice.book_id}}";    // Redirect to this_book_detail page
                                 </script>
                             </div>
                         {% endif %}
-
                     </div>
                         
                 </div>

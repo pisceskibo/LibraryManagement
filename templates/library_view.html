@@ -30,6 +30,7 @@
     </div>
 </section>
 
+
 <!-- Hiển thị chức năng thêm sách -->
 {% if request.cookies.get('token') %}
 <div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;">
@@ -128,13 +129,11 @@
                                     <a href="/books/detail_book?choice_book={{book.id_book}}" class="btn btn-primary">Go somewhere</a>
                                     {% endif %}
                                 </div>
-
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
-
 
             <!-- Phân trang -->
             <div style="text-align: center;">
@@ -158,7 +157,6 @@
                     </ul>
                 </nav>
             </div>
-
         </div>
     </div>
 </div>

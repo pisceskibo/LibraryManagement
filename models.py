@@ -1,5 +1,5 @@
 # Thư viện xây dựng Models
-from sqlalchemy import Column, String, Integer, DateTime, Date, ForeignKey, Text
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Date, ForeignKey, Text
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import relationship
 
@@ -17,6 +17,7 @@ class User(Base):
     
     # Tạo mối quan hệ giữa hai bảng
     books = relationship("Book", back_populates="user")
+    comments = relationship("CommentBook", back_populates="usercomment")
     
     
 # Model sách
@@ -53,6 +54,7 @@ class Book(Base):
     category = relationship("Category", back_populates="category_books")
     borrows = relationship("BorrowBook", back_populates="book_borrow")
     borrowfinal = relationship("BorrowBookFinal", back_populates="book_borrow_final")
+    comments = relationship("CommentBook", back_populates="book")
 
 
 # Model Category
@@ -105,6 +107,26 @@ class BorrowBookFinal(Base):
     
     # Tại mối liên hệ giữa 2 bảng
     book_borrow_final = relationship("Book", back_populates="borrowfinal")
+
+
+# Model CommentBook
+class CommentBook(Base):
+    __tablename__ = 'commentbook'
+    id = Column(Integer, primary_key=True, autoincrement=True)  # Khóa chính mới cho bảng
+    username_id = Column(String(30), ForeignKey('users.username'), nullable=False, index=True)
+    book_id = Column(String(30), ForeignKey('books.id_book'), nullable=False, index=True)
+    description_reviewer = Column(Text, nullable=False, index=True)
+    rate_book = Column(Integer, nullable=False, index=True)
+
+    # Sửa và xóa bình luận
+    insert_at = Column(DateTime, index=True)
+    update_at = Column(DateTime, index=True)
+    delete_at = Column(DateTime, index=True)
+    delete_flag = Column(Boolean, index=True)
+
+    # Tạo mối liên kết giữa các bảng
+    usercomment = relationship("User", back_populates="comments")
+    book = relationship("Book", back_populates="comments")
 
 
 # Model OverviewRate (tỷ lệ đánh giá sao)

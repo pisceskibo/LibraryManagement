@@ -1,1 +1,0 @@
-# DÀNH CHO CÁC Ý TƯỞNG THIẾT KẾ API KHÁC

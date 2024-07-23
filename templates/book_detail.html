@@ -12,8 +12,8 @@
                 <h1 class="text-white text-center"> {{this_book_choice.id_book}} </h1>
                 <h2 class="text-white text-center"> {{this_book_choice.title}} </h2> 
                 <br>
-
             </div>
+
         </div>
     </div>
 </section>
@@ -33,14 +33,14 @@
                                     {% if this_book_choice.image_book %} 
                                         <div style=" text-align: center;">
                                             <img src="/static/media/{{this_book_choice.image_book}}" class="card-img-top" 
-                                            style="object-fit: cover; max-width: 600px; height: 450px; border-radius: 20px; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
+                                                style="object-fit: cover; max-width: 600px; height: 450px; border-radius: 20px; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
                                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';" 
                                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';"> 
                                         </div>
                                     {% else %}
                                         <div style=" text-align: center;">
                                             <img src="https://placehold.co/200x150" class="card-img-top" 
-                                            style="max-width: 600px; border-radius: 20px; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
+                                                style="max-width: 600px; border-radius: 20px; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
                                                 onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';" 
                                                 onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';"> 
                                         </div>
@@ -119,7 +119,124 @@
     </section>
 </div>
 
+<div style="background-color: #00FFCC">
+    <br>
+</div>
+<hr>
+
+<!-- Chức năng cho phép bình luận -->
+{% if request.cookies.get('token') %}
+<h2 style="text-align: center;"> Đánh giá tài liệu </h2>
+<div style="padding-left: 10px;">
+    <form action="/books/detail_book" method="post">
+        <input type="hidden" id="choice_book" name="choice_book" value="{{ this_book_choice.id_book }}">
+        <div class="form-group">
+            <label for="comment">Nhận xét của <b>{{user.username}}</b>:</label>
+            
+            <textarea class="form-control" id="description" name="description" rows="3" required=""></textarea>
+        </div>
+        <br>
+        <div class="col-lg-12 col-12">
+            <label for="rate_star"> <b> Rate {{this_book_choice.id_book}}: </b></label>
+            <div class="rate" id="star_book" name="star_book">
+                <input type="radio" id="star5" name="star_book" value="5" />
+                <label for="star5" title="5 stars"><span class="fa fa-star"></span></label>
+                <input type="radio" id="star4" name="star_book" value="4" />
+                <label for="star4" title="4 stars"><span class="fa fa-star"></span></label>
+                <input type="radio" id="star3" name="star_book" value="3" />
+                <label for="star3" title="3 stars"><span class="fa fa-star"></span></label>
+                <input type="radio" id="star2" name="star_book" value="2" />
+                <label for="star2" title="2 stars"><span class="fa fa-star"></span></label>
+                <input type="radio" id="star1" name="star_book" value="1" />
+                <label for="star1" title="1 star"><span class="fa fa-star"></span></label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Gửi nhận xét</button>
+    </form>
+</div>
+{% endif %}
+
+<br>
+<div style="background-color: #00FFCC">
+    <br>
+</div>
+<hr>
+
+<!-- Hiển thị danh sách bình luận -->
+<div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+    <div style="flex: 1; text-align: center;">
+        <h2>Danh mục nhận xét cho {{this_book_choice.id_book}}:</h2>
+        <h3> <b style="color: red;">{{ this_book_mean_star }}/5.0</b> </h3>
+    </div>
+    <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+        <div style="width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(#4caf50 {{ this_book_mean_star / 5.0 * 100 }}%, #ccc {{ this_book_mean_star / 5.0 * 100 }}%); display: flex; justify-content: center; align-items: center; font-size: 18px; color: #fff;">
+            {{ this_book_mean_star }} / 5.0
+        </div>
+    </div>
+</div>
+
 
 <hr>
+<div style="padding-left: 20px">
+{% for comment_book, user in this_comment_book %}
+<div class="comment">
+    <div class="comment-body">
+        <h5><img src="/static/media/{{ user.avatar }}" alt="Avatar" class="avatar" 
+                style="object-fit: cover; border-radius: 100%; width: 40px; height: 40px;"> 
+            <a href="/users/detail_student?username_choice={{comment_book.username_id}}">
+                {{ comment_book.username_id }}
+            </a> 
+
+            {% if request.cookies.get('username') == comment_book.username_id %}
+                <a href="/books/comment_edit?id_choice={{comment_book.id}}"> ✏️ </a>
+            {% endif %}
+        </h5>
+        <p>{{ comment_book.description_reviewer }}</p>
+        {% if comment_book.update_at %}
+        <small>Edited at: {{ comment_book.update_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        {% else %}
+        <small>Commented on: {{ comment_book.insert_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        {% endif %}
+        
+        {% for number in range(comment_book.rate_book) %}⭐{% endfor %}
+    </div>
+</div>
+<hr>
+{% endfor %}
+</div>
+
+
+<!-- TRANG TRÍ GIAO DIỆN VỚI CSS -->
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    .checked {
+        color: orange;
+    }
+
+    .rate {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+    .rate input {
+        display: none;
+    }
+
+    .rate label {
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+    .rate input:checked ~ label {
+        color: orange;
+    }
+
+    .rate input:hover ~ label {
+        color: orange;
+    }
+</style>
 
 {% endblock content %} 

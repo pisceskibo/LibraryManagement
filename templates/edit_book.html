@@ -43,9 +43,9 @@
                                     <option value="{{book.category_id}}"> {{book.category_id}} </option>
                                     <option value="default_category_id"> default_category_id </option>
                                     {% for category in all_category %}
-                                    {% if category.category_id != book.category_id %}
-                                    <option value="{{category.category_id}}"> {{category.category_id}} </option>
-                                    {% endif %}
+                                        {% if category.category_id != book.category_id %}
+                                            <option value="{{category.category_id}}"> {{category.category_id}} </option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                                 <label for="category_id">Category</label>

@@ -1,0 +1,113 @@
+{% extends "base.html" %} 
+
+
+<!-- NỘI DUNG THAY ĐỔI -->
+{% block content %} 
+<section class="hero-section d-flex justify-content-center align-items-center" id="section_1"
+    style="padding-bottom: 25px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-12 mx-auto">
+                <h1 class="text-white text-center"> Sửa bình luận </h1>
+                <h2 class="text-white text-center"> "{{your_comment_choice.book_id}} - {{your_comment_choice.username_id}}" </h2> 
+                <br>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div style="background-color: #00FFCC">
+    <br>
+</div>
+<hr>
+
+<!-- Chức năng cho phép sửa bình luận -->
+{% if request.cookies.get('token') %}
+<div style="padding-left: 10px;">
+    <form action="/books/comment_edit" method="post">
+        <input type="hidden" id="id_choice" name="id_choice" value="{{ your_comment_choice.id }}">
+        <div class="form-group">
+            <label for="comment">Nhận xét của <b>{{user.username}}</b>:</label>
+            
+            <textarea class="form-control" id="description" name="description" rows="3" required="">{{your_comment_choice.description_reviewer}}</textarea>
+        </div>
+        <br>
+        <div class="col-lg-12 col-12">
+            <label for="rate"> <b> Rate {{your_comment_choice.book_id}}: </b></label>
+            <div class="rate" id="rate" name="rate">
+                <input type="radio" id="star5" name="rate" value="5" {% if your_comment_choice.rate_book == 5 %}checked{% endif %}/>
+                <label for="star5" title="5 stars"><span class="fa fa-star"></span></label>
+                
+                <input type="radio" id="star4" name="rate" value="4" {% if your_comment_choice.rate_book == 4 %}checked{% endif %}/>
+                <label for="star4" title="4 stars"><span class="fa fa-star"></span></label>
+                
+                <input type="radio" id="star3" name="rate" value="3" {% if your_comment_choice.rate_book == 3 %}checked{% endif %}/>
+                <label for="star3" title="3 stars"><span class="fa fa-star"></span></label>
+                
+                <input type="radio" id="star2" name="rate" value="2" {% if your_comment_choice.rate_book == 2 %}checked{% endif %}/>
+                <label for="star2" title="2 stars"><span class="fa fa-star"></span></label>
+                
+                <input type="radio" id="star1" name="rate" value="1" {% if your_comment_choice.rate_book == 1 %}checked{% endif %}/>
+                <label for="star1" title="1 star"><span class="fa fa-star"></span></label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Sửa nhận xét</button>
+        <button type="button" class="btn btn-danger mt-2"> 
+            <a href="/books/comment_delete?id_choice={{your_comment_choice.id}}" style="color: white"> Xóa nhận xét </a> 
+        </button>
+    </form>
+</div>
+{% endif %}
+
+
+{% if success_message %}
+<div class="alert alert-success mt-3" role="alert">
+    <script type="text/javascript">
+        alert('{{ success_message }}');
+        window.location.href = "/books/detail_book?choice_book={{your_comment_choice.book_id}}"; // Redirect to this_book_detail page
+    </script>
+</div>
+{% endif %}
+
+<br>
+<div style="background-color: #00FFCC">
+    <br>
+</div>
+<hr>
+
+
+<!-- TRANG TRÍ GIAO DIỆN VỚI CSS -->
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    .checked {
+        color: orange;
+    }
+
+    .rate {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+    .rate input {
+        display: none;
+    }
+
+    .rate label {
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+    .rate input:checked ~ label {
+        color: orange;
+    }
+
+    .rate input:hover ~ label {
+        color: orange;
+    }
+</style>
+
+{% endblock content %} 

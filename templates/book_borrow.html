@@ -39,7 +39,9 @@
                             </div>
 
                             <button type="submit" class="form-control btn btn-primary"> Borrow Book </button>
-                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/books/detail_book?choice_book={{borrowed_book.id_book}}"> Cancel </a></b> </button>
+                            <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> 
+                                <b> <a href="/books/detail_book?choice_book={{borrowed_book.id_book}}"> Cancel </a></b> 
+                            </button>
                         </form>
 
                         {% if success_message %}

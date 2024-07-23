@@ -1,5 +1,6 @@
 # Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, không có quyền category, không có quyền phân quyền)
-# Thêm chức năng bình luận và đánh giá cho từng loại sách
+# Đối với role = 2 thì trang Borrow sẽ thống kê được tình trạng của từng sách đang mượn
+
 # Thêm trợ lý ảo cho website
 # Thêm bảng phân tích, biểu đồ đánh giá 
 # Trang trí giao diện ở trang chủ 
