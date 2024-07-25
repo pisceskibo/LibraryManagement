@@ -38,7 +38,7 @@ async def edit_comment(request: Request, id_choice: int = Form(), description: s
                 models.CommentBook.delete_flag == False).all()
             
             if your_comment_choice == []:
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
             else:
@@ -51,7 +51,7 @@ async def edit_comment(request: Request, id_choice: int = Form(), description: s
                 db.commit()
                 db.refresh(your_comment_choice)
 
-                return templates.TemplateResponse("edit_comment.html", {"request": request, 
+                return templates.TemplateResponse("comments/edit_comment.html", {"request": request, 
                                                                  "user": user,
                                                                  "your_comment_choice": your_comment_choice, 
                                                                  "mean_star": mean_star, 
@@ -59,11 +59,11 @@ async def edit_comment(request: Request, id_choice: int = Form(), description: s
                                                                  "success_message": "Sửa bình luận thành công!"})
 
         except:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     
@@ -85,23 +85,23 @@ async def get_edit_comment(request: Request, id_choice: Optional[int] = None,
                 models.CommentBook.delete_flag == False).all()
 
             if len(your_comment_choice) == 0:
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy bình luận cần sửa!"})
             else:
                 your_comment_choice = your_comment_choice[0]
 
-                return templates.TemplateResponse("edit_comment.html", {"request": request, 
+                return templates.TemplateResponse("comments/edit_comment.html", {"request": request, 
                                                                  "user": user,
                                                                  "your_comment_choice": your_comment_choice, 
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         except:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     
@@ -125,7 +125,7 @@ async def delete_comment(request: Request, id_choice: int = Form(),
                 models.CommentBook.delete_flag == False).all()
 
             if len(your_comment_choice) == 0:
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy bình luận cần xóa!"})
             else:
@@ -136,18 +136,18 @@ async def delete_comment(request: Request, id_choice: int = Form(),
                 db.commit()
                 db.refresh(your_comment_choice)
 
-                return templates.TemplateResponse("delete_comment.html", {"request": request, 
+                return templates.TemplateResponse("comments/delete_comment.html", {"request": request, 
                                                                  "user": user,
                                                                  "your_comment_choice": your_comment_choice, 
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2,
                                                                  "success_message": "Xóa bình luận thành công!"})
         except:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
@@ -169,23 +169,23 @@ async def get_delete_comment(request: Request, id_choice: Optional[int] = None,
                 models.CommentBook.delete_flag == False).all()
 
             if len(your_comment_choice) == 0:
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy bình luận cần xóa!"})
             else:
                 your_comment_choice = your_comment_choice[0]
 
-                return templates.TemplateResponse("delete_comment.html", {"request": request, 
+                return templates.TemplateResponse("comments/delete_comment.html", {"request": request, 
                                                                  "user": user,
                                                                  "your_comment_choice": your_comment_choice, 
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         except:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else: 
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     

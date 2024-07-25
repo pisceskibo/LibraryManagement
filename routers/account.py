@@ -28,7 +28,7 @@ async def create_account(request: Request, username: str = Form(), fullname: str
     
     if user:
         # Username đã tồn tại, cần chọn username khác
-        return templates.TemplateResponse("register.html", {"request": request, 
+        return templates.TemplateResponse("accounts/register.html", {"request": request, 
                                                             "mean_star": mean_star, 
                                                             "error": "Username already exists!"})
     else:    
@@ -38,7 +38,7 @@ async def create_account(request: Request, username: str = Form(), fullname: str
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return templates.TemplateResponse("register.html", {"request": request, 
+        return templates.TemplateResponse("accounts/register.html", {"request": request, 
                                                             "mean_star": mean_star, 
                                                             "success": "Account created successfully!"})
 
@@ -46,7 +46,7 @@ async def create_account(request: Request, username: str = Form(), fullname: str
 async def get_register(request: Request, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
-    return templates.TemplateResponse("register.html", {"request": request, 
+    return templates.TemplateResponse("accounts/register.html", {"request": request, 
                                                         "mean_star": mean_star, 
                                                         "all_category2": all_category2})
 
@@ -69,7 +69,7 @@ async def login_account(request: Request, username: str = Form(), password: str 
         return response
     else:
         # Username hoặc Password bị sai
-        return templates.TemplateResponse("login.html", {"request": request, 
+        return templates.TemplateResponse("accounts/login.html", {"request": request, 
                                                          "mean_star": mean_star, 
                                                          "error": "Invalid credentials!"})
 
@@ -78,7 +78,7 @@ async def get_login(request: Request, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("login.html", {"request": request, 
+    return templates.TemplateResponse("accounts/login.html", {"request": request, 
                                                      "mean_star": mean_star, 
                                                      "all_category2": all_category2})
 
@@ -106,7 +106,7 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
         get_email = user_logined.email
         get_role = user_logined.role
         
-        return templates.TemplateResponse("profile.html", {
+        return templates.TemplateResponse("accounts/profile.html", {
             "request": request, 
             "current_username": current_username,
             "user": user_logined,
@@ -116,6 +116,6 @@ async def read_profile(request: Request, db: Session = Depends(models.get_db)):
             "mean_star": mean_star,
             "all_category2": all_category2})
     else:
-        return templates.TemplateResponse("login.html", {"request": request, 
+        return templates.TemplateResponse("accounts/login.html", {"request": request, 
                                                          "mean_star": mean_star, 
                                                          "error": "You are not logged in."})

@@ -98,15 +98,15 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             db.add(new_book)
             db.commit()
             db.refresh(new_book)
-            return templates.TemplateResponse("add_book.html", {"request": request, 
+            return templates.TemplateResponse("books/add_book.html", {"request": request, 
                                                                 "mean_star": mean_star, 
                                                                 "success": "Book added successfully!"})
         except:
-            return templates.TemplateResponse("add_book.html", {"request": request, 
+            return templates.TemplateResponse("books/add_book.html", {"request": request, 
                                                                 "mean_star": mean_star, 
                                                                 "error": "Nhập thiếu dữ liệu thông tin sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Chưa có tài khoản đăng nhập!"})
 
@@ -118,12 +118,12 @@ async def get_login(request: Request, token: str = Cookie(None), db: Session = D
     if token:
         all_category = db.query(models.Category.category_id).filter(models.Category.delete_flag != 1).all()
         
-        return templates.TemplateResponse("add_book.html", {"request": request, 
+        return templates.TemplateResponse("books/add_book.html", {"request": request, 
                                                             "all_category": all_category, 
                                                             "mean_star": mean_star, 
                                                             "all_category2": all_category2})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star})
     
     
@@ -144,7 +144,7 @@ async def sort_books(bookview: int, choice: str, request: Request, db: Session =
     books = books.filter(models.Book.delete_flag != 1).all()
     total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
 
-    return templates.TemplateResponse("sorting_book.html", {
+    return templates.TemplateResponse("books/sorting_book.html", {
         "request": request,
         "books": books,
         "total_books": total_books,
@@ -170,7 +170,7 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
     books = books.filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
     total_books = len(books)
     
-    return templates.TemplateResponse("searching_book.html", {
+    return templates.TemplateResponse("books/searching_book.html", {
         "request": request, 
         "books": books, 
         "bookview": bookview,
@@ -201,7 +201,7 @@ async def search_category_book(request: Request, searching: str, sortby: str = "
         books = books.filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
     total_books = len(books)
     
-    return templates.TemplateResponse("booktype.html", {
+    return templates.TemplateResponse("books/booktype.html", {
         "request": request, 
         "books": books, 
         "searching": searching,
@@ -308,22 +308,22 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                 db.commit()
                 db.refresh(book)
                 
-                return templates.TemplateResponse("edit_book.html", {"request": request, 
+                return templates.TemplateResponse("books/edit_book.html", {"request": request, 
                                                                      "book": book, 
                                                                      "mean_star": mean_star, 
                                                                      "success_message": "Sửa sách thành công!"})
             else:
                 # Không có quyền sửa sách khác User hoặc Admin
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền sửa sách!"}) 
         except:
             # Chưa đăng nhập nên không vào được
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
@@ -349,17 +349,17 @@ async def get_edit(request: Request, id: Optional[str] = None,
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()
         
         if book:
-            return templates.TemplateResponse("edit_book.html", {"request": request, 
+            return templates.TemplateResponse("books/edit_book.html", {"request": request, 
                                                                  "book": book, 
                                                                  "all_category": all_category, 
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy sách cần sửa!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
@@ -392,22 +392,22 @@ async def delete_book(request: Request, id: str = Form(), db: Session = Depends(
                 db.commit()
                 db.refresh(book)
                     
-                return templates.TemplateResponse("delete_book.html", {"request": request, 
+                return templates.TemplateResponse("books/delete_book.html", {"request": request, 
                                                                        "book": book, 
                                                                        "mean_star": mean_star, 
                                                                        "success_message": "Sách đã bị xóa!"})
             else:
                 # Không có quyền xóa sách
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
 
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
@@ -419,16 +419,16 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
     if token:
         book = db.query(models.Book).filter(models.Book.id_book == id).first()
         if book:
-            return templates.TemplateResponse("delete_book.html", {"request": request, 
+            return templates.TemplateResponse("books/delete_book.html", {"request": request, 
                                                                    "book": book, 
                                                                    "mean_star": mean_star, 
                                                                    "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
@@ -466,7 +466,7 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                 
                 if this_user_borrow != []:
                     this_user_borrow = this_user_borrow[0]
-                    return templates.TemplateResponse("book_detail.html", {
+                    return templates.TemplateResponse("books/book_detail.html", {
                         "request": request, 
                         "user": user,
                         "mean_star": mean_star,
@@ -476,7 +476,7 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                         "this_comment_book": this_comment_book,
                         "this_book_mean_star": this_book_mean_star})
                 else:
-                    return templates.TemplateResponse("book_detail.html", {
+                    return templates.TemplateResponse("books/book_detail.html", {
                         "request": request, 
                         "user": user,
                         "mean_star": mean_star,
@@ -486,11 +486,11 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                         "this_book_mean_star": this_book_mean_star})
             except:
                 # Đăng nhập bị sai
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
         else:
-            return templates.TemplateResponse("book_detail.html", {
+            return templates.TemplateResponse("books/book_detail.html", {
                     "request": request, 
                     "mean_star": mean_star,
                     "all_category2": all_category2,
@@ -499,7 +499,7 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                     "this_book_mean_star": this_book_mean_star})
     else:
         # Không tìm thấy sách này
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
@@ -530,11 +530,11 @@ async def comment_this_book(request: Request,
     
             return RedirectResponse(url=f"/books/detail_book?choice_book={choice_book}", status_code=303)
         except:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                             "mean_star": mean_star, 
                                                                             "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
@@ -552,7 +552,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
         total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
         total_pages = (total_books + page_size - 1) // page_size  # Tính toán tổng số trang
 
-        return templates.TemplateResponse("library.html", {
+        return templates.TemplateResponse("books/library.html", {
             "request": request,
             "books": books,
             "total_books": total_books,
@@ -570,7 +570,7 @@ async def read_all_books(request: Request, bookview: int, page: int = Query(1, g
         total_books = db.query(models.Book).filter(models.Book.delete_flag == 0).count()
         total_pages = (total_books + page_size2 - 1) // page_size2  # Tính toán tổng số trang
 
-        return templates.TemplateResponse("library_view.html", {
+        return templates.TemplateResponse("books/library_view.html", {
             "request": request,
             "books": books,
             "total_books": total_books,

@@ -51,19 +51,19 @@ async def create_category(request: Request, category_id: str = Form(), category_
                 db.commit()
                 db.refresh(new_category)
             
-                return templates.TemplateResponse("add_category.html", {"request": request, 
+                return templates.TemplateResponse("category/add_category.html", {"request": request, 
                                                                         "mean_star": mean_star, 
                                                                         "success": "Category created successfully!"})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền thêm thể loại sách!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
@@ -80,15 +80,15 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         # Logic truy cập tới template tạo thể loại sách
         user = function.get_user(db, username)
         if user.role != 0:
-            return templates.TemplateResponse("add_category.html", {"request": request, 
+            return templates.TemplateResponse("category/add_category.html", {"request": request, 
                                                                     "mean_star": mean_star, 
                                                                     "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không có quyền thêm sách!"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, "mean_star": mean_star})
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, "mean_star": mean_star})
     
 
 # Cập nhật thông tin thể loại theo id_category
@@ -107,7 +107,7 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             if user.role != 0:
                 category = db.query(models.Category).filter(models.Category.category_id == choice_category_id).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền sửa sách!"})
 
@@ -119,7 +119,7 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                 db.commit()
                 db.refresh(category)
                         
-                return templates.TemplateResponse("edit_category.html", {
+                return templates.TemplateResponse("category/edit_category.html", {
                         "request": request, 
                         "success": "Category updated successfully!",
                         "this_category": category,
@@ -129,15 +129,15 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                 
             else:
                 # "Không có thể loại sách '{category.category_id}' cần thay đổi"
-                return templates.TemplateResponse("error_template.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                           "mean_star": mean_star, 
                                                                           "error": "Page Not Found"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     
@@ -160,12 +160,12 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                 this_category = db.query(models.Category).filter(models.Category.category_id == choice_category_id, 
                                                                  models.Category.delete_flag == 0).first()
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền sửa thể loại sách!"})
  
             if this_category:
-                return templates.TemplateResponse("edit_category.html", {
+                return templates.TemplateResponse("category/edit_category.html", {
                         "request": request, 
                         "user": user, 
                         "this_category": this_category,
@@ -173,15 +173,15 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "mean_star": mean_star, 
                         "all-category2": all_category2})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có thể loại sách này!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     
@@ -210,7 +210,7 @@ async def delete_category(request: Request, deleted_category_id: str = Form(),
                 db.refresh(category_clear)
 
                 # return f"Thể loại {category_clear.category_id} đã bị xóa"
-                return templates.TemplateResponse("delete_category.html", {
+                return templates.TemplateResponse("category/delete_category.html", {
                     "request": request, 
                     "success_message": "Xóa thể loại thành công!", 
                     "user": user, 
@@ -218,15 +218,15 @@ async def delete_category(request: Request, deleted_category_id: str = Form(),
                     "choiced_category": category_clear,
                     "mean_star": mean_star})
             else:
-                return templates.TemplateResponse("not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền xóa thể loại sách này!"})
         except:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page Not Found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
@@ -239,16 +239,16 @@ async def get_delete(request: Request, deleted_category_id: Optional[str] = None
     if token:
         choiced_category = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
         if choiced_category:
-            return templates.TemplateResponse("delete_category.html", {"request": request, 
+            return templates.TemplateResponse("category/delete_category.html", {"request": request, 
                                                                        "choiced_category": choiced_category, 
                                                                        "mean_star": mean_star, 
                                                                        "all_category2": all_category2})
         else:
-            return templates.TemplateResponse("error_template.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
-        return templates.TemplateResponse("error_template.html", {"request": request, 
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
@@ -268,7 +268,7 @@ async def search_category(searching: str, request: Request, db: Session = Depend
     searching_category = searching_category.filter(models.Category.delete_flag != 1).all()
     total_searching_category = len(searching_category)
     
-    return templates.TemplateResponse("searching_category.html", {
+    return templates.TemplateResponse("category/searching_category.html", {
         "request": request, 
         "searching_category": searching_category, 
         "searching": searching,
@@ -284,7 +284,7 @@ async def get_all_category(request: Request, db: Session = Depends(models.get_db
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()    
     all_category = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
 
-    return templates.TemplateResponse("category_list.html", {"request": request, 
+    return templates.TemplateResponse("category/category_list.html", {"request": request, 
                                                              "all_category": all_category, 
                                                              "mean_star": mean_star, 
                                                              "all_category2": all_category2})
