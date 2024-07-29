@@ -1,5 +1,8 @@
 # Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, không có quyền category, không có quyền phân quyền)
 
 # Thêm trợ lý ảo cho website
-# Thêm bảng phân tích, biểu đồ đánh giá 
 # Trang trí giao diện ở trang chủ 
+
+# Nút Checkout --> trang hướng dẫn sử dụng
+# Nút Authority --> trang web giới thiệu tác giả
+# Trang âm nhạc, phát nhạc trực tuyến 

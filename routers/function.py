@@ -1,6 +1,7 @@
 # Thư viện cho các hàm chức năng khác
 from fastapi import Request
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from passlib.context import CryptContext
 import models
 import jwt
@@ -54,3 +55,69 @@ def get_mean_star_for_book(id_book, db: Session):
     count_this_book_star = len(all_this_book_star)
     mean_this_book_star = round(total_this_book_star / count_this_book_star, 1) if count_this_book_star > 0 else 0.0
     return mean_this_book_star
+
+
+# Sách được truy cập nhiều nhất
+def bestsellerbook(db: Session):
+    most_borrowed_book = (
+        db.query(
+            models.BorrowBook.book_id,
+            models.Book.title,
+            func.count(models.BorrowBook.book_id).label('borrow_count')
+        ).join(models.Book, models.Book.id_book == models.BorrowBook.book_id)
+        .filter(models.Book.delete_flag == 0)
+        .group_by(models.BorrowBook.book_id)
+        .order_by(func.count(models.BorrowBook.book_id).desc())
+        .first()
+    )
+
+    # Kiểm tra xem sách nào được mượn nhiều nhất
+    if most_borrowed_book:
+        book_id, book_name, borrow_count = most_borrowed_book
+        return book_id, book_name, borrow_count
+    else:
+        return None, None, 0
+
+
+# Top những cuốn sách được đánh giá tốt nhất
+def highestbook(db: Session):
+    the_highest_books = (
+        db.query(
+            models.CommentBook.book_id,
+            models.Book.title,
+            func.avg(models.CommentBook.rate_book).label('average_rating')  # Tính trung bình đánh giá sao
+        )
+        .join(models.Book, models.Book.id_book == models.CommentBook.book_id)  # Kết hợp với bảng Book
+        .filter(models.Book.delete_flag == 0)  # Lọc sách chưa bị xóa
+        .group_by(models.CommentBook.book_id, models.Book.title)  # Nhóm theo book_id và title
+        .order_by(func.avg(models.CommentBook.rate_book).desc())  # Sắp xếp theo đánh giá sao trung bình giảm dần
+        .all()
+    )
+
+    # Kiểm tra nếu có sách nào được đánh giá
+    if the_highest_books:
+        # Trả về danh sách các sách được đánh giá tốt nhất
+        return [(book.book_id, book.title, round(book.average_rating, 1)) for book in the_highest_books]
+    else:
+        return []
+
+def chartplotseeing(db: Session):
+    the_highest_books = (
+        db.query(
+            models.CommentBook.book_id,
+            models.Book.title,
+            func.avg(models.CommentBook.rate_book).label('average_rating')  # Tính trung bình đánh giá sao
+        )
+        .join(models.Book, models.Book.id_book == models.CommentBook.book_id)  # Kết hợp với bảng Book
+        .filter(models.Book.delete_flag == 0)  # Lọc sách chưa bị xóa
+        .group_by(models.CommentBook.book_id, models.Book.title)  # Nhóm theo book_id và title
+        .order_by(models.CommentBook.book_id)
+        .all()
+    )
+
+    # Kiểm tra nếu có sách nào được đánh giá
+    if the_highest_books:
+        # Trả về danh sách các sách được đánh giá tốt nhất
+        return [(book.book_id, book.title, round(book.average_rating, 1)) for book in the_highest_books]
+    else:
+        return []

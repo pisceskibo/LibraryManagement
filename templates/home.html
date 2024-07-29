@@ -116,7 +116,7 @@
                                                 <h5 class="mb-2">Book</h5>
                                                 <p class="mb-0">All of the book in Library</p>
                                             </div>
-                                            <span class="badge bg-design rounded-pill ms-auto">14</span>
+                                            <span class="badge bg-design rounded-pill ms-auto">{{all_book|length}}</span>
                                         </div>
                                         <img src="static/images/another/bookseeing.png" class="custom-block-image img-fluid" alt="">
                                     </a>
@@ -144,7 +144,7 @@
                                         <div class="d-flex">
                                             <div>
                                                 <h5 class="mb-2">Borrow</h5>
-                                                <p class="mb-0">The number of borrowed book</p>
+                                                <p class="mb-0">The number of borrowed books</p>
                                             </div>
                                             <span class="badge bg-design rounded-pill ms-auto">100+</span>
                                         </div>
@@ -156,8 +156,6 @@
                     </div>
                 
                 
-
-
                     <div class="tab-pane fade" id="marketing-tab-pane" role="tabpanel" aria-labelledby="marketing-tab" tabindex="0">
                         <div class="row">
                             <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
@@ -168,7 +166,7 @@
                                                 <h5 class="mb-2">Employee</h5>
                                                 <p class="mb-0">All of the student in Library</p>
                                             </div>
-                                            <span class="badge bg-advertising rounded-pill ms-auto">30</span>
+                                            <span class="badge bg-advertising rounded-pill ms-auto">{{all_student|length}}</span>
                                         </div>
                                         <img src="static/images/another/studentseeing.png" class="custom-block-image img-fluid" alt="">
                                     </a>
@@ -223,7 +221,7 @@
                                             <span class="badge bg-music rounded-pill ms-auto">45</span>
                                         </div>
 
-                                        <img src="images/topics/undraw_Compose_music_re_wpiw.png" class="custom-block-image img-fluid" alt="">
+                                        <img src="#" class="custom-block-image img-fluid" alt="">
                                     </a>
                                 </div>
                             </div>
@@ -241,12 +239,12 @@
                                             <span class="badge bg-music rounded-pill ms-auto">45</span>
                                         </div>
 
-                                        <img src="images/topics/undraw_happy_music_g6wc.png" class="custom-block-image img-fluid" alt="">
+                                        <img src="#" class="custom-block-image img-fluid" alt="">
                                     </a>
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-6 col-12">
+                            <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
                                 <div class="custom-block bg-white shadow-lg">
                                     <a href="topics-detail.html">
                                         <div class="d-flex">
@@ -259,7 +257,7 @@
                                             <span class="badge bg-music rounded-pill ms-auto">20</span>
                                         </div>
 
-                                        <img src="images/topics/undraw_Podcast_audience_re_4i5q.png" class="custom-block-image img-fluid" alt="">
+                                        <img src="#" class="custom-block-image img-fluid" alt="">
                                     </a>
                                 </div>
                             </div>
@@ -339,7 +337,112 @@
 </section>
 <hr>
 
+
+<!-- Thống kê sách nhiều người truy cập nhất -->
+<section class="faq-section section-padding" id="section_4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12">
+                <h2 class="mb-4">Book Data Frequency</h2>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-5 col-12">
+                <img src="static/images/another/faq_graphic.jpg" class="img-fluid" alt="FAQs">
+            </div>
+
+            <div class="col-lg-6 col-12 m-auto">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            What is the Bestseller Book?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Cuốn sách được truy cập nhiều nhất trong thư viện là sách có mã <strong><a href="/books/detail_book?choice_book={{bestseller_id}}"> "{{bestseller_id}} - {{bestseller_name}}" </a></strong> với số lượng truy cập lên tới <strong>{{count_view}}+</strong> cao nhất từ trước đến nay.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Top books with the highest Rate?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Top những cuốn sách được người dùng đánh giá cao về chất lượng và lượng thông tin truyền tải tốt nhất từ trước đến nay.
+                                {% for highbook in all_highest_book %}
+                                <li>
+                                    {{highbook[2]}} ⭐ =>
+                                    <a href="/books/detail_book?choice_book={{highbook[0]}}">
+                                        "{{highbook[0]}} - {{highbook[1]}}"
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                <li> ... </li>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            What is the new book created?
+                        </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Cuốn sách mới được tạo gần đây nhất là 
+                                <strong>
+                                    <a href="/books/detail_book?choice_book={{new_created_book.id_book}}">
+                                        "{{new_created_book.id_book}} - {{new_created_book.title}}"
+                                    </a>
+                                </strong> bởi {{new_created_book.username_id}}
+                                và được tạo vào lúc {{new_created_book.insert_at.strftime('%Y-%m-%d %H:%M:%S')}}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Vẽ biểu đồ đánh giá sách -->
+<div style="font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0;">
+    <div class="chart-container" style="position: relative; display: flex; justify-content: space-around; align-items: flex-end; height: 300px; width: 80%; border-left: 2px solid #333; border-bottom: 2px solid #333; padding: 10px;">
+        <!-- Nhãn trục tung -->
+        <div class="y-axis-labels" style="position: absolute; left: -40px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; text-align: right;">
+            {% for i in range(5, 0, -1) %}
+                <div style="height: 20%; line-height: 1; padding-right: 5px;">{{ i }}</div>
+            {% endfor %}
+        </div>
+        
+        <!-- Cột biểu đồ -->
+        {% for book_id, title, average_rating in chart_books %}
+            <div class="bar" style="background-color: #61a5c2; width: 50px; height: {{ (average_rating / 5) * 100 }}%; margin: 0 10px; position: relative;">
+                <span style="position: absolute; bottom: 100%; transform: translateX(-50%); left: 50%;">{{ average_rating }}⭐</span>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Chú thích -->
+    <div class="labels" style="display: flex; justify-content: space-around; width: 80%;">
+        {% for book_id, title, average_rating in chart_books %}
+            <div class="label" style="width: 50px; text-align: center;">{{ book_id }}</div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+
+
 <!-- Nhà tài trợ -->
+<hr>
 <div style="text-align: center; background-color: rgb(197, 240, 240);">
     <h2>💎 Nhà sáng lập kim cương 💎</h2>
     <br>
@@ -355,6 +458,7 @@
     <br>
     <div style="text-align: center;">
       <h3> Tác giả: Tạ Quang Tùng </h3>
+      <br>
     </div>
 </div>
 <hr>
@@ -413,7 +517,9 @@
             </div>
         </div>
     </div>
+    <hr>
 </section>
+
 
 <hr>
 <div style="text-align: center;">
