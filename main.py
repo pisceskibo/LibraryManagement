@@ -1,9 +1,7 @@
 # Thư viện Backend Python
-from fastapi import FastAPI, Depends, Form, Request
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
 import models
-import jwt
-import datetime
 from routers import function
 
 # Thư viện giao diện
@@ -12,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 # Thư viện nhánh con API
-from routers import account, book, student, category, contact, borrow, comment
+from routers import account, book, student, category, contact, borrow, comment, authority
 
 
 # Cài đặt setting cho program
@@ -29,6 +27,7 @@ app.include_router(category.router)
 app.include_router(contact.router)
 app.include_router(borrow.router)
 app.include_router(comment.router)
+app.include_router(authority.router)
 
 
 # Trang chủ giao diện (trang '/home')

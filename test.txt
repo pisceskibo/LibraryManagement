@@ -1,4 +1,5 @@
 # Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, có quyền category, không có chức năng phân quyền)
+# Tạo bảng gửi yêu cầu cho User để trở thành Admin
 
 # Thêm trợ lý ảo cho website
 # Trang trí giao diện ở trang chủ 

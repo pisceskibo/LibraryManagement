@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+<!-- NỘI DUNG THAY ĐỔI -->
+{% block content %}
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-5 col-12 mb-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Homepage</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Profolio</li>
+                    </ol>
+                </nav>
+
+                <h2 class="text-white">IT Developer <br> Tạ Quang Tùng</h2>
+                <div class="d-flex align-items-center mt-5">
+                    <a href="#topics-detail" class="btn custom-btn custom-border-btn smoothscroll me-4">Read More</a>
+                    <a href="#top" class="custom-icon bi-bookmark smoothscroll"></a>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-12">
+                <div class="topics-detail-block bg-white shadow-lg">
+                    <img src="static/images/TQT.jpg" class="topics-detail-block-image img-fluid"
+                        style="object-fit: cover; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
+                        onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';" 
+                        onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<section class="topics-detail-section section-padding" id="topics-detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-12 m-auto">
+                <h2 class="mb-4">Giới thiệu chung</h2>
+                <p>Sinh viên năm cuối có đam mê và quan tâm đến lĩnh vực CNTT và phát triển phần mềm. 
+                    Thuộc tuýp người thích tìm tòi, sáng tạo và có những ý tưởng khi lên kế hoạch để giải quyết vấn đề xung quanh công việc. 
+                    Đang tìm kiếm một vị trí phù hợp với năng lực tại công ty có các đề tài dự án hấp dẫn, nơi mà hiệu suất làm việc được công nhận và khen thưởng xứng đáng. 
+                    Có mong muốn định hướng làm kỹ sư phát triển phần mềm hoặc Lập Trình viên Python FullStack.</p>
+                
+                <blockquote>
+                    <i> "Tuy không quá nổi bật, nhưng cũng rất đặc biệt" </i>
+                </blockquote>
+
+                <div class="row my-4">
+                    <div class="col-lg-6 col-md-6 col-12">
+                        <img src="static/images/TQT5.jpg" class="topics-detail-block-image img-fluid"
+                        style="object-fit: cover; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
+                        onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';" 
+                        onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-12">
+                        <img src="static/images/TQT4.png" class="topics-detail-block-image img-fluid"
+                        style="object-fit: cover; transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;" 
+                        onmouseover="this.style.transform='scale(1.1)'; this.style.filter='brightness(80%)';" 
+                        onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(100%)';">
+                    </div>
+                </div>
+                <p>Hiện tại, Quang Tùng đang là thực tập sinh Backend Python tại công ty Rikkeisoft nhằm để cải thiện và nâng cao kỹ năng chuyên môn.</p>
+                <br>
+            </div>
+                
+            <div class="accordion" id="accordionExample" style="max-width: 80%; margin: 0 auto;">
+                <!-- Thông tin cá nhân -->
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h5> 1. Thông tin cá nhân: </h5>
+                        </button>
+                    </h4>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul>
+                                <li>Fullname: Tạ Quang Tùng (Kibo)</li>
+                                <li>Date of birth: 06/03/2003</li>
+                                <li>Country: Hà Nội</li>
+                                <li>Major: Mathematics and Computer Science</li>
+                                <li>School: Hanoi University of Science (HUS - VNU)</li>
+                                <li>Company: Rikkeisoft Company</li>
+                                <li>Role: Backend Developer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Trình độ học vấn -->
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <h5> 2. Trình độ học vấn: </h5>
+                        </button>
+                    </h4>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <p>
+                                Sinh viên chuyên ngành Toán Tin của trường Đại học Khoa học Tự nhiên - Đại học Quốc gia Hà Nội.
+                                Áp dụng kiến thức cơ bản Toán học và Tin học vào trong phát triển phần mềm Website.
+                                Sử dụng thành thạo các ngôn ngữ lập trình Backend như: Python, Java, Pascal, R, ... cùng với
+                                việc xây dựng giao diện kết hợp một số thuật toán.
+                            </p>
+                            <div style="text-align: center;">
+                                <img src="static/images/programming_languages.jpg" style="max-width: 90%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Ý tưởng dự án Library -->
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <h5> 3. Ý tưởng dự án Library: </h5>
+                        </button>
+                    </h4>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <!-- Nội dung về ý tưởng dự án -->
+                            <p>Nội dung chi tiết về ý tưởng dự án Library của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</section>
+
+
+<section class="section-padding section-bg">
+    <div class="container">
+        <div class="row justify-content-center">
+
+            <div class="col-lg-5 col-12">
+                <img src="static/images/items/finance.png" class="newsletter-image img-fluid" alt="">
+            </div>
+
+            <div class="col-lg-5 col-12 subscribe-form-wrap d-flex justify-content-center align-items-center">
+                <form class="custom-form subscribe-form" action="#" method="post" role="form">
+                    <h4 class="mb-4 pb-2">Join as Admin Role</h4>
+                    {% if request.cookies.get('token') %}
+                    {% if user.role == 0 %}
+                    <input type="email" name="subscribe-email" id="subscribe-email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email Address" required="">
+                    <div class="col-lg-12 col-12">
+                        <button type="submit" class="form-control">Subscribe</button>
+                    </div>
+                    {% else %}
+                    <div class="col-lg-12 col-12">
+                        <button type="submit" class="form-control">
+                            <a href="/books?bookview=0"> Trải nghiệm ngay </a>
+                        </button>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="col-lg-12 col-12">
+                        <button type="submit" class="form-control">
+                            <a href="/login"> Login your Account </a>
+                        </button>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

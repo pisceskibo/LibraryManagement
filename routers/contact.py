@@ -26,7 +26,7 @@ async def contact_form(request: Request, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    return templates.TemplateResponse("contact.html", {"request": request, 
+    return templates.TemplateResponse("references/contact.html", {"request": request, 
                                                        "mean_star": mean_star, 
                                                        "all_category2": all_category2})
 
@@ -76,6 +76,6 @@ async def sending_email(request: Request, sending_by_name: str = Form(), sending
     # Thoát exit
     server.quit()
     
-    return templates.TemplateResponse("contact.html", {"request": request, 
+    return templates.TemplateResponse("references/contact.html", {"request": request, 
                                                        "mean_star": mean_star,
                                                        "success_message": "Gửi email thành công!"})
