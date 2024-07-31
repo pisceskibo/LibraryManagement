@@ -42,7 +42,6 @@ async def edit_comment(request: Request, id_choice: int = Form(), description: s
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
             else:
-                
                 your_comment_choice = your_comment_choice[0]
                 your_comment_choice.description_reviewer = description
                 your_comment_choice.rate_book = rate
@@ -57,7 +56,6 @@ async def edit_comment(request: Request, id_choice: int = Form(), description: s
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2,
                                                                  "success_message": "Sửa bình luận thành công!"})
-
         except:
             return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
@@ -143,7 +141,7 @@ async def delete_comment(request: Request, id_choice: int = Form(),
                                                                  "all_category2": all_category2,
                                                                  "success_message": "Xóa bình luận thành công!"})
         except:
-            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else:
@@ -181,7 +179,7 @@ async def get_delete_comment(request: Request, id_choice: Optional[int] = None,
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         except:
-            return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
     else: 

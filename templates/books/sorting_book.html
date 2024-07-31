@@ -162,16 +162,13 @@
                 </table>
 
                 {% else %}
-                <!-- Chức năng hiển thị sách -->
-
+                <!-- Chức năng hiển thị sách sau khi sắp xếp -->
                 <div class="container text-center bg-body-secondary">
-
                     <div class="row">
                         {% for book in books %}
                         <!-- Thực hiện vòng lặp từng sinh viên -->
                         <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                             <div class="card" style="width: 18rem;">
-
                                 <!-- Responsive Image -->
                                 {% if book and book.image_book%}
                                 <img src="/static/media/{{book.image_book}}" class="card-img-top"
@@ -207,10 +204,8 @@
                         </div>
                         {% endfor %}
                     </div>
-
                 </div>
                 {% endif %}
-
             </div>
         </div>
     </div>

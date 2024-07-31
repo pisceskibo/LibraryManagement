@@ -10,18 +10,17 @@
         <div class="row">
 
             <div class="col-lg-8 col-12 mx-auto">
-                <h1 class="text-white text-center"> Danh sách các sinh viên </h1>
-                <h6 class="text-center"> Student List </h6>
+                <h1 class="text-white text-center"> Danh sách các sinh viên theo quyền </h1>
+                <h6 class="text-center"> Student Role List </h6>
 
-                <form action="/users/search_students" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
+                <form action="/users/search_students?view={{view}}" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
                     role="search">
+                    <input type="hidden" name="view" value={{view}}>
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1">
                         </span>
-
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Search for something..." aria-label="Search">
-
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -31,24 +30,38 @@
     </div>
 </section>
 
-
-<!-- Chức năng tìm sinh viên theo quyền -->
-<div style="display: flex; justify-content: space-between; align-items: center; background-color: #66FFCC; padding: 10px;">
-    <div class="col-md-6">
-        <div class="dataTables_length" id="DataTables_Table_0_length">
-            <label> <b>Total User: {{total_this_user}} students</b></label>
+{% if view == 0 %}
+<div style="background-color: #66FFCC; padding: 10px;">
+    <!-- Cách hiển thị lên giao diện -->
+    <div class="button-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Bên trái -->
+        <div style="display: flex; align-items: center;">
+            <button class="btn btn-primary button" style="margin-right: 10px;">
+                <a href="/users?view=0" style="color: inherit; text-decoration: none;">
+                    <i class="bi bi-grid"></i>
+                </a>
+            </button>
+            <button class="btn btn-light button">
+                <a href="/users?view=1" style="color: inherit; text-decoration: none;">
+                    <i class="bi bi-list"></i>
+                </a>
+            </button>
         </div>
-    </div>
 
-    <div class="dropdown" style="padding-right: 10px;">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Role by:
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="/users/sort_user?choice=User">User</a></li>
-            <li><a class="dropdown-item" href="/users/sort_user?choice=Admin">Admin</a></li>
-            <li><a class="dropdown-item" href="/users/sort_user?choice=SuperAdmin">SuperAdmin</a></li>
-        </ul>
+        <!-- Ở giữa -->
+        <div style="text-align: center;">
+            <label><b>The number of Role Users: {{ total_this_user }} students</b></label>
+        </div>
+
+        <!-- Bên phải (lọc sinh viên theo quyền) --> 
+        <div class="dropdown" style="text-align: right;">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Role by:</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/users/sort_user?choice=User">User</a></li>
+                <li><a class="dropdown-item" href="/users/sort_user?choice=Admin">Admin</a></li>
+                <li><a class="dropdown-item" href="/users/sort_user?choice=SuperAdmin">SuperAdmin</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -64,7 +77,6 @@
                     <!-- Thực hiện vòng lặp từng sinh viên -->
                     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
                         <div class="card" style="width: 18rem;">
-
                             <!-- Responsive Image -->
                             {% if student.avatar %}
                                 <img src="/static/media/{{student.avatar}}" class="card-img-top"
@@ -94,7 +106,6 @@
                                 <a href="detail_student?username_choice={{student.username}}" class="btn btn-primary">Go somewhere</a>
                                 {% endif %}
                             </div>
-
                         </div>
                     </div>
                     {% endfor %}
@@ -104,6 +115,96 @@
         </div>
     </div>
 </section>
+{% else %}
+<div style="display: flex; justify-content: space-between; align-items: center; background-color: #66FFCC; padding: 10px;">
+    <div class="col-md-6">
+        <div class="dataTables_length" id="DataTables_Table_0_length">
+            <label><b>The number of Role Users: {{total_this_user}} students</b></label>
+        </div>
+    </div>
+
+    <div class="dropdown" style="padding-right: 10px;">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Role by:
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/users/sort_user?view={{view}}&choice=User">User</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?view={{view}}&choice=Admin">Admin</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?view={{view}}&choice=SuperAdmin">SuperAdmin</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- Chức năng hiển thị sinh viên -->
+<div class="card card-table comman-shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row">
+                    <!-- Cách hiển thị lên giao diện -->
+                    <div class="button-container">
+                        <button class="btn btn-light button">
+                            <a href="/users?view=0">
+                                <i class="bi bi-grid"></i>
+                            </a>
+                        </button>
+                        <button class="btn btn-primary button">
+                            <a href="/users?view=1">
+                                <i class="bi bi-list"></i>
+                            </a>
+                        </button>
+                    </div>        
+                </div>
+                <br>
+
+                <!-- Tạo bảng dữ liệu -->
+                <table
+                    class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                    id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+                    <thead class="student-thread">
+                        <tr style="text-align: center; font-size:larger;">
+                            {% if request.cookies.get('token') %}
+                                <th style="width: 100px;">Role</th>
+                            {% endif %}
+                            <th rowspan="1" colspan="1"
+                                aria-label="ID: activate to sort column ascending">STT</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Username: activate to sort column ascending">Username</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Fullname: activate to sort column ascending">Fullname</th>
+                            <th rowspan="1" colspan="1"
+                                aria-label="Email: activate to sort column ascending">Email</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <form action="">
+                        {% for student in this_user %}
+                            <tr class="{% if loop.index is even %} even {% else %}odd{% endif %}">
+                                {% if request.cookies.get('token') %}
+                                <td style="text-align: center;">
+                                    <button type="button" class="btn btn-info">
+                                        <a href="get_admin?finded_username={{student.username}}" style="color: aliceblue;"> <b>🖍 Edit</b> </a>
+                                    </button>
+                                </td>
+                                {% endif %}
+                                <td style="text-align: center;">{{loop.index}}</td>
+                                <td style="text-align: center;"> <a href="detail_student?username_choice={{student.username}}">{{ student.username }}</a></td>
+                                <td style="text-align: center;">{{ student.fullname }}</td>
+                                <td style="text-align: center;">{{ student.email }}</td>
+                            </tr>
+                        {% endfor %}
+                        </form>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endif %}
 
 <hr>
 <div style="text-align: center;">

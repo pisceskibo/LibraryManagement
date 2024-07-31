@@ -49,7 +49,7 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             else:
                 category_taken = "default_category_id"
             
-            
+
             # Ảnh và file cho sách
             book_image_path = None
             book_pdf_path = None
@@ -106,6 +106,7 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
                                                                 "mean_star": mean_star, 
                                                                 "error": "Nhập thiếu dữ liệu thông tin sách!"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Chưa có tài khoản đăng nhập!"})
@@ -123,6 +124,7 @@ async def get_login(request: Request, token: str = Cookie(None), db: Session = D
                                                             "mean_star": mean_star, 
                                                             "all_category2": all_category2})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star})
     
@@ -188,7 +190,7 @@ async def search_category_book(request: Request, searching: str, sortby: str = "
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     this_category_by_searching = db.query(models.Category).filter(models.Category.delete_flag != 1,
                                                                   models.Category.category_id == searching).first()
-    
+
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
     
     books = db.query(models.Book).filter(
@@ -209,43 +211,6 @@ async def search_category_book(request: Request, searching: str, sortby: str = "
         "mean_star": mean_star,
         "this_category_by_searching": this_category_by_searching,
         "all_category2": all_category2})
-
-
-# Gộp các chức năng tìm kiếm, sắp xếp, phân trang (đang hoàn thiện)
-@router.get('/books/extension')
-async def search_and_sort(searching_title_book: str = None, searching_author: str = None, searching_category: str = None,
-                          searching: str = None, sortby: str = None, 
-                          limit: int = Query(10, gt=0),  # Số lượng sách tối đa mỗi trang, mặc định là 5
-                          offset: int = Query(0, ge=0),  # Vị trí bắt đầu của trang, mặc định là 0
-                          db: Session = Depends(models.get_db)):
-    query = db.query(models.Book).filter(models.Book.delete_flag == 0)
-    
-    # Chức năng tìm kiếm
-    if searching_title_book:
-        query = query.filter(models.Book.title == searching_title_book)
-    if searching_author:
-        query = query.filter(models.Book.author == searching_author)
-    if searching_category:
-        query = query.filter(models.Book.category_id == searching_category)
-    
-    if searching != None:
-        query = query.filter(
-            (models.Book.id_book.contains(searching)) | 
-            (models.Book.title.contains(searching)) | 
-            (models.Book.author.contains(searching)) | 
-            (models.Book.year.contains(searching)) |
-            (models.Book.category_id.contains(searching)))
-    
-    # Chức năng sắp xếp
-    if sortby == "year":
-        query = query.order_by(models.Book.year)
-    elif sortby == "id":
-        query = query.order_by(models.Book.id_book)
-    
-    # Chức năng phân trang
-    books = query.offset(offset).limit(limit).all()
-    
-    return books
 
     
 # Chỉnh sửa sách đối với những sách của User (khác sách User tạo thì không thể sửa)
@@ -318,11 +283,12 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền sửa sách!"}) 
         except:
-            # Chưa đăng nhập nên không vào được
+            # Đăng nhập sai 
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
+        # Chưa đăng nhập nên không vào được
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
@@ -359,6 +325,7 @@ async def get_edit(request: Request, id: Optional[str] = None,
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy sách cần sửa!"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -401,12 +368,13 @@ async def delete_book(request: Request, id: str = Form(), db: Session = Depends(
                 return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
-
         except:
+            # Xóa sách không hợp lệ (thông tin sai)
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
@@ -424,16 +392,18 @@ async def get_delete(request: Request, id: Optional[str] = None, token: str = Co
                                                                    "mean_star": mean_star, 
                                                                    "all_category2": all_category2})
         else:
+            # Không thấy sách cần xóa
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
 
 
-# Hiển thị chi tiết thông tin từng cuốn sách
+# Hiển thị chi tiết thông tin từng cuốn sách (bao gồm cả Comment)
 @router.get('/books/detail_book', response_class=HTMLResponse)
 async def get_book_detail(request: Request, token: str = Cookie(None), choice_book: Optional[str] = None, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
@@ -503,7 +473,7 @@ async def get_book_detail(request: Request, token: str = Cookie(None), choice_bo
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
 
-# Chức năng bình luận sách
+# Chức năng bình luận sách cho Users (bao gồm cả xem chi tiết sách)
 @router.post('/books/detail_book')
 async def comment_this_book(request: Request,  
                             choice_book: str = Form(), 
@@ -530,10 +500,12 @@ async def comment_this_book(request: Request,
     
             return RedirectResponse(url=f"/books/detail_book?choice_book={choice_book}", status_code=303)
         except:
+            # Không có quyền truy cập trang
             return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                             "mean_star": mean_star, 
                                                                             "error": "Page not found"})
     else:
+        # Không có tài khoản nên không thể bình luận sách
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})

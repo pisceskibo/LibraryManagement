@@ -13,15 +13,15 @@
                 <h1 class="text-white text-center"> Danh sách các sinh viên </h1>
                 <h6 class="text-center"> Student List </h6>
 
-                <form action="/users/search_students" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
+                <form action="/users/search_students?view=0" method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5"
                     role="search">
+                    <input type="hidden" name="view" value=0>
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bi-search" id="basic-addon1">
                         </span>
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Search for something..." aria-label="Search">
-
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -33,15 +33,27 @@
 
 
 <!-- Chức năng tìm sinh viên theo quyền -->
-<div style="background-color: #66FFCC;">
-    <div class="dropdown" style="text-align: right; padding-right: 10px;">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-            aria-expanded="false"> Role by:
+<div style="background-color: #66FFCC; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <!-- Cách hiển thị lên giao diện -->
+    <div class="button-container" style="display: flex;">
+        <button class="btn btn-primary button" style="margin-right: 10px;">
+            <a href="/users?view=0" style="color: inherit; text-decoration: none;">
+                <i class="bi bi-grid"></i>
+            </a>
         </button>
+        <button class="btn btn-light button">
+            <a href="/users?view=1" style="color: inherit; text-decoration: none;">
+                <i class="bi bi-list"></i>
+            </a>
+        </button>
+    </div>
+
+    <div class="dropdown" style="text-align: right;">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Role by:</button>
         <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="/users/sort_user?choice=User">User</a></li>
-            <li><a class="dropdown-item" href="/users/sort_user?choice=Admin">Admin</a></li>
-            <li><a class="dropdown-item" href="/users/sort_user?choice=SuperAdmin">SuperAdmin</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?view=0&choice=User">User</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?view=0&choice=Admin">Admin</a></li>
+            <li><a class="dropdown-item" href="/users/sort_user?view=0&choice=SuperAdmin">SuperAdmin</a></li>
         </ul>
     </div>
 </div>
@@ -52,7 +64,6 @@
     <div class="container">
         <div class="container text-center bg-body-secondary">
             <div style="padding-top: 110px;">
-
                 <div class="row">
                     {% for student in all_users %}
                     <!-- Thực hiện vòng lặp từng sinh viên -->
@@ -88,12 +99,10 @@
                                 <a href="users/detail_student?username_choice={{student.username}}" class="btn btn-primary">Go somewhere</a>
                                 {% endif %}
                             </div>
-
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-
             </div>
         </div>
     </div>
@@ -104,17 +113,17 @@
     <nav aria-label="Page navigation example" style="display: inline-block;">
         <ul class="pagination">
             <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                <a class="page-link" href="/users?page={{ page - 1 }}" aria-label="Previous">
+                <a class="page-link" href="/users?view=0&page={{ page - 1 }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             {% for num in range(1, total_pages + 1) %}
             <li class="page-item {% if num == page %}active{% endif %}">
-                <a class="page-link" href="/users?page={{ num }}">{{ num }}</a>
+                <a class="page-link" href="/users?view=0&page={{ num }}">{{ num }}</a>
             </li>
             {% endfor %}
             <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                <a class="page-link" href="/users?page={{ page + 1 }}" aria-label="Next">
+                <a class="page-link" href="/users?view=0&page={{ page + 1 }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

@@ -36,7 +36,6 @@
                             <div class="form-floating mb-3">
                                 <input type="text" name="finded_username" id="finded_username" class="form-control" required=""
                                     placeholder="Username" value="{{finded_username}}" readonly/>
-
                                 <label for="finded_username"> Username </label>
                             </div>
 
@@ -52,7 +51,6 @@
                                 </select>
                                 <label for="floatingSelect">Role</label>
                             </div>
-
                             <button type="submit" class="form-control btn btn-primary"> Update Role </button>
                             <button type="button" class="form-control btn btn-danger mt-3" style="color:aliceblue; font-size: 20px;"> <b> <a href="/users"> Cancel </a></b> </button>
                         </form>
@@ -61,13 +59,12 @@
                             <div class="alert alert-success mt-3" role="alert">
                                 <script type="text/javascript">
                                     alert('{{ success_message }}');
-                                    window.location.href = "/users"; // Redirect to users page
+                                    window.location.href = "/users?view=0"; // Redirect to users page
                                 </script>
                             </div>
                         {% endif %}
                         
                     </div>
-                    
                 </div>
             </div>
         </div>

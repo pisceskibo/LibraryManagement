@@ -46,7 +46,6 @@ async def create_category(request: Request, category_id: str = Form(), category_
                 new_category = models.Category(category_id=category_id, category_name=category_name, 
                                             insert_at=insert_at, insert_id=insert_id, update_at=update_at, update_id=update_id,
                                             delete_at=delete_at, delete_id=delete_id, delete_flag=delete_flag)
-                
                 db.add(new_category)
                 db.commit()
                 db.refresh(new_category)
@@ -55,6 +54,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
                                                                         "mean_star": mean_star, 
                                                                         "success": "Category created successfully!"})
             else:
+                # Không có quyền tạo thể loại mới
                 return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có quyền thêm thể loại sách!"})
@@ -63,6 +63,7 @@ async def create_category(request: Request, category_id: str = Form(), category_
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page not found"})
     else:
+        # Chưa có tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page not found"})
@@ -86,9 +87,10 @@ async def get_create_category(request: Request, token: str = Cookie(None), db: S
         else:
             return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                          "mean_star": mean_star, 
-                                                                         "error": "Không có quyền thêm sách!"})
+                                                                         "error": "Không có quyền thêm thể loại sách!"})
     else:
-        return templates.TemplateResponse("errors/error_template.html", {"request": request, "mean_star": mean_star})
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+                                                                         "mean_star": mean_star})
     
 
 # Cập nhật thông tin thể loại theo id_category
@@ -105,12 +107,13 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             
             user = function.get_user(db, username)
             if user.role != 0:
-                category = db.query(models.Category).filter(models.Category.category_id == choice_category_id).first()
+                category = db.query(models.Category).filter(models.Category.category_id == choice_category_id,
+                                                            models.Category.delete_flag == 0).first()
             else:
                 return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
-                                                                             "error": "Không có quyền sửa sách!"})
-
+                                                                             "error": "Không có quyền sửa thể loại sách!"})
+            
             if category:
                 category.category_name = new_category_name
                 category.update_at = datetime.datetime.now()
@@ -125,18 +128,19 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
                         "this_category": category,
                         "choice_category_id": choice_category_id,
                         "mean_star": mean_star
-                    })
-                
+                    }) 
             else:
                 # "Không có thể loại sách '{category.category_id}' cần thay đổi"
                 return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                           "mean_star": mean_star, 
                                                                           "error": "Page Not Found"})
         except:
+            # Tài khoản sai
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page Not Found"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -173,14 +177,16 @@ async def get_edit_category(request: Request, choice_category_id: Optional[str] 
                         "mean_star": mean_star, 
                         "all-category2": all_category2})
             else:
-                return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
+                return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Không có thể loại sách này!"})
         except:
+            # Tài khoản bị sai
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
                                                                       "error": "Page Not Found"})
     else:
+        # Chưa đăng nhập tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})

@@ -47,7 +47,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="/users"> Student </a>
+                                <a class="nav-link click-scroll" href="/users?view=0"> Student </a>
                             </li>
 
                             <li class="nav-item">
@@ -79,8 +79,7 @@
                                     <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{request.cookies.get('username')}}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li> <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{
-                                        request.cookies.get('username') }}</li>
+                                    <li> <a href="/profile" class="navbar-icon bi-person smoothscroll"> </a> {{ request.cookies.get('username') }}</li>
                                     <li><a class="dropdown-item" href="/logout"> Logout </a></li>
                                 </ul>
                             </div>
@@ -137,7 +136,7 @@
                     </li>
 
                     <li class="site-footer-link-item">
-                        <a href="/users" class="site-footer-link"> Student </a>
+                        <a href="/users?view=0" class="site-footer-link"> Student </a>
                     </li>
 
                     <li class="site-footer-link-item">

@@ -34,9 +34,16 @@
                             </button>
                             <button class="btn btn-primary button">
                                 <a href="/books/all_my_books">
-                                    <i class="bi bi-grid"></i>
+                                    <i class="bi bi-save"></i>
                                 </a>
                             </button>
+                            {% if user.role == 2 %}
+                            <button class="btn btn-light button">
+                                <a href="/books/borrows">
+                                    <i class="bi bi-trash"></i> JSON
+                                </a>
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                     
@@ -47,7 +54,6 @@
                             </label>
                         </div>
                     </div>
-                
                 </div>
 
                 <!-- Tạo bảng dữ liệu -->

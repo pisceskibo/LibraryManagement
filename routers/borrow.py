@@ -49,7 +49,6 @@ async def borrowing_book(request: Request, borrow_book_id: str = Form(), token: 
                 new_borrow_book = models.BorrowBook(book_id = borrowed_book_id, username_id=borrowed_book_username,
                                                     borrow_at=borrowed_book_at, borrow_predict=borrowed_book_predict, borrow_actual=borrowed_book_actual,
                                                     status=borrowed_status)     
-
                 db.add(new_borrow_book)
                 db.commit()
                 db.refresh(new_borrow_book)
@@ -67,10 +66,12 @@ async def borrowing_book(request: Request, borrow_book_id: str = Form(), token: 
                                                                              "mean_star": mean_star, 
                                                                              "error": "Page not found"})
         except:
+            # Tài khoản bị sai
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
     else:
+        # Chưa có tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -88,6 +89,7 @@ async def get_borrowing_book(request: Request, borrow_book_id: Optional[str] = N
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
     else:
+        # Chưa có tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -108,7 +110,7 @@ async def restore_bookstore(request: Request, borrow_book_id: str = Form(), toke
             find_book_to_restore = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
                                                                       models.BorrowBook.status == 1,
                                                                       models.BorrowBook.username_id == username).all()
-
+            
             if find_book_to_restore != []:
                 find_book_to_restore = find_book_to_restore[0]
                 find_book_to_restore.borrow_actual = datetime.datetime.now()
@@ -128,7 +130,6 @@ async def restore_bookstore(request: Request, borrow_book_id: str = Form(), toke
                                                                  "success_message": "Trả sách thành công!"})
             else:
                 # return "Sách này chưa được mượn"
-                print("Lỗi")
                 return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -162,6 +163,7 @@ async def get_restore_book(request: Request, borrow_book_id: Optional[str] = Non
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
     else:
+        # Chưa có tài khoản
         return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -226,13 +228,14 @@ async def show_all_my_book(request: Request, token: str = Cookie(None), db: Sess
         # Decode
         decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
         username = decodeJSON["username"]
+        user = function.get_user(db, username)
 
         my_book = db.query(models.Book).filter(models.Book.insert_id == username,
                                                models.Book.delete_flag == 0).order_by(models.Book.id_book).all()
-        
         total_my_book = len(my_book)
         
         return templates.TemplateResponse("books/bookme.html", {"request": request, 
+                                                                 "user": user,
                                                                  "my_book": my_book,
                                                                  "total_my_book": total_my_book, 
                                                                  "mean_star": mean_star, 
@@ -278,7 +281,6 @@ async def restore_bookstore(request: Request, username_res: str = Form(), borrow
                                                                     "success_message": "Trả sách thành công!"})
                 else:
                     # return "Sách này chưa được mượn"
-                    print("Lỗi")
                     return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                     "mean_star": mean_star, 
                                                                     "error": "Page Not Found"})
@@ -288,6 +290,7 @@ async def restore_bookstore(request: Request, username_res: str = Form(), borrow
                                                                              "error": "Page not found"})
         except:
             # return "Sai tên đăng nhập hoặc mật khẩu"
+            print("Supper erro")
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                   "mean_star": mean_star, 
                                                                   "error": "Page Not Found"})
@@ -327,34 +330,8 @@ async def get_restore_book(request: Request, username_res: str, borrow_book_id: 
                                                                   "error": "Page Not Found"})
 
 
-
-# Hiển thị lịch sử mượn trả sách (chỉ có SuperAdmin có quyền theo dõi)
+# Hiển thị lịch sử mượn trả sách (chỉ có SuperAdmin có quyền theo dõi) --> Dạng JSON
 @router.get('/books/borrows')
 async def show_all_borrowed(db: Session = Depends(models.get_db)):
     all_borrowed_books = db.query(models.BorrowBook).all()
     return all_borrowed_books
-
-# Kiểm tra trạng thái sách (đang mượn và chưa được mượn)
-@router.get('/books/show_status_books')
-async def show_status(encoded_jwt: str, looking_for_book: str = Form(), db: Session = Depends(models.get_db)):
-    if encoded_jwt != "":
-        try:
-            # Decode
-            decodeJSON = jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
-            username = decodeJSON["username"]
-            
-            query_status = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == looking_for_book,
-                                                              models.BorrowBook.username_id == username).order_by(models.BorrowBook.id.desc()).first()
-            if query_status:
-                # return query_status
-                if query_status.status == 1:
-                    return f"Sách có mã {looking_for_book} đang được mượn"
-                else:
-                    return f"Sách có mã {looking_for_book} chưa được mượn"
-            else:
-                return f"Sách có mã {looking_for_book} chưa được mượn"
-        except:
-            return "Sai tên đăng nhập hoặc mật khẩu"
-    else:
-        return "Đăng nhập bị lỗi"
-    

@@ -50,7 +50,6 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
                 return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
                                                                              "error": f"Không có quyền thay đổi user/admin cho {finded_username}!"})
-
         except:
             return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
@@ -257,7 +256,7 @@ async def get_delete(request: Request, token: str = Cookie(None), db: Session = 
         
 # Tìm kiếm sinh viên (Customer)
 @router.get('/users/search_students', response_class=HTMLResponse)
-async def search_student(searching: str, request: Request, db: Session = Depends(models.get_db)):
+async def search_student(view: int, searching: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
@@ -273,6 +272,7 @@ async def search_student(searching: str, request: Request, db: Session = Depends
     return templates.TemplateResponse("students/searching_users.html", {
         "request": request, 
         "students": students, 
+        "view": view,
         "searching": searching,
         "total_students": total_students,
         "mean_star": mean_star, 
@@ -281,7 +281,7 @@ async def search_student(searching: str, request: Request, db: Session = Depends
 
 # Lọc sinh viên theo quyền hạn
 @router.get('/users/sort_user', response_class=HTMLResponse)
-async def search_student_role(choice: str, request: Request, db: Session = Depends(models.get_db)):
+async def search_student_role(view: int, choice: str, request: Request, db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
 
@@ -298,6 +298,7 @@ async def search_student_role(choice: str, request: Request, db: Session = Depen
 
     return templates.TemplateResponse("students/student_role.html", {
         "request": request,
+        "view": view,
         "this_user": this_user,
         "total_this_user": total_this_user,
         "mean_star": mean_star, 
@@ -306,21 +307,37 @@ async def search_student_role(choice: str, request: Request, db: Session = Depen
 
 # Hiển thị tất cả danh sách người dùng (kết hợp phân trang)
 @router.get('/users', response_class=HTMLResponse)
-async def get_all_users(request: Request, page: int = Query(1, gt=0), page_size: int = Query(8, gt=0), db: Session = Depends(models.get_db)):
+async def get_all_users(request: Request, view: int, page: int = Query(1, gt=0), page_size: int = Query(8, gt=0), page_size2: int = Query(10, gt=0), db: Session = Depends(models.get_db)):
     mean_star = function.get_mean_star(db)
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
-    offset = (page - 1) * page_size
-    all_users = db.query(models.User).filter(models.User.delete_flag == 0).order_by(models.User.username).offset(offset).limit(page_size).all()
-    
-    total_users = db.query(models.User).filter(models.User.delete_flag == 0).count()
-    total_pages = (total_users + page_size - 1) // page_size    # Tinh tổng số trang sẽ có
-    
-    return templates.TemplateResponse("students/student_list.html", {
-        "request": request, 
-        "all_users": all_users, 
-        "mean_star": mean_star,
-        "page": page,
-        "total_users": total_users,
-        "total_pages": total_pages, 
-        "all_category2": all_category2})
+    if view == 0:
+        offset = (page - 1) * page_size
+        all_users = db.query(models.User).filter(models.User.delete_flag == 0).order_by(models.User.username).offset(offset).limit(page_size).all()
+        
+        total_users = db.query(models.User).filter(models.User.delete_flag == 0).count()
+        total_pages = (total_users + page_size - 1) // page_size    # Tinh tổng số trang sẽ có
+        
+        return templates.TemplateResponse("students/student_list.html", {
+            "request": request, 
+            "all_users": all_users, 
+            "mean_star": mean_star,
+            "page": page,
+            "total_users": total_users,
+            "total_pages": total_pages, 
+            "all_category2": all_category2})
+    else:
+        offset = (page - 1) * page_size2
+        all_users = db.query(models.User).filter(models.User.delete_flag == 0).order_by(models.User.username).offset(offset).limit(page_size2).all()
+        
+        total_users = db.query(models.User).filter(models.User.delete_flag == 0).count()
+        total_pages = (total_users + page_size2 - 1) // page_size2    # Tinh tổng số trang sẽ có
+        
+        return templates.TemplateResponse("students/student_doc.html", {
+            "request": request, 
+            "all_users": all_users, 
+            "mean_star": mean_star,
+            "page": page,
+            "total_users": total_users,
+            "total_pages": total_pages, 
+            "all_category2": all_category2})

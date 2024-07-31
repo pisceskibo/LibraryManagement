@@ -34,16 +34,23 @@
                             </button>
                             <button class="btn btn-light button">
                                 <a href="/books/all_my_books">
-                                    <i class="bi bi-grid"></i>
+                                    <i class="bi bi-save"></i>
                                 </a>
                             </button>
+                            {% if user.role == 2 %}
+                            <button class="btn btn-light button">
+                                <a href="/books/borrows">
+                                    <i class="bi bi-trash"></i> JSON
+                                </a>
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                     
                     <!-- Tổng số sách của thư viện -->
                     <div class="col-md-6">
                         <div class="dataTables_length" id="DataTables_Table_0_length">
-                            <label> <b> Total Book:
+                            <label> <b> Total Borrowing Book:
                                 {% if user.role != 2 %}
                                     {{total_borrowing_books}} books 
                                 {% else %}
@@ -109,7 +116,7 @@
                                 <td style="text-align: center;">{{ book.borrow_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                 <td style="text-align: center;">
                                     {% set remaining_days = (book.borrow_predict - current_time).days %}
-                                            {{ remaining_days }} ngày
+                                    {{ remaining_days }} ngày
                                 </td>
                                 <td style="text-align: center;">
                                     {% if remaining_days > 0 %}

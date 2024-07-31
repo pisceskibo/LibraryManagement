@@ -21,7 +21,6 @@
 
                         <input name="searching" type="search" class="form-control" id="searching"
                             placeholder="Searching for something..." aria-label="Search Anywhere" value="{{searching}}">
-
                         <button type="submit" class="form-control">Search</button>
                     </div>
                 </form>
@@ -44,12 +43,12 @@
 {% endif %}
 
 <!-- Tổng số thể loại sách của thư viện -->
-    <div class="col-md-6" style="padding-bottom: 10px;">
-        <div class="dataTables_length" id="DataTables_Table_0_length">
-            <label> <b> Total Searched Category: {{total_searching_category}} categories </b>
-            </label>
-        </div>
+<div class="col-md-6" style="padding-bottom: 10px;">
+    <div class="dataTables_length" id="DataTables_Table_0_length">
+        <label> <b> Total Searched Category: {{total_searching_category}} categories </b>
+        </label>
     </div>
+</div>
 
 <!-- Chức năng hiển thị từng thể loại sách-->
 <div class="card card-table comman-shadow">
@@ -100,7 +99,6 @@
                                 <td style="text-align: center;"> {{category.insert_id}}</td>
                                 <td style="text-align: center;"> {{category.update_at}}</td>
                                 <td style="text-align: center;"> {{category.update_id}}</td>
-
                             </tr>
                         {% endfor %}
                         </form>

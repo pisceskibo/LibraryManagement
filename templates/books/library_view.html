@@ -36,7 +36,7 @@
 <div style="padding-top: 0.3cm; padding-bottom: 0.3cm; padding-left: 0.3cm;">
     <button type="button" class="btn btn-primary">
         <a href="/books/create_book" style="color: aliceblue;">
-            <h5> ➕ Thêm sách</h5>
+            <h5> ➕ Thêm sách </h5>
         </a>
     </button>
 </div>
@@ -135,31 +135,31 @@
                     </div>
                 </div>
 
-            <!-- Phân trang -->
-            <div style="text-align: center;">
-                <nav aria-label="Page navigation example" style="display: inline-block;">
-                    <ul class="pagination">
-                        <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                            <a class="page-link" href="/books?bookview=1&page={{ page - 1 }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        {% for num in range(1, total_pages + 1) %}
-                        <li class="page-item {% if num == page %}active{% endif %}">
-                            <a class="page-link" href="/books?bookview=1&page={{ num }}">{{ num }}</a>
-                        </li>
-                        {% endfor %}
-                        <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-                            <a class="page-link" href="/books?bookview=1&page={{ page + 1 }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <!-- Phân trang -->
+                <div style="text-align: center;">
+                    <nav aria-label="Page navigation example" style="display: inline-block;">
+                        <ul class="pagination">
+                            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                                <a class="page-link" href="/books?bookview=1&page={{ page - 1 }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% for num in range(1, total_pages + 1) %}
+                            <li class="page-item {% if num == page %}active{% endif %}">
+                                <a class="page-link" href="/books?bookview=1&page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                                <a class="page-link" href="/books?bookview=1&page={{ page + 1 }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 
