@@ -80,7 +80,6 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
                     # Lưu đường dẫn file avatar vào cơ sở dữ liệu
                     book_pdf_path = f"files/{book_pdf_filename}"
 
-                    
             # Thời gian xử lý sách
             insert_at = datetime.datetime.now()
             insert_id = username

@@ -18,6 +18,7 @@ class User(Base):
     # Tạo mối quan hệ giữa hai bảng
     books = relationship("Book", back_populates="user")
     comments = relationship("CommentBook", back_populates="usercomment")
+    join_requests = relationship('JoinAdmin', back_populates='user')
     
     
 # Model sách
@@ -127,6 +128,23 @@ class CommentBook(Base):
     # Tạo mối liên kết giữa các bảng
     usercomment = relationship("User", back_populates="comments")
     book = relationship("Book", back_populates="comments")
+
+
+# Model JoinAdmin (bảng yêu cầu Admin)
+class JoinAdmin(Base):
+    __tablename__ = 'joinadmin'
+    id = Column(Integer, primary_key=True, autoincrement=True)          # Khóa chính mới cho bảng
+    username_id = Column(String(30), ForeignKey('users.username'), nullable=False, index=True)
+    image_contribution = Column(String(100), index=True, nullable=True)         # Lưu thông tin chuyển khoản
+
+    # Update
+    inserted_at = Column(DateTime, index=True)      # Thời gian tạo yêu cầu (User)
+    updated_at = Column(DateTime, index=True)       # Thời gian update quyền (SuperAdmin)
+    status = Column(Boolean, index=True)            # Trạng thái đã đổi           
+
+    # Tạo liên kết giữa các bảng
+    user = relationship('User', back_populates='join_requests')
+
 
 
 # Model OverviewRate (tỷ lệ đánh giá sao)

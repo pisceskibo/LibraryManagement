@@ -6,6 +6,7 @@ import models
 import jwt
 import shutil
 import os
+import datetime
 from routers import function
 
 # Thư viện giao diện
@@ -38,6 +39,17 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
             if user.role == 2:
                 user_update = db.query(models.User).filter(models.User.username == finded_username).first()
                 user_update.role = new_role
+
+                # Nếu là danh sách yêu cầu được gửi
+                user_request = db.query(models.JoinAdmin).filter(models.JoinAdmin.username_id == finded_username,
+                                                                 models.JoinAdmin.status == 0).all()
+                if len(user_request) != 0:
+                    user_request = user_request[0]
+                    user_request.updated_at = datetime.datetime.now()
+                    user_request.status = 1
+
+                    db.commit()
+                    db.refresh(user_request)
 
                 db.commit()
                 db.refresh(user_update)

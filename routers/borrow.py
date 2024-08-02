@@ -110,7 +110,6 @@ async def restore_bookstore(request: Request, borrow_book_id: str = Form(), toke
             find_book_to_restore = db.query(models.BorrowBook).filter(models.BorrowBook.book_id == borrow_book_id,
                                                                       models.BorrowBook.status == 1,
                                                                       models.BorrowBook.username_id == username).all()
-            
             if find_book_to_restore != []:
                 find_book_to_restore = find_book_to_restore[0]
                 find_book_to_restore.borrow_actual = datetime.datetime.now()
