@@ -40,9 +40,9 @@ async def get_infor_authority(request: Request, token: str = Cookie(None), db: S
                                                         })
     else:    
         # Render template với dữ liệu đã cho
-        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+        return templates.TemplateResponse("references/authority.html", {"request": request, 
                                                         "mean_star": mean_star, 
-                                                        "all_category2": all_category2,
+                                                        "all_category2": all_category2
                                                         })
     
 
@@ -112,9 +112,9 @@ async def join_admin(request: Request, username_require: str = Form(), contribut
                                                         "all_category2": all_category2,
                                                         })
     else:
-        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+        return templates.TemplateResponse("references/authority.html", {"request": request, 
                                                         "mean_star": mean_star, 
-                                                        "all_category2": all_category2,
+                                                        "all_category2": all_category2
                                                         })
 
 
