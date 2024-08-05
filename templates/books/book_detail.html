@@ -76,7 +76,7 @@
                                                     {% if this_user_borrow %}
                                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                                         <button type="button" class="btn btn-warning">
-                                                            <a href="/static/media/{{this_book_choice.pdf_book}}" target="_blank", style="color: black;"> <h5>Xem tài liệu</h5> </a>
+                                                            <a href="/static/media/{{this_book_choice.pdf_book}}#toolbar=0" target="_blank", style="color: black;"> <h5>Xem tài liệu</h5> </a>
                                                         </button>
                                                         <button type="button" class="btn btn-success">
                                                             <a href="/books/restore_book?borrow_book_id={{this_book_choice.id_book}}" style="color: black;"> <h5>Trả tài liệu</h5> </a>
@@ -84,14 +84,14 @@
                                                     </div>
                                                     {% else %}
                                                     <button type="button" class="btn btn-primary">    
-                                                    <a href="/books/borrow_book?borrow_book_id={{this_book_choice.id_book}}" style="color: black;"> <h5>👁️ Mượn sách 👁️ </h5> </a>
+                                                    <a href="/books/borrow_book?borrow_book_id={{this_book_choice.id_book}}" style="color: black;"> <h5>📖 Mượn sách 📖 </h5> </a>
                                                     </button>    
                                                     {% endif %}
                                                 {% else %}
                                                     {% if this_user_borrow %}
                                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                                             <button type="button" class="btn btn-warning">
-                                                                <a href="/static/media/{{this_book_choice.pdf_book}}" target="_blank", style="color: black;"> <h5>Xem tài liệu</h5> </a>
+                                                                <a href="/static/media/{{this_book_choice.pdf_book}}#toolbar=0" target="_blank", style="color: black;"> <h5>Xem tài liệu</h5> </a>
                                                             </button>
                                                             <button type="button" class="btn btn-success">
                                                                 <a href="/books/restore_book?borrow_book_id={{this_book_choice.id_book}}" style="color: black;"> <h5>Trả tài liệu</h5> </a>
@@ -101,7 +101,6 @@
                                                         <h4> ❌ Đã hết sách ❌ </h4>
                                                     {% endif %}
                                                 {% endif %}
-
                                             {% endif %}
                                         {% endif %}
 
