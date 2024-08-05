@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 <!-- NỘI DUNG THAY ĐỔI -->
 {% block content %}
 <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -121,6 +122,47 @@
                         <div class="accordion-body">
                             <!-- Nội dung về ý tưởng dự án -->
                             <p>Nội dung chi tiết về ý tưởng dự án Library của bạn.</p>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <!-- Nội dung về ý tưởng dự án -->
+                                    <h2>Thực trạng</h2>
+                                    <p>Hiện nay, việc quản lý và tra cứu thông tin về tài liệu trong các thư viện thường gặp nhiều khó khăn do việc lưu trữ thông tin chưa được tổ chức hợp lý và thiếu sự kết nối giữa các hệ thống. 
+                                    Nhiều thư viện vẫn sử dụng các phương pháp truyền thống để quản lý tài liệu, dẫn đến việc truy xuất thông tin trở nên chậm chạp và không hiệu quả. 
+                                    Điều này tạo ra sự khó khăn cho người dùng trong việc tìm kiếm tài liệu và cho nhân viên thư viện trong việc quản lý và cập nhật dữ liệu.</p>
+                                    
+                                    <h2>Lý do</h2>
+                                    <p>Để cải thiện hiệu quả hoạt động của thư viện và đáp ứng nhu cầu ngày càng cao của người dùng, cần một giải pháp công nghệ hiện đại hơn. 
+                                    Một hệ thống quản lý thư viện điện tử sẽ giúp giảm thiểu sự phức tạp trong việc quản lý số, tăng cường khả năng tìm kiếm và truy xuất thông tin nhanh chóng, đồng thời cung cấp các công cụ hỗ trợ quản lý và phân tích dữ liệu mạnh mẽ. 
+                                    Điều này không chỉ cải thiện trải nghiệm của người dùng mà còn giúp nhân viên thư viện làm việc hiệu quả hơn.</p>
+                                    
+                                    <h2>Ý tưởng</h2>
+                                    <p>Dự án thư viện số (Digital Library) nhằm xây dựng một hệ thống quản lý thư viện trực tuyến tích hợp các chức năng quan trọng như tra cứu, quản lý danh mục, theo dõi các sách đã mượn, và phân tích dữ liệu. 
+                                    Hệ thống sẽ cung cấp một giao diện người dùng thân thiện, cho phép người dùng dễ dàng tìm kiếm sách theo các tiêu chí khác nhau, xem thông tin chi tiết và đánh giá sách. 
+                                    Bên cạnh đó, hệ thống sẽ có các chức năng quản lý cho nhân viên thư viện như thêm, sửa, xóa thông tin tài liệu điện tử, và theo dõi các hoạt động của người dùng.</p>
+                                    
+                                    <h2>Mô hình</h2>
+                                    <p>Hệ thống được thiết kế với kiến trúc phân lớp, bao gồm các thành phần chính:</p>
+                                    <ul>
+                                        <li><strong>Giao diện người dùng</strong>: Được xây dựng bằng HTML, CSS và JavaScript, cung cấp trải nghiệm người dùng trực quan và dễ sử dụng.</li>
+                                        <li><strong>Backend</strong>: Sử dụng FastAPI của Python để xử lý các yêu cầu từ phía người dùng và thực hiện các thao tác trên cơ sở dữ liệu.</li>
+                                        <li><strong>Cơ sở dữ liệu</strong>: Sử dụng SQLAlchemy để quản lý dữ liệu sách, người dùng, mượn sách và các thông tin liên quan.</li>
+                                        <li><strong>Phân tích dữ liệu</strong>: Cung cấp các báo cáo và biểu đồ thống kê để đánh giá hiệu suất hoạt động của thư viện và xu hướng sử dụng sách.</li>
+                                    </ul>
+                                    
+                                    <h2>Cách sử dụng</h2>
+                                    <p>Người dùng có thể truy cập hệ thống qua trang web để tìm kiếm sách, xem thông tin chi tiết và đánh giá tài liệu. 
+                                    Hệ thống hỗ trợ tìm kiếm nhanh chóng theo từ khóa, thể loại và các tiêu chí khác. 
+                                    Nhân viên thư viện có thể đăng nhập vào hệ thống để quản lý danh mục sách, theo dõi các sách đã mượn, và cập nhật thông tin sách khi cần thiết. 
+                                    Hệ thống cũng cung cấp các công cụ phân tích để theo dõi số lượng sách được mượn, đánh giá sách và các số liệu liên quan.</p>
+                                    
+                                    <h2>Hiệu năng và hiệu quả</h2>
+                                    <p>Hệ thống thư viện số giúp cải thiện đáng kể hiệu quả quản lý và tra cứu sách. 
+                                    Với giao diện thân thiện và khả năng tìm kiếm nhanh chóng, người dùng có thể dễ dàng tìm thấy sách mình cần mà không mất nhiều thời gian. 
+                                    Các chức năng quản lý sách và người dùng giúp giảm thiểu sự phức tạp trong công việc của nhân viên thư viện, đồng thời cung cấp các công cụ phân tích để theo dõi hoạt động của thư viện. 
+                                    Điều này không chỉ giúp nâng cao chất lượng dịch vụ mà còn giúp thư viện hoạt động hiệu quả hơn, tiết kiệm thời gian và chi phí.</p>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
