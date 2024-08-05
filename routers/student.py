@@ -53,6 +53,9 @@ async def update_role(request: Request, finded_username: str = Form(), new_role:
 
                 db.commit()
                 db.refresh(user_update)
+
+                # Gửi mail cho User
+                function.email_of_admin(user_update)
                 
                 return templates.TemplateResponse("accounts/change_admin.html", {"request": request, 
                                                                         "finded_username": finded_username, 
