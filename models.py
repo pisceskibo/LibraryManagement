@@ -146,7 +146,6 @@ class JoinAdmin(Base):
     user = relationship('User', back_populates='join_requests')
 
 
-
 # Model OverviewRate (tỷ lệ đánh giá sao)
 class OverviewRate(Base):
     __tablename__ = 'ratetable'

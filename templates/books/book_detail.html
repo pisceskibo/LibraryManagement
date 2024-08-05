@@ -7,13 +7,11 @@
     style="padding-bottom: 25px;">
     <div class="container">
         <div class="row">
-
             <div class="col-lg-8 col-12 mx-auto">
                 <h1 class="text-white text-center"> {{this_book_choice.id_book}} </h1>
                 <h2 class="text-white text-center"> {{this_book_choice.title}} </h2> 
                 <br>
             </div>
-
         </div>
     </div>
 </section>
@@ -51,7 +49,6 @@
                                     <div class="bg-secondary d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
                                         <h1 class="h1 text-white mb-0"> {{this_book_choice.title}} </h1>
                                     </div>
-
                                     <hr>
                                     <ul class="list-unstyled mb-1-9" style="text-align: left; padding-left: 60px;">
                                         <li class="mb-2 mb-xl-3 display-28" style="font-size: 24px !important;"><span class="display-26 text-secondary me-2 font-weight-600">ID Book:</span> {{this_book_choice.id_book}} </li> 
@@ -110,7 +107,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -132,7 +128,6 @@
         <input type="hidden" id="choice_book" name="choice_book" value="{{ this_book_choice.id_book }}">
         <div class="form-group">
             <label for="comment">Nhận xét của <b>{{user.username}}</b>:</label>
-            
             <textarea class="form-control" id="description" name="description" rows="3" required=""></textarea>
         </div>
         <br>

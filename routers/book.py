@@ -320,6 +320,7 @@ async def get_edit(request: Request, id: Optional[str] = None,
                                                                  "mean_star": mean_star, 
                                                                  "all_category2": all_category2})
         else:
+            # Không thấy sách cần sửa
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                          "mean_star": mean_star, 
                                                                          "error": "Không thấy sách cần sửa!"})
