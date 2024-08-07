@@ -49,7 +49,7 @@ async def classifier_search(keyword: str = Form(None), db: Session = Depends(mod
     if keyword:
         # Mô hình hóa phân loại văn bản
         test_input_array = classifier.format_testcase(keyword)
-       
+        
         if test_input_array == []:
             return RedirectResponse(url="/", status_code=303)
         
