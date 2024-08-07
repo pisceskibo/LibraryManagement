@@ -129,11 +129,6 @@ def naivebayes_searching_ai(test_input_array):
     normalizationR3 = get_normalization(p_R3_test, sum_p_Ri_test)
     normalizationR4 = get_normalization(p_R4_test, sum_p_Ri_test)
     normalizationR5 = get_normalization(p_R5_test, sum_p_Ri_test)
-    print(normalizationR1)
-    print(normalizationR2)
-    print(normalizationR3)
-    print(normalizationR4)
-    print(normalizationR5)
 
     array_normalization_statistical = [normalizationR1, normalizationR2, normalizationR3, normalizationR4, normalizationR5]
     highest_score = max(array_normalization_statistical)

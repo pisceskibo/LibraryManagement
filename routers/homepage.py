@@ -45,7 +45,7 @@ async def read_root(request: Request, db: Session = Depends(models.get_db)):
 
 # Chuyển trang với chế độ AI
 @router.post("/", response_class=HTMLResponse)
-async def classifier_search(keyword: str = Form(None)):
+async def classifier_search(keyword: str = Form(None), db: Session = Depends(models.get_db)):
     if keyword:
         # Mô hình hóa phân loại văn bản
         test_input_array = classifier.format_testcase(keyword)
@@ -54,13 +54,43 @@ async def classifier_search(keyword: str = Form(None)):
             return RedirectResponse(url="/", status_code=303)
         
         label_for_test = classifier.naivebayes_searching_ai(test_input_array)
+        keyword = keyword.strip()
 
         if label_for_test == "Library":
-            return RedirectResponse(url="/books?bookview=0", status_code=303)
+            books = db.query(models.Book).filter(
+                (models.Book.id_book.contains(keyword)) | 
+                (models.Book.title.contains(keyword)) | 
+                (models.Book.author.contains(keyword)) | 
+                (models.Book.year.contains(keyword))
+            ).filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
+
+            if len(books) == 0:
+                return RedirectResponse(url="/books?bookview=0", status_code=303)
+            else:
+                return RedirectResponse(url=f"/books/search_book?bookview=0&searching={keyword}", status_code=303)
+            
         elif label_for_test == "Student":
-            return RedirectResponse(url="/users?view=0", status_code=303)
+            students = db.query(models.User).filter(
+                (models.User.username.contains(keyword)) | 
+                (models.User.fullname.contains(keyword))
+            ).filter(models.User.delete_flag != 1).order_by(models.User.username).all()
+
+            if len(students) == 0:
+                return RedirectResponse(url="/users?view=0", status_code=303)
+            else:
+                return RedirectResponse(url=f"/users/search_students?view=0&searching={keyword}", status_code=303)
+            
         elif label_for_test == "Type":
-            return RedirectResponse(url="/category_books", status_code=303)
+            searching_category = db.query(models.Category).filter(
+                (models.Category.category_id.contains(keyword)) | 
+                (models.Category.category_name.contains(keyword))
+            ).filter(models.Category.delete_flag != 1).all()
+
+            if len(searching_category) == 0:
+                return RedirectResponse(url="/category_books", status_code=303)
+            else:
+                return RedirectResponse(url=f"/category_books/search_category?searching={keyword}", status_code=303)
+            
         elif label_for_test == "Authority":
             return RedirectResponse(url="/authority", status_code=303)
         elif label_for_test == "Contact":
