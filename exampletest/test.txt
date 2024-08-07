@@ -1,6 +1,4 @@
 # Thêm các quyền hạn cho role = 1 (sửa sách bất kỳ, xem sách bất kỳ, có quyền category, không có chức năng phân quyền)
-
 # Thêm trợ lý ảo cho website
 # Trang trí giao diện ở trang chủ 
-
 # Nút Checkout --> trang hướng dẫn sử dụng
