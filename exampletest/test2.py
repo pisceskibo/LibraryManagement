@@ -19,17 +19,18 @@ def get_audio():
 
 
 # 2. CẬP NHẬT MÃ FASTAPI
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from chatbotai import classifier
 
-app = FastAPI()
+# Nhánh call API
+router = APIRouter()        
 
 class VoiceInput(BaseModel):
     keyword: str
 
-@app.post("/search_voice")
+@router.post("/search_voice")
 async def search_voice(request: Request):
     # Nhận giọng nói từ người dùng
     audio_text = get_audio()  # Gọi hàm để nhận giọng nói
