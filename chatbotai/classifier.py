@@ -26,11 +26,10 @@ def naivebayes_searching_ai(test_input_array):
         for line in file:
             data = line.strip()
             data_string += data
-        data_string = data_string.strip()
-        data_array = data_string.split(",")
-        file.close()
 
-        return data_array[0:len(data_array) - 1]
+        data_string = data_string.strip()
+        file.close()
+        return format_testcase(data_string)
         
     r1 = docfile("chatbotai/dataset/library.txt")
     r2 = docfile("chatbotai/dataset/student.txt")

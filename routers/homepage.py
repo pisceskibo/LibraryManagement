@@ -1,13 +1,15 @@
 # Thư viện Backend Python
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, Request, Cookie
 from sqlalchemy.orm import Session
 import models
 from routers import function
-from chatbotai import classifier
+from chatbotai import classifier, chatbotgpt
+import jwt
 
 # Thư viện giao diện
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+import threading
 
 
 # Khởi chạy nhánh App
@@ -99,3 +101,18 @@ async def classifier_search(keyword: str = Form(None), db: Session = Depends(mod
             return RedirectResponse(url="/", status_code=303)
     else:
         return RedirectResponse(url="/", status_code=303)
+
+
+# Chatbox GPT
+@router.get("/run_chatbox")
+async def run_chatbox(token: str = Cookie(None)):
+    if token:
+        try:
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = decodeJSON["username"]
+            threading.Thread(target=chatbotgpt.chatbox, args=(username,)).start()
+        except:
+            threading.Thread(target=chatbotgpt.chatbox).start()
+    else:
+        threading.Thread(target=chatbotgpt.chatbox).start()
+    return JSONResponse(content={"status": "Chatbox opened"})

@@ -86,6 +86,21 @@
                             <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                             {% endif %}
                         </div>
+                        
+                        <div style="padding-left: 20px">
+                            <button class="navbar-icon bi-chat smoothscroll"
+                                    style="background-color: #FFFF99" onclick="openChatbox()"></button>
+                            <script>
+                                function openChatbox() {
+                                    fetch('/run_chatbox')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log(data.status);  // Hiển thị trạng thái trong console
+                                        })
+                                        .catch(error => console.error('Error:', error));
+                                }
+                            </script>
+                        </div>
 
                     </div>
                 </div>
