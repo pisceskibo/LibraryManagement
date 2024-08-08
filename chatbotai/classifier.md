@@ -55,8 +55,7 @@ Tập training có 5 lớp sau:
 + Tính xác suất các label tương ứng có trong INPUT:
 >   
     p(Ri|x_inp) = p(Ri) * tích(p(x_inp_j|Ri)) = p(Ri) * tích(lamdaRij^x_inp_j)
-với i = 1 --> 5
-        j = 1 --> z
+với i = 1 --> 5, j = 1 --> z
 
 + Xác suất phân loại văn bản:
 > 
