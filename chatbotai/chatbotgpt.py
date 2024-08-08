@@ -1,6 +1,7 @@
 # Xuất thư viện giao diện cửa sổ
 import tkinter as tk
 from tkinter import *
+from chatbotai import classifier
 
 
 # Tạo cửa số giao diện chính 
@@ -69,11 +70,23 @@ def chatbox(username=None):
     message_entry.bind("<Return>", enter_message)
     root.mainloop()
 
+
 # Cơ sở dữ liệu phản hồi
 def get_response(msg):
-    if msg.lower() == "hello":
-        return "Hi, how can I assist you today?"
-    elif msg == "How can I help you?":
-        return "I'm here to assist you with any questions or concerns."
+    # Xử lý dữ liệu cần hỏi
+    test_input_array = classifier.format_testcase(msg)
+    classifier_data = classifier.naivebayes_searching_ai(test_input_array)
+        
+    if classifier_data == "Library":
+        return "Bạn hãy vào mục Library để trải nghiệm nhiều hơn nha!"
+    elif classifier_data == "Student":
+        return "Bạn hãy vào mục Student để tra cứu thông tin nha!"
+    elif classifier_data == "Type":
+        return "Bạn hãy vào mục Category để biết thêm chi tiết hơn nha!"
+    elif classifier_data == "Authority":
+        return "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
+    elif classifier_data == "Contact":
+        return "Bạn hãy vào mục Contact để gửi phản hồi nha!"
     else:
-        return "I didn't understand that. Could you please rephrase?"
+        return "Tôi không hiểu ý bạn! Bạn hãy cung cấp thêm thông tin khác!"
+        

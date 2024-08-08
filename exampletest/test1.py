@@ -104,6 +104,7 @@ def open_website(text):
         return False
 
 def open_google_and_search(text):
+    print("Testststtsts")
     search_for = text.split("kiếm", 1)[1]
     speak('Okay!')
     driver = webdriver.Chrome(path)
