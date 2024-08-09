@@ -7,13 +7,13 @@ from chatbotai import classifier
 from gtts import gTTS
 import io
 import pygame
+import webbrowser       # Truy cập tự động tới website
 
 # Truy cập tới CSDL
 from sqlalchemy.orm import Session
 import models
 from database import SessionLocal
 from sqlalchemy import or_
-
 
 
 # Tạo cửa số giao diện chính 
@@ -152,6 +152,7 @@ def get_response(msg):
     
     elif classifier_data == "Authority":
         response = "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
+        webbrowser.open("http://127.0.0.1:8000/authority")
     elif classifier_data == "Contact":
         response = "Bạn hãy vào mục Contact để gửi phản hồi nha!"
     else:
