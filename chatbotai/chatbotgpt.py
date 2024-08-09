@@ -3,6 +3,10 @@ import tkinter as tk
 from tkinter import *
 from chatbotai import classifier
 
+# Chuyển đổi văn bản thành giọng nói
+from gtts import gTTS
+import io
+import pygame
 
 # Tạo cửa số giao diện chính 
 def chatbox(username=None):
@@ -64,6 +68,8 @@ def chatbox(username=None):
         
         text.configure(state=tk.DISABLED)
         text.see(tk.END)
+        # Phát âm thanh sau khi hiển thị văn bản
+        root.after(500, lambda: text_to_speech(t))
 
     # Đăng ký sự kiện để xử lý khi cửa sổ bị đóng
     root.protocol("WM_DELETE_WINDOW", root.quit)
@@ -76,17 +82,41 @@ def get_response(msg):
     # Xử lý dữ liệu cần hỏi
     test_input_array = classifier.format_testcase(msg)
     classifier_data = classifier.naivebayes_searching_ai(test_input_array)
-        
+
+    # Phản hồi theo từng trường hợp
     if classifier_data == "Library":
-        return "Bạn hãy vào mục Library để trải nghiệm nhiều hơn nha!"
+        response = "Bạn hãy vào mục Library để trải nghiệm nhiều hơn nha!"
     elif classifier_data == "Student":
-        return "Bạn hãy vào mục Student để tra cứu thông tin nha!"
+        response = "Bạn hãy vào mục Student để tra cứu thông tin nha!"
     elif classifier_data == "Type":
-        return "Bạn hãy vào mục Category để biết thêm chi tiết hơn nha!"
+        response = "Bạn hãy vào mục Category để biết thêm chi tiết hơn nha!"
     elif classifier_data == "Authority":
-        return "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
+        response = "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
     elif classifier_data == "Contact":
-        return "Bạn hãy vào mục Contact để gửi phản hồi nha!"
+        response = "Bạn hãy vào mục Contact để gửi phản hồi nha!"
     else:
-        return "Tôi không hiểu ý bạn! Bạn hãy cung cấp thêm thông tin khác!"
-        
+        response = "Tôi không hiểu ý bạn! Bạn hãy cung cấp thêm thông tin khác!"
+    
+    return response
+
+# Hàm để chuyển văn bản thành âm thanh và phát nó
+def text_to_speech(text):
+    # Khởi tạo gTTS và tạo âm thanh từ văn bản
+    tts = gTTS(text=text, lang='vi')
+    # Tạo một luồng byte
+    fp = io.BytesIO()
+    # Lưu âm thanh vào luồng byte
+    tts.write_to_fp(fp)
+    # Đặt con trỏ của luồng ở đầu
+    fp.seek(0)
+    
+    # Khởi tạo pygame mixer
+    pygame.mixer.init()
+    # Tải âm thanh từ luồng byte vào pygame mixer
+    pygame.mixer.music.load(fp, 'mp3')
+    # Phát âm thanh
+    pygame.mixer.music.play()
+    
+    # Chờ cho đến khi phát xong
+    while pygame.mixer.music.get_busy():
+        continue
