@@ -103,7 +103,7 @@ def get_response(msg):
 def text_to_speech(text):
     # Khởi tạo gTTS và tạo âm thanh từ văn bản
     tts = gTTS(text=text, lang='vi')
-    # Tạo một luồng byte
+    # Tạo một luồng byte để lưu trữ dữ liệu âm thanh tạm thời
     fp = io.BytesIO()
     # Lưu âm thanh vào luồng byte
     tts.write_to_fp(fp)
