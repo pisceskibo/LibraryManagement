@@ -8,6 +8,14 @@ from gtts import gTTS
 import io
 import pygame
 
+# Truy cập tới CSDL
+from sqlalchemy.orm import Session
+import models
+from database import SessionLocal
+from sqlalchemy import or_
+
+
+
 # Tạo cửa số giao diện chính 
 def chatbox(username=None):
     global root
@@ -79,17 +87,69 @@ def chatbox(username=None):
 
 # Cơ sở dữ liệu phản hồi
 def get_response(msg):
+    db: Session = SessionLocal()
     # Xử lý dữ liệu cần hỏi
     test_input_array = classifier.format_testcase(msg)
     classifier_data = classifier.naivebayes_searching_ai(test_input_array)
+    msg_search = classifier.get_keyword_search(test_input_array)
 
     # Phản hồi theo từng trường hợp
     if classifier_data == "Library":
-        response = "Bạn hãy vào mục Library để trải nghiệm nhiều hơn nha!"
+        # Tạo danh sách các điều kiện tìm kiếm
+        search_conditions = []
+        for keyword in msg_search:
+            search_conditions.append(models.Book.id_book.contains(keyword))
+            search_conditions.append(models.Book.title.contains(keyword))
+            search_conditions.append(models.Book.author.contains(keyword))
+            
+        # Truy vấn sách với các điều kiện tìm kiếm kết hợp với toán tử OR
+        books = db.query(models.Book).filter(
+            or_(*search_conditions)).filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
+
+        if len(books) == 0:
+            response = "Bạn hãy vào mục Library để trải nghiệm nhiều hơn nha!"
+        else:
+            name_books = [book.title for book in books]
+            join_searching = ",".join(name_books)
+            response = f"Trong mục Library có những cuốn sách {join_searching} nên bạn có thể vào xem nhé!"
+    
     elif classifier_data == "Student":
-        response = "Bạn hãy vào mục Student để tra cứu thông tin nha!"
+         # Tạo danh sách các điều kiện tìm kiếm cho sinh viên
+        search_conditions = []
+        for keyword in msg_search:
+            search_conditions.append(models.User.username.contains(keyword))
+            search_conditions.append(models.User.fullname.contains(keyword))
+
+        # Truy vấn sinh viên với các điều kiện tìm kiếm kết hợp với toán tử OR
+        students = db.query(models.User).filter(
+            or_(*search_conditions)).filter(models.User.delete_flag != 1).order_by(models.User.username).all()
+
+        if len(students) == 0:
+            response = "Bạn hãy vào mục Student để tra cứu thông tin nha!"
+        else:
+            name_students = [student.username for student in students]
+            join_searching = ",".join(name_students)
+            response = f"Trong mục Student có những người liên quan như {join_searching} mà bạn muốn tìm!"
+
     elif classifier_data == "Type":
-        response = "Bạn hãy vào mục Category để biết thêm chi tiết hơn nha!"
+        # Tạo danh sách các điều kiện tìm kiếm cho loại tài nguyên
+        search_conditions = []
+        for keyword in msg_search:
+            search_conditions.append(models.Category.category_id.contains(keyword))
+            search_conditions.append(models.Category.category_name.contains(keyword))
+
+        # Truy vấn loại tài nguyên với các điều kiện tìm kiếm kết hợp với toán tử OR
+        categories = db.query(models.Category).filter(
+            or_(*search_conditions)
+        ).filter(models.Category.delete_flag != 1).order_by(models.Category.category_name).all()
+
+        if not categories:
+            response = "Bạn hãy vào mục Category để biết thêm chi tiết hơn nha!"
+        else:
+            name_categories = [category.category_name for category in categories]
+            join_searching = ", ".join(name_categories)
+            response = f"Trong mục Category có các thể loại như: {join_searching}. Bạn có thể vào xem chi tiết hơn nhé!"
+    
     elif classifier_data == "Authority":
         response = "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
     elif classifier_data == "Contact":

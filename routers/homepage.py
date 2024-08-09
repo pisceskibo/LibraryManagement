@@ -62,8 +62,7 @@ async def classifier_search(keyword: str = Form(None), db: Session = Depends(mod
             books = db.query(models.Book).filter(
                 (models.Book.id_book.contains(keyword)) | 
                 (models.Book.title.contains(keyword)) | 
-                (models.Book.author.contains(keyword)) | 
-                (models.Book.year.contains(keyword))
+                (models.Book.author.contains(keyword))
             ).filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
 
             if len(books) == 0:

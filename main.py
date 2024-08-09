@@ -1,12 +1,8 @@
 # Thư viện Backend Python
-from fastapi import FastAPI, Depends, Request
-from sqlalchemy.orm import Session
-import models
-from routers import function
+from fastapi import FastAPI
 
 # Thư viện giao diện
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 # Thư viện nhánh con API

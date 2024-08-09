@@ -18,6 +18,40 @@ def format_testcase(test_input):
 
 
 # Xây dựng chức năng phân loại danh mục tự động
+def get_keyword_search(test_input_array):
+    # Đọc file lấy dữ liệu tập training
+    def docfile(path):
+        file = open(path, 'r', encoding='utf-8')        # Mở file
+        data_string = ""
+        for line in file:
+            data = line.strip()
+            data_string += data
+
+        data_string = data_string.strip()
+        file.close()
+        return format_testcase(data_string)
+        
+    r1 = docfile("chatbotai/dataset/library.txt")
+    r2 = docfile("chatbotai/dataset/student.txt")
+    r3 = docfile("chatbotai/dataset/type.txt")
+    r4 = docfile("chatbotai/dataset/authority.txt")
+    r5 = docfile("chatbotai/dataset/contact.txt")
+
+    # Bộ dữ liệu tập training 
+    datasets = [r1, r2, r3, r4, r5]  
+
+    # Bộ dữ liệu test
+    r_test = []
+    for element_identity in test_input_array:
+        for rij in datasets:
+            if element_identity in rij:
+                r_test.append(element_identity)
+    if r_test == []:
+        return ""
+    return r_test
+
+
+# Xây dựng chức năng phân loại danh mục tự động
 def naivebayes_searching_ai(test_input_array):
     # Đọc file lấy dữ liệu tập training
     def docfile(path):
