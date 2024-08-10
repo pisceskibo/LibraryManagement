@@ -111,7 +111,7 @@ def get_response(msg):
         else:
             name_books = [book.title for book in books]
             join_searching = ",".join(name_books)
-            response = f"Trong mục Library có những cuốn sách {join_searching} nên bạn có thể vào xem nhé!"
+            response = f"Trong mục Library có {len(books)} cuốn sách: {join_searching} nên bạn có thể vào xem nhé!"
     
     elif classifier_data == "Student":
          # Tạo danh sách các điều kiện tìm kiếm cho sinh viên
@@ -129,7 +129,7 @@ def get_response(msg):
         else:
             name_students = [student.username for student in students]
             join_searching = ",".join(name_students)
-            response = f"Trong mục Student có những người liên quan như {join_searching} mà bạn muốn tìm!"
+            response = f"Trong mục Student có {len(students)} người liên quan như: {join_searching} mà bạn muốn tìm!"
 
     elif classifier_data == "Type":
         # Tạo danh sách các điều kiện tìm kiếm cho loại tài nguyên
@@ -148,7 +148,7 @@ def get_response(msg):
         else:
             name_categories = [category.category_name for category in categories]
             join_searching = ", ".join(name_categories)
-            response = f"Trong mục Category có các thể loại như: {join_searching}. Bạn có thể vào xem chi tiết hơn nhé!"
+            response = f"Trong mục Category có {len(categories)} thể loại như: {join_searching}. Bạn có thể vào xem chi tiết hơn nhé!"
     
     elif classifier_data == "Authority":
         response = "Bạn hãy vào mục Authory để biết thêm thông tin chi tiết hơn nha!"
