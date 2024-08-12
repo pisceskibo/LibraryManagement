@@ -3,7 +3,7 @@
 
 ### Tạo môi trường ảo trên Terminal:
 + B1: Mở terminal chạy lệnh `python -m venv .myvenv`
-+ B2: Kích hoạt môi trường ảo `.\.venv\Scripts\activate`
++ B2: Kích hoạt môi trường ảo `.\.myvenv\Scripts\activate`
 + B3: Danh sách các thư viện hiện có trong môi trường ảo `pip list`
 + B4: Cài đặt phiên bản thư viện `pip install -r requirements.txt`
 + B5: Nếu muốn hủy môi trường ảo `deactivate`

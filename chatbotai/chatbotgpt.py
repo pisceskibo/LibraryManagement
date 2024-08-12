@@ -65,19 +65,30 @@ def chatbox(username=None):
         # Insert user message aligned to right with background color and border
         text.tag_configure("user", justify='right', background="#55BEC0", foreground="#FFFFFF")
         user_msg = f"{sender}: {msg}"
-        user_msg = f"{user_msg}\n{'─' * len(user_msg)}"  # Add a border effect
+        user_msg = f"\n{user_msg}\n"  # Add a border effect
         text.insert(tk.END, user_msg + "\n", "user")
 
         # Insert bot response aligned to left with background color and border
         text.tag_configure("bot", justify='left', background="#394F46", foreground="#6DFFE7")
         bot_msg = f"Bot: {t}"
-        bot_msg = f"{bot_msg}\n{'─' * len(bot_msg)}"  # Add a border effect
+        bot_msg = f"\n{bot_msg}\n"  # Add a border effect
         text.insert(tk.END, bot_msg + "\n", "bot")
         
         text.configure(state=tk.DISABLED)
         text.see(tk.END)
         # Phát âm thanh sau khi hiển thị văn bản
         root.after(500, lambda: text_to_speech(t))
+    
+    # Hiển thị tin nhắn từ bot ngay khi mở ứng dụng
+    text.configure(state=tk.NORMAL)
+    text.tag_configure("bot", justify='left', background="#394F46", foreground="#6DFFE7")
+    hello_msg = "Chào bạn, tôi là Trợ lý ảo AI của Library Manager, bạn cần tôi giúp gì nhỉ?"
+    bot_msg = f"Bot: {hello_msg}"
+    bot_msg = f"\n{bot_msg}\n"  # Thêm hiệu ứng viền cho tin nhắn của bot
+    text.insert(tk.END, bot_msg + "\n", "bot")
+    text.configure(state=tk.DISABLED)
+    text.see(tk.END)
+    root.after(500, lambda: text_to_speech(hello_msg))
 
     # Đăng ký sự kiện để xử lý khi cửa sổ bị đóng
     root.protocol("WM_DELETE_WINDOW", root.quit)
