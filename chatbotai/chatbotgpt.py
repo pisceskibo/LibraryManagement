@@ -171,6 +171,7 @@ def get_response(msg):
     
     return response
 
+
 # Hàm để chuyển văn bản thành âm thanh và phát nó
 def text_to_speech(text):
     # Khởi tạo gTTS và tạo âm thanh từ văn bản
