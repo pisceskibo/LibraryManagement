@@ -30,7 +30,7 @@ def chatbox(username=None):
     tk.Label(root, width=450, bg='#394F46').place(relwidth=1, rely=0.07, relheight=0.012)
 
     # Text widget để hiển thị tin nhắn
-    text = tk.Text(root, width=20, height=2, bg='#12182B', fg='#6DFFE7', font='Helvetica 14', padx=5, pady=5)
+    text = tk.Text(root, width=20, height=2, bg='#12182B', fg='#6DFFE7', font='Helvetica 14', padx=10, pady=10)
     text.place(relheight=0.745, relwidth=1, rely=0.08)
     text.configure(cursor='arrow', state=tk.DISABLED)
 
@@ -189,6 +189,3 @@ def text_to_speech(text):
     # Phát âm thanh
     pygame.mixer.music.play()
     
-    # Chờ cho đến khi phát xong
-    while pygame.mixer.music.get_busy():
-        continue

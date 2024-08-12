@@ -177,8 +177,14 @@
 {% for comment_book, user in this_comment_book %}
 <div class="comment">
     <div class="comment-body">
-        <h5><img src="/static/media/{{ user.avatar }}" alt="Avatar" class="avatar" 
-                style="object-fit: cover; border-radius: 100%; width: 40px; height: 40px;"> 
+        <h5>
+            {% if user.avatar %}
+            <img src="/static/media/{{ user.avatar }}" alt="Avatar" class="avatar" 
+                style="object-fit: cover; border-radius: 100%; width: 40px; height: 40px;">
+            {% else %}
+            <img src="/static/images/default_avatar.png" alt="Avatar" class="avatar" 
+                style="object-fit: cover; border-radius: 100%; width: 40px; height: 40px;">
+            {% endif %}
             <a href="/users/detail_student?username_choice={{comment_book.username_id}}">
                 {{ comment_book.username_id }}
             </a> 

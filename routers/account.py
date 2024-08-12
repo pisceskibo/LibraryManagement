@@ -1,5 +1,5 @@
 # Thư viện Backend Python
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, Request, Cookie
 from sqlalchemy.orm import Session
 import models
 import jwt
@@ -90,6 +90,83 @@ async def logout():
     response.delete_cookie('token')
     response.delete_cookie('username')
     return response
+
+
+# Thay đổi mật khẩu
+@router.post('/change_password')
+async def change_your_password(request: Request, old_password: str = Form(), new_password: str = Form(), enter_again_password: str = Form(),
+                               token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+
+    if token:
+        try:
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = decodeJSON["username"]
+            user = function.get_user(db, username)
+
+            # Điều kiện thay đổi mật khẩu
+            check_old = function.verify_password(old_password, user.password)
+            check_old_new = old_password != new_password
+            check_new_again = new_password == enter_again_password
+            
+            if check_old and check_old_new and check_new_again:
+                print("Lỗi")
+                hash_new_password = function.get_password_hash(new_password)
+                user.password = hash_new_password
+
+                db.commit()
+                db.refresh(user)
+        
+                return templates.TemplateResponse("accounts/change_password.html", {"request": request, 
+                                                        "username": username,
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        "success_message": "Đổi mật khẩu thành công!"
+                                                        })
+            else:
+                return templates.TemplateResponse("accounts/change_password.html", {"request": request, 
+                                                        "username": username,
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        "error_message": "Đổi mật khẩu không thành công!"
+                                                        })
+        except:
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        })
+    else:
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        })
+
+@router.get('/change_password', response_class=HTMLResponse)
+async def change_password(request: Request, token: str = Cookie(None), db: Session = Depends(models.get_db)):
+    mean_star = function.get_mean_star(db)
+    all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
+
+    if token:
+        try:
+            decodeJSON = jwt.decode(token, "secret", algorithms=["HS256"])
+            username = decodeJSON["username"]
+
+            return templates.TemplateResponse("accounts/change_password.html", {"request": request, 
+                                                        "username": username,
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        })
+        except:
+            return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        })
+    else:
+        return templates.TemplateResponse("errors/error_template.html", {"request": request, 
+                                                        "mean_star": mean_star, 
+                                                        "all_category2": all_category2,
+                                                        })
 
 
 # Trang cá nhân
