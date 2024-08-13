@@ -58,8 +58,7 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             if book_image:
                 if len(book_image.filename) != 0:
                     # Tạo tên file book_image dựa trên book và tên file gốc
-                    unique_suffix = f"{uuid.uuid4().hex[:8]}"
-                    book_image_filename = f"{username}_{unique_suffix}_{book_image.filename}"
+                    book_image_filename = f"{username}_{book_image.filename}"
 
                     # Lưu file vào thư mục upload
                     file_path_image_book = os.path.join(UPLOAD_IMAGE_FOLDER, book_image_filename)
@@ -72,8 +71,7 @@ async def create_book(request: Request, id: str = Form(), category_id: str = For
             if book_pdf:
                 if len(book_pdf.filename) != 0:
                     # Tạo tên file book_pdf dựa trên book và tên file gốc
-                    unique_suffix = f"{uuid.uuid4().hex[:8]}"
-                    book_pdf_filename = f"{username}_{unique_suffix}_{book_pdf.filename}"
+                    book_pdf_filename = f"{username}_{book_pdf.filename}"
 
                     # Lưu file vào thư mục upload
                     file_path_image_book = os.path.join(UPLOAD_PDF_FOLDER, book_pdf_filename)
