@@ -58,7 +58,7 @@
                                   BookType
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    {% for category in all_category2 %}
+                                    {% for category in all_category2 | sort(attribute='category_name') %}
                                     <a class="dropdown-item" href="/books/booktype?searching={{category.category_id}}&sortby=id">{{category.category_name}}</a>
                                     {% endfor %}
                                 </div>

@@ -1,0 +1,21 @@
++ test1:
+Tư tưởng HCM
+Lập trình RStudio
+Lập trình Python
+Lập trình JavaScript
+Lập trình Java
+Lập trình Flask
+Lập trình Django
+Nền tảng GIT và Github
+Cơ sở dữ liệu
+
++ test2:
+Thống kê ứng dụng
+Hệ thống máy tính
+Xác suất
+Phương trình vi phân
+Lập trình FastAPI
+Giải tích hàm ứng dụng
+Tối ưu hóa
+Tin học cơ sở
+Lập trình Streamlit
