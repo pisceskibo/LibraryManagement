@@ -111,7 +111,6 @@ async def change_your_password(request: Request, old_password: str = Form(), new
             check_new_again = new_password == enter_again_password
             
             if check_old and check_old_new and check_new_again:
-                print("Lỗi")
                 hash_new_password = function.get_password_hash(new_password)
                 user.password = hash_new_password
 
