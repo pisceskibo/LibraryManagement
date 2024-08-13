@@ -7,4 +7,4 @@
 + B3: Danh sách các thư viện hiện có trong môi trường ảo `pip list`
 + B4: Cài đặt phiên bản thư viện `pip install -r requirements.txt`
 + B5: Nếu muốn hủy môi trường ảo `deactivate`
-+ B6: Tạo file `.gitignore` để máy ảo `.myvenv` không thể được upload lên GIT (trong file `.gitignore` viết lệnh `.myvenv/`)
++ B6: Tạo file `.gitignore` để máy ảo `.myvenv/` không thể được upload lên GIT
