@@ -162,7 +162,7 @@ async def search_book(request: Request, bookview: int, searching: str, db: Sessi
     all_category2 = db.query(models.Category).filter(models.Category.delete_flag != 1).all()
     
     searching = searching.strip()       # Xóa các khoảng trắng dư thừa
-    
+   
     books = db.query(models.Book).filter(
         (models.Book.id_book.contains(searching)) | 
         (models.Book.title.contains(searching)) | 
@@ -228,7 +228,7 @@ async def edit_book(request: Request, id: str = Form(), category_id: str = Form(
             username = decodeJSON["username"]
             
             user = function.get_user(db, username)
-            if user.role == 0:
+            if user.role != 2:
                 book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
             else:
                 book = db.query(models.Book).filter((models.Book.id_book == id)).first()
@@ -311,7 +311,7 @@ async def get_edit(request: Request, id: Optional[str] = None,
         
         # Logic chỉ sửa được những sách
         user = function.get_user(db, username)
-        if user.role == 0:
+        if user.role != 2:
             book = db.query(models.Book).filter((models.Book.username_id == username) & (models.Book.id_book == id)).first()
         else:
             book = db.query(models.Book).filter((models.Book.id_book == id)).first()

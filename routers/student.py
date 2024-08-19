@@ -177,7 +177,6 @@ async def update_user(request: Request, fullname: str = Form(), email: str = For
                                                                    "user": user, 
                                                                    "mean_star": mean_star, 
                                                                    "success_message": "Cập nhật thông tin thành công!"})
-
         except:
             return templates.TemplateResponse("errors/error_template.html", {"request": request, 
                                                                       "mean_star": mean_star, 
