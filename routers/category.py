@@ -106,9 +106,13 @@ async def update_category(request: Request, choice_category_id: str = Form(), ne
             username = decodeJSON["username"]
             
             user = function.get_user(db, username)
-            if user.role != 0:
+            if user.role == 2:
                 category = db.query(models.Category).filter(models.Category.category_id == choice_category_id,
                                                             models.Category.delete_flag == 0).first()
+            elif user.role == 1:
+                category = db.query(models.Category).filter(models.Category.category_id == choice_category_id,
+                                                            models.Category.delete_flag == 0,
+                                                            models.Category.insert_id == username).first()
             else:
                 return templates.TemplateResponse("errors/not_permit_access.html", {"request": request, 
                                                                              "mean_star": mean_star, 
@@ -206,7 +210,13 @@ async def delete_category(request: Request, deleted_category_id: str = Form(),
             user = function.get_user(db, username)
         
             if user.role != 0:
-                category_clear = db.query(models.Category).filter(models.Category.category_id == deleted_category_id).first()
+                if user.role == 2:
+                    category_clear = db.query(models.Category).filter(models.Category.category_id == deleted_category_id,
+                                                                      models.Category.delete_flag == 0).first()
+                elif user.role == 1:
+                    category_clear = db.query(models.Category).filter(models.Category.category_id == deleted_category_id,
+                                                                      models.Category.insert_id == username,
+                                                                      models.Category.delete_flag == 0).first()
                 
                 category_clear.delete_at = datetime.datetime.now()
                 category_clear.delete_id = username

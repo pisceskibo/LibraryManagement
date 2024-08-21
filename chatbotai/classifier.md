@@ -8,6 +8,8 @@ Tập training có 5 lớp sau:
 | `Authority` | R4 = {d<sub>1</sub>, d<sub>2</sub>, ...} | R4 có n<sub>4</sub> phần tử |
 | `Contact` | R5 = {e<sub>1</sub>, e<sub>2</sub>, ...} | R5 có n<sub>5</sub> phần tử |
 
+Tập dữ liệu Test cần phân loại: INPUT = {input1, input2, ...}
+
 => Hãy phân loại văn bản INPUT nhập vào thuộc lớp Label nào trong 5 lớp trên?
 
 # Sử dụng Multinomial Naive Bayes
@@ -41,7 +43,7 @@ Tập training có 5 lớp sau:
     lamdaRi = (element_j + alpha) / (N(Ri) + alpha*z)
 </div> 
 
-> với element_j thuộc Ri = {element1, element2, ...}
+> với element_j thuộc Ri = {element1, element2, ..., elementz}
 
 + Tính vector cột theo công thức: \
     lamdaR1 = {a<sub>1z</sub>+1/n<sub>1</sub>+z, a<sub>2z</sub>+1/n<sub>1</sub>+z, a<sub>3z</sub>+1/n<sub>1</sub>+z, ..., a<sub>zz</sub>+1/n<sub>1</sub>+z} \
