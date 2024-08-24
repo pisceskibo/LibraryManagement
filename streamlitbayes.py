@@ -115,7 +115,7 @@ def multinomial_naivebayes_searching_ai(test_input_array):
 
     st.write("**Xác suất tương đối từng lớp:**")
     abs_probabilities = pd.DataFrame({
-            'Labels': ['R1', 'R2', 'R3', 'R4', 'R5'],
+            'Labels': labels,
             'P(Ri|x_inp)': ['P(R1|x_inp)', 'P(R2|x_inp)', 'P(R3|x_inp)', 'P(R4|x_inp)', 'P(R5|x_inp)'],
             'Xác suất tương đối': [p_R1_test, p_R2_test, p_R3_test, p_R4_test, p_R5_test]
         })
@@ -156,7 +156,7 @@ def main_streamlit():
         result, probabilities = multinomial_naivebayes_searching_ai(test_input_array)
 
         if not result:
-            st.write("Không thể phân loại dữ liệu kiểm tra. Vui lòng kiểm tra lại dữ liệu đầu vào.")
+            st.write("Không thể phân loại dữ liệu. Vui lòng kiểm tra lại dữ liệu đầu vào.")
             return
         
         st.write("## Kết quả phân loại mô hình:")
@@ -174,9 +174,9 @@ def main_streamlit():
 
         fig, ax = plt.subplots()
         ax.bar(labels, probabilities, color='skyblue')
-        ax.set_xlabel('Danh mục')
+        ax.set_xlabel('Danh mục theo Labels')
         ax.set_ylabel('Xác suất')
-        ax.set_title('Xác suất các danh mục')
+        ax.set_title('Xác suất dựa trên mô hình Multinomial Naive Bayes')
         st.pyplot(fig)
 
 if __name__ == "__main__":
