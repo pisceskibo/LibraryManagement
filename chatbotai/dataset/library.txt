@@ -1,2 +1,2 @@
 book,document,
-sách,truyện,
+sách,truyện,python,

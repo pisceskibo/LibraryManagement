@@ -64,7 +64,7 @@ async def classifier_search(keyword: str = Form(None), db: Session = Depends(mod
                 (models.Book.title.contains(keyword)) | 
                 (models.Book.author.contains(keyword))
             ).filter(models.Book.delete_flag != 1).order_by(models.Book.id_book).all()
-
+            
             if len(books) == 0:
                 return RedirectResponse(url="/books?bookview=0", status_code=303)
             else:
