@@ -8,6 +8,7 @@
 + B4: Cài đặt phiên bản thư viện `pip install -r requirements.txt`
 + B5: Nếu muốn hủy môi trường ảo `deactivate`
 + B6: Tạo file `.gitignore` để máy ảo `.myvenv/` không thể được upload lên GIT
++ B7: Deploy phần mềm trên: https://dashboard.render.com/ 
 
 ### Công nghệ sử dụng:
 + Ngôn ngữ: Python
@@ -18,3 +19,5 @@
 + Hệ thống quản lý thư viện tài liệu với FastAPI
 + Hệ thống trợ lý ảo với Tkinter
 + Mô hình kiểm thử hệ thống với Streamlit
+
+> Link Website: https://librarymanagement-cyxr.onrender.com/ 

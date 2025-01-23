@@ -1,0 +1,10 @@
+uvicorn
+fastapi
+SQLAlchemy
+passlib
+PyJWT
+gTTS
+pygame
+Jinja2
+python-multipart
+bcrypt
