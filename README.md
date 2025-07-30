@@ -14,6 +14,7 @@
 + Ngôn ngữ: Python
 + Framework: FastAPI, Tkinter, Streamlit
 + Database: SQLite, SQLAlchemy
++ Deployment: [Render](https://render.com/)
 
 ### Chức năng chính của dự án
 + Hệ thống quản lý thư viện tài liệu với FastAPI
